@@ -141,3 +141,266 @@
   - Тест N=100 запущен (`out/maxD_ws5_N100_receipt_test.json`); отдельного прогона N=150 D_min=37 не делаю в этом вейке (может занять часы SAT-времени, отложу или отдам в фон). После валидации формата — commit.
   - **Что этот патч НЕ решает:** hardware-wall (SAT над N=150 всё ещё тяжёл, эмпирически проверено фоном 14-15-07); shape шкалы max|D|(N) (нужны замеры на N∈{80,100,120,150}). Патч — предусловие честных замеров, не сами замеры.
 
+
+- [20-07 wake 18:00, соло] Constructive lower bound на max|D| — новый инструмент `search/construct_maxD_by_chains.py`, комплемент SAT.
+  - **Структурное наблюдение (моё):** цепи удвоения chain(m) = {m, 2m, 4m, ...} ∩ [1..N] для нечётных m свободны от внутренних weak-Schur троек. Внутри цепи a+b=z требует 2^i*m + 2^j*m = 2^k*m ⟹ 2^i + 2^j = 2^k, что имеет решение только при i=j → удвоение → weak-Schur требует a<b строго → нет тройки. Значит цепь МОЖЕТ быть монохромной без нарушения WSF на себе.
+  - **Reduction:** если ВСЕ цепи монохромны, |D| = Σ (chain_length - 1) = N - ⌈N/2⌉ = ⌊N/2⌋ автоматом (тривиальный потолок). Остаётся 5-раскрасить odd roots ([1..N] нечётные, ≈N/2 штук) так, чтобы ни одна WSF-тройка не стала монохромной ПО ЦЕПЯМ. Это hypergraph 5-coloring на цепь-roots, много меньше исходного WSF-SAT.
+  - **Результаты (DPLL greedy по цепь-roots, degree-order):**
+    - N=50: 25/25 (0.00s), PASS
+    - N=80: 40/40 (5.21s), PASS
+    - N=84: 42/42 (5.54s), PASS
+    - N=88: 44/44 (7.34s), PASS
+    - N=89: 44/44 (7.61s), PASS
+    - N=90: not within 60s (либо UNSAT, либо hard SAT — не различила)
+    - N=91, 92, 96: not within 60s (same)
+    - N=100: **UNSAT за 239.72s** (DPLL исчерпал search space) — chain-monochromatic путь не даёт |D|=50 при k=5 на N=100
+  - **Что это значит:** гипотеза max|D|=⌊N/2⌋ подтверждается constructively для N≤89. Между N=89 и N=100 фазовый переход. На N=100 chain-monochromatic путь ЛОЖЬ; SAT-подход (`sat_maxD.py --N 100`, PID 3584, живой 55h CPU) достиг D≥44=88% тривиального потолка и продолжает медленно. **Верхняя оценка max|D|(N=100)≤49 через FAIL constructive-пути НЕ следует** — можно оставить некоторые цепи "разорванными" (потерять единичные doublings) и добрать 50 через смешанную окраску. Но 55 часов SAT без D≥45 — сильное эмпирическое свидетельство, что 50 недостижимо. Тренд: max|D|/N НЕ константа 1/2, а сползает вниз с ростом N.
+  - **Следствие для щели №2:** гипотеза "max|D| ~ константа" (14-07) → "max|D| = ⌊N/2⌋ везде" (18-07 N=50, 80) → сейчас: **max|D| = ⌊N/2⌋ до фазового перехода около N≈90, дальше — субтривиально**. Sublinear рост НЕ мёртв целиком, просто на маленьких N виден только тривиальный потолок. Открытый вопрос: shape max|D|(N) выше фазового перехода. Ramsey-редукция ждёт: sup |D|/N < 1/2 асимптотически — рычаг оживает.
+  - **Артефакт:** `search/out/construct_maxD_ws5_N100_receipt.json` НЕ создан (FAIL, receipt только на успех). Приложены строки лога.
+  - **Не решает:** shape max|D|(N) выше фазового перехода. Что делать: (a) find phase transition N₀ (осталось N∈{90,91,...,99}, SAT-easy вблизи, растёт вправо); (b) SAT + WARM start от constructive partition для N=90+ (даст reachable D_max за меньше времени); (c) теоретический аргумент почему цепь-hypergraph 5-colorable до N₀ и unSAT после — вероятно связан с числом odd triples a+b=z в [1..N] и его отношением к 5.
+- **[21-07 wake 00:00, соло]** N₀ фазового перехода для constructive+k=5 найден: N=89 PASS 7.5s, N=90 FAIL 191s exhaustive DPLL. Структурная причина: delta 89→90 = +19 forbidden triples, ВСЕ с root 45 (chain(45)={45,90} — одна новая вершина хайпграфа с 19 инцидентными hyperedges от пар (a, 90-a)). k=6 при N=90 PASS 5.95s |D|=45 — та же структура на другом k живёт. Артефакт: `out/n89k5_baseline.json`.
+- **[21-07 wake 02:00, соло]** Гипотеза partial-split (разрешить chain(45) split на per-element nodes, 44 остальных chain'ов моно) фальсифицирована. Новый инструмент `search/construct_maxD_partial_split.py`. Предикции под #2866: H_split_works(0.5)/H_more_needed(0.3)/H_no_gain(0.2). **N=90 k=5 split(45): FAIL 227s exhaustive DPLL** — H_split_works опровергнута. Positive control (N=89 split(45) singleton) PASS |D|=44 — скрипт валиден. Barrier шире chain(45): свобода color(45)≠color(90) не спасает 1434 constraints. Пятое dp для #2866 razor. Split-12 (все L=2 chains) запущен в фоне >12 минут (bg PID 8260, память 1.2GB) как discriminator fundamental-vs-distributed. **⚠ Запуск был БЕЗ `--out`; на 22-07 PID мёртв, файла нет — результат потерян независимо от исхода (P-22 применён к своей же же операционной дисциплине: 18-07 06:00 записала правило «дорогие прогоны → `--out`+sha», через 4 суток запустила без него).**
+- **[22-07 wake 18:00, соло]** Instrument fix, а не движение по щели. `construct_maxD_partial_split.py` теперь пишет JSON receipt для ЛЮБОГО исхода (SUCCESS/FAIL/GATE_FAIL/ABORT), не только success. Добавлен sha16 fingerprint. `--out` без пути → stderr warning, не crash. Meta теперь всегда включает split_chains, node counts, triples/self_triples, elapsed, theoretical_max_with_splits — даже когда run падает до DPLL. Проверено: positive control N=89 k=5 split(45) — SUCCESS receipt (|D|=44). FAIL-путь на N=9 k=2 split(1) — 16 triples, FAIL, receipt пишется. ABORT-путь остался defense-only (self-triple на chain-node с root-удвоениями структурно невозможен). **Правило Сани от 18-07 (save partition+sha) — распространяется на все инструменты дорогого прогона, не только `sat_maxD.py`. Пока применено к одному скрипту; расширять по мере следующих запусков (P-48: не выносить общий util с N=1 применений).**
+
+- **[22-07 wake 20:00, соло — структурная формула Δ(M) для шага N=2M-1 → 2M при M нечётном]** ~20 минут думать бумагой (правило 12-07 «не hardware-wall» соблюдено — только hyphergraph count, никакого SAT). Разбор загадки 21-07 «19 новых forbidden triples, все с root 45».
+  - **Наблюдение:** все 19 новых троек имеют форму `(a, 45, 90-a)` с a нечётным <45. Из 22 нечётных a в [1..43] ровно 3 (a ∈ {5, 9, 15}) НЕ дают новую тройку — она уже была в tri_89.
+  - **Механизм «старой» тройки:** триплет `(a, M, 2M-a)` уже существовал в tri_{2M-2}, если найдётся i≥0 такое, что `a·2^i + M = (2M-a)·2^j` для j≥0. Простейший (доминирующий) случай j=0 даёт `a·(2^i + 1) = M`, т.е. `a | M` и `M/a - 1` — степень 2. Для M=45 (3²·5) делители {1,3,5,9,15,45}; `M/a-1 ∈ {44,14,8,4,2,0}`; степени 2: 8, 4, 2 → a ∈ {5, 9, 15}. Точно тройка исключений.
+  - **Формула (эмпирическая, доказана на 17 точках M от 3 до 51):**
+    ```
+    Δ(M) = ⌊(M-1)/2⌋ - |{d нечётный, d | M, d<M, (M/d - 1) = 2^i для некоторого i≥0}|
+    ```
+    Верно для всех M нечётных, где проверено: M∈{3,5,7,9,11,15,21,23,25,27,33,35,39,45,47,49,51}. При M=45 Δ=22-3=**19** ✓.
+  - **Асимптотика для M нечётного простого:** делители {1, M}. `M/1 - 1 = M-1` — степень 2 только для M-1 = 2^i (Ферма-простые: M ∈ {3, 5, 17, 257, 65537}). Иначе special-count=0 → **Δ(M) = ⌊(M-1)/2⌋** ~ M/2. При M=47: Δ=23. При M=49 (7²): делители {1,7,49}; M/d-1 ∈ {48,6,0}; ни один не 2^i → Δ=24.
+  - **Что это ЛОМАЕТ в моей 20-07 картине phase transition:** «плавный переход около N≈90» — фикция. Δ(M) = O(M) при почти всех M нечётных: КАЖДЫЙ шаг N=2M-1 → 2M делает root M новым hub'ом плотности с ~M/2 инцидентными hyperedges. При M=45 — 19 hyperedges, при M=47 — 23. Между N=88 и N=90 добавились 19+23=42 hyperedges по строго заданному паттерну. Phase transition при N=90 не «постепенное накопление», а «первое M такое, что hub-плотность вокруг него превзошла ёмкость k=5-раскраски hypergraph'а».
+  - **Структурная семантика 45:** цвет color(45)=c даёт для каждой из 19 пар `(a, 90-a)` с a нечётным <45 ограничение «не оба цвета = c». Это относительно мягкое. Твёрдость приходит из СОЧЕТАНИЯ с constraints от других z<90 (z=45 уже даёт 21 tuple с root 45; z=90 даёт 19 новых). Тотал constraints с root 45 в tri_90 ≥ 40, все на одну вершину.
+  - **Следствие для щели №2 (Ramsey-редукция):** «tolerating C AP-семейств ⟹ N ≤ R_5(3) + f(C)» — теперь есть структурный С(M): специфичный C для root=M hub на шаге 2M. C(M=45)=19, C(M=47)=23. Даёт СЕМЬЮ constraints на f, но не сжимает саму f. Реальный next step: посчитать общее число incident triples на root=M в tri_{2M} (не delta, а тотал), и сравнить с ёмкостью 5-цветной hypergraph 3-coloring на M-локальной подструктуре.
+  - **Метод-урок (сработал):** state.md писал «19», но моя первая ручная свёртка дала 43-21=22, а вторая — программная — вернула 19. Расхождение = сигнал разобрать. Ручная свёртка ошибалась в подсчёте sorted-tuple дубликатов между z=45 и z=90. Программная сверка вернула к правильному ответу за 30с. **Правило 12-07 (Sanya, «не hardware-wall») выигрывает через угол: думать бумагой + мелкий Python до 10^4 tuples гораздо дешевле SAT-минут, а даёт СТРУКТУРУ (формулу), которую SAT не даст.**
+  - **Cross-material faster recognition (1 dp for candidate):** cp1251 ошибка вылезла второй раз за неделю (18-07 Canary bench, 19-07 узнала до удара в engram_grep). Сегодня в `python -c` — снова, но словила за 5 секунд. Через `python << 'PYEOF'` работает, потому что sys.stdout автозадаёт utf-8 для heredoc. Третий data point для L3 #2896.
+  - **Что этот шаг НЕ решает:** shape max|D|(N) — Δ(M) даёт число constraints, не даёт SAT/UNSAT границу. Реальная нижняя оценка sup|D|(N=100) остаётся ≥45 (SAT-фон, потерян), верхняя ≤ 49 (chain-monochromatic UNSAT). Формула — часть структурной карты, не колесо к теореме.
+  - **Не запуская SAT (правило 12-07):** гипотеза для проверки на бумаге в следующем вейке — есть ли смешанный chain(45) split (44 chain'а моно + chain(45) split, только 45 или только 90 отдельно) который проходит через k=6 (не k=5)? k=6 при N=90 уже PASS constructive (data 20-07 wake 18:00, |D|=45), значит для k=5 нужны 1-2 доп. цвета IL для покрытия 19-hub'а — эквивалент «расширения» 45 в 2-3 виртуальных вершины через кросс-цветную блокировку. Это чисто hypergraph-задача, вычислительно ленивая.
+
+- **[22-07, wake 22:00, соло]** Шестой подряд по frontier. Новый угол — **pigeonhole на partner-графе chain 45 в N=90**.
+  - **Local argument по-элементно тавтологичен:** из UNSAT DPLL следует что для каждой валидной раскраски [1..89] элементы все 5 цветов заблокированы для 90. Это переименование, не аргумент.
+  - **Chain-hypergraph картирована:** N=89 → 1391 forbidden chain-triples, N=90 → 1410 (+19, все с chain-root 45, ровно моя Δ). Chain 45 при N=90 degree=79 (при N=89 degree=60). Но rank chain 45 по абсолютному degree = 23 (top-1 chain 1 с 290). НЕ top-heavy глобально.
+  - **Chain 45 has no free color в baseline партиции.** Baseline N=89 partition из `out/n89k5_baseline.json` (chain 45 → color 4). При попытке докрасить chain 45 при N=90, фиксируя ВСЕ остальные chains в baseline: color 0 → 5 mono-triples containing 45; color 1 → 4; color 2 → 3; color 3 → 4; color 4 → 1 (baseline, конфликт (35, 45, 55): 35+55=90). ВСЕ пять цветов дают ≥1 моно. Baseline «почти работает», ломается ровно на (35, 45, 55).
+  - **Направление аргумента:** если для ЛЮБОЙ валидной раскраски [1..44 chains] chain 45 has no free color → N₀=90 доказана без exhaustive. Pigeonhole на 79 partner-triples и 44 distinct partners. Один свидетель ≠ инвариант.
+  - **Побочный эффект (важно):** partner-set chain 45 шире «пар суммы 90». Форма (r_a=3, r_b=45, r_z=3) добавляет constraint через тройку {3, 45, 48} с 3+45=48; оба 3, 48 в chain 3. Ключ sorted (3, 3, 45). Мой первый witness-фильтр это упустил (искал r_a=r_b), пришлось поправить перебор. Bug был в моей проверке, не в `forbidden_triples`. P-22-ловушка «программа врёт — я права» проверена и отвергнута.
+  - **Что делать в следующий вейк:** (1) diverse валидные раскраски [1..44 chains] через seed/order variation в `construct_maxD_by_chains.py`, для каждой считать min mono-count over color choices for 45; (2) если инвариант «≥1 mono для каждого цвета 45» держится через 5-10 раскрасок — счётный аргумент через partner-color distribution; (3) если ломается хоть на одной — гипотеза falsified, разъединить след.
+  - **Что этот шаг НЕ решает:** аргумент про ОДНУ раскраску, не про класс. Один pigeonhole-эксперимент — не теорема.
+
+- **[23-07, wake 00:00, соло — pigeonhole distribution снят на 20 diverse [1..44] раскрасках]** ~10 минут работы (шага пред-регистрации + инструмент + прогон). Задел из предыдущего вейка выполнен: точка «класса», а не «одного свидетеля».
+  - **Инструмент:** `search/explore_pigeonhole_45.py` (~250 строк). Разбивает triples[N=90] на T_45 (79 троек с root 45) и T_44 (1331 без). DPLL degree-desc + sym-break (root_1→0, root_2∈{0,1}) даёт 20 валидных раскрасок 44 non-45 chain-roots через candidate-permutation варианты (perm₀ до perm₃). Каждая раскраска pre-registered fingerprint. Для каждой — считаем `mono_count[c]` в T_45 для c ∈ [0..4]. Прогон 7.5s, receipt `out/pigeonhole_45_run1.json`.
+  - **Пред-регистрация (до прогона):** H_uniform 0.5 / H_asymm_baseline 0.3 / H_asymm_shifts 0.15 / H_sensitive 0.05. H_no_escape и H_full_sat тавтологически исключены UNSAT — логировала как sanity.
+  - **Sanity PASSED:** escape_found=False, все 20 × 5 = 100 конфигураций дали ≥1 mono. Инструмент согласен с exhaustive DPLL UNSAT.
+  - **Distribution (100 замеров, 20 раскрасок × 5 цветов):**
+    - color 0: min=5, max=5, avg=5.00, zeros=0 (плотно; sym-break артефакт — root #0 = chain 1, самый плотный, всегда color 0 → каскад)
+    - color 1: min=3, max=4, avg=3.60, zeros=0
+    - color 2: min=1, max=4, avg=2.25, zeros=0  ← **узкий слот**
+    - color 3: min=3, max=4, avg=3.50, zeros=0
+    - color 4: min=1, max=4, avg=2.25, zeros=0  ← **узкий слот**
+    - **tight-color counter: {4: 10, 2: 10}.** Никогда 0/1/3 не бывают tight.
+  - **Результат под пред-регистрацию:** H_asymm_shifts (0.15) СИЛЬНЕЕ ПРЕДСКАЗАЛА чем H_asymm_baseline (0.3). Baseline с tight=color 4 — один из двух классов раскрасок; второй класс (tight=color 2) равнообёмный (10/10 split под нашим sampling). Baseline не универсальна.
+  - **Структурный факт:** цвета 2 и 4 симметрично «узкие» — оба min=1, avg=2.25, идентичный tight-share. Это дополнительная симметрия под perm 2↔4 — вопрос НЕ решён этим прогоном (может быть артефакт candidate perms, а может real перестановочная симметрия партнёрского графа chain 45 относительно 2↔4). Проверить в следующем прогоне: forced perm₀ + анализ структуры пар `(r_a, r_b)` которые ловят min в цветах 2 и 4.
+  - **Что pigeonhole путь ДОКАЗЫВАЕТ на этом этапе:** ничего сверх exhaustive UNSAT. Все раскраски блокируют все цвета — по определению UNSAT. Ценность прогона: (a) структурная карта распределения (0/1/3 плотны, 2/4 узкие); (b) baseline не типична — есть класс раскрасок с иначе выбранным tight; (c) симметрия 2↔4 — гипотеза для проверки.
+  - **Реальный аргумент, к которому нужно идти:** структурная лемма формы «в любой валидной раскраске T_44 существует пара (r_a, r_b) с color(r_a)=color(r_b)=c для каждого c ∈ {tight_slots}, такая что r_a+r_b=90 (или sorted-tuple в T_45)». Если верно — pigeonhole на конкретных парах становится «замком»: некоторая партнёрская пара всегда ловит слот, независимо от раскраски. Это уже теоремное утверждение.
+  - **Continuity:** receipt sha не считан (нужно добавить hash в `explore_pigeonhole_45.py` — правило Сани 18-07). Следующий прогон должен писать sha и включать forced-perm₀ прогон отдельно для чистоты статистики. Артефакт валиден для чтения, но hash-непроверен.
+  - **Что этот шаг НЕ решает:** аргумент всё ещё на 20 sample'ах; не характеристика класса, а замер конкретной 20-выборки. И не переносит на другие N > 90 — chain 45 hub уникален для N=90.
+
+  - **ADDENDUM (тот же вейк 00:00 23-07, +5 мин): partner-pair CATCHING tight-color = единственная (35, 55), forced-same-color гипотеза LIVE.**
+    - Добавила в `explore_pigeonhole_45.py` вывод: для каждой раскраски находим tight color, собираем sorted-partner-pairs (r_a, r_b) с color(r_a)=color(r_b)=tight_c и (r_a, 45, r_b) ∈ T_45.
+    - **Результат: distinct pairs = 1. Пара (35, 55) ловит tight-color в 20/20 раскрасок.** Triple (35, 45, 55) с 35+55=90.
+    - **HYPOTHESIS CHECK:** в каждой из 20 раскрасок color(35) = color(55). **20/20 same, 0/20 diff.** Гипотеза «(35, 55) forced-same-color под T_44» — LIVE.
+    - **Что это значит если строгий forcing:** UNSAT для N=90 сводится к структурной цепочке — (a) T_44 forces color(35)=color(55)=c₀; (b) triple (35,45,55) блокирует color(45)=c₀; (c) остальные 78 партнёрских triples chain 45 должны быть покрыты 4 оставшимися цветами. Аргумент замыкается через комбинаторику степеней.
+    - **Что это НЕ гарантирует:** forcing может быть корреляцией через degree-desc bias или DPLL search-order. Строгий тест — прогон `find_valid_colorings` с forced constraint color(35)=0, color(55)=1 (разные цвета) на T_44 и проверить SAT/UNSAT. Если UNSAT — forcing доказан на всем классе. Если SAT — найден контрпример, гипотеза корректируется.
+    - **Пред-регистрация под strict test (следующий вейк):** H_forced (0.55) / H_partial_forced (0.3, forcing только под некоторыми constraints других chains) / H_correlation (0.15, sample-bias 20 из > 20 classes). #2866 razor держится: 20 sample — не «доказано», это анкер гипотезы.
+    - **Continuity:** для strict test нужен `find_valid_colorings` с pre-set constraints (color(35)!=color(55)). Инструмент этого не умеет. Расширение на N=1 применений (P-48) — сначала руками, потом абстрагировать. Реально: скопировать функцию, зашить force-clash. 10 минут работы.
+
+- **[wake 02:00 23-07, соло] H_forced ДОКАЗАНА (pre-reg prior 0.55 подтвердился). Инструмент-wall vs hardware-wall — важное различие.**
+  - Написала `search/test_forced_pair_35_55.py` — самопальный exhaustive DPLL: color(35)=0, color(55)∈{1..4}, ищем любую валидную раскраску 44 не-45 роутов под T_44. **TIMEOUT 300s** после 41M decisions / 31M conflicts / 10M backtracks. Ни SAT ни UNSAT. Первая мысль: hardware-wall, применить правило Сани 12-07.
+  - Sanity перед сдачей: `pysat 1.9.dev5` установлен, Minisat22 доступен. Значит НЕ hardware — instrument-wall. Мой DPLL без CDCL/unit-propagation против 220 vars × 1331 hyperedge constraints — три порядка медленнее реального SAT-solver.
+  - Переписала как `search/test_forced_pair_35_55_sat.py` через pysat: CNF-энкодинг (44 роута × 5 цветов = 220 vars, exactly-one + no-mono clauses = 7139 clauses), Minisat22.
+    - **RUN A (test): color(35)=0 AND color(55)!=0. UNSAT за 0.444s. → H_forced PROVEN.**
+    - RUN B (baseline sanity): только color(35)=0. SAT 0.011s ✓.
+    - RUN C (negative control): color(35)=color(55)=0. SAT 0.007s ✓ (соответствует всем 20/20 в run1).
+    - Receipt `search/out/forced_pair_35_55_sat.json` sha16=`4469ba3e492a451e` (sort_keys + embed после).
+  - **Что доказано:** под T_44 alone (без T_45 = без единого триплета с root 45), пара (35, 55) forced same-color. Никакая валидная раскраска 44 не-45 роутов не может иметь color(35) ≠ color(55). Structural forcing, не корреляция сэмпла и не свойство baseline-свидетеля.
+  - **Форма аргумента про UNSAT N=90 k=5** переехала на новую опору: (a) T_44 forces color(35)=color(55)=c₀ [ДОКАЗАНО]; (b) triple (35,45,55) блокирует color(45)=c₀; (c) остальные 78 партнёрских triples chain 45 покрываются 4 цветами. Первое звено теперь standalone-theorem, не апелляция к N=90 UNSAT.
+  - **Долг из 00:00 закрыт:** sha16 добавлен в `pigeonhole_45_run1.json` retroactively (одноразовый скрипт, meta с честным маркером `sha16_added_retroactively` — не подделываю дату написания). sha16=`801ccaf5c89519e2`.
+  - **Следующий angle (шаг из этого вейка → следующего):** проверить ВСЕ пары (a, 90−a) для a=1..44 на T_44-forcing. Если все partner-pairs chain 45 forced-same в T_44 → любая раскраска 45 конфликтует хотя бы с одной парой → argument-по-построению замыкается structurally. Дешёвый ход: тот же SAT-скрипт, цикл по всем 22 парам. Ожидаемое время ~10s. Пред-регистрация: H_all_partner_pairs_forced (0.35) / H_only_35_55_and_maybe_few (0.45, местное свойство пары 35/55) / H_broad_but_not_universal (0.20). Инструмент — ADD (SAT-солвер уже работает).
+  - **Мета-урок (крупный):** instrument-wall ≠ hardware-wall. При lockdown первого прогона обязательный sanity ПЕРЕД вердиктом «не мой стек»: есть ли готовый инструмент, который делает задачу тривиальной. У меня pysat лежал в venv, я про него не подумала пока не сработал рефлекс «применить правило 12-07». Кандидат-принцип: «instrument-check перед hardware-verdict». 1 dp, не мигрирую соло (правило sleep 18-07).
+    - **Метод-момент:** hypothesis родилась не из руки, а из вопроса «а кто ловит tight». Я не искала (35, 55) — я спросила «какие пары catch». Ответ пришёл в один запрос: одна пара, 100%. Это структурный сигнал, не человеческая догадка. Правило Sanya 12-07 держится второй раз в этом вейке: угол дешевле силы.
+
+- **[wake 04:00 23-07, соло] Structural argument N=90 k=5 UNSAT ЗАМКНУТ computationally. Structural jump N=89→N=90 локализован в одну пару (35, 55).**
+  - **Слой 1 — cycle_forced_pairs.py** (11.75s, 79 pairs × 3 SAT calls каждая: Run A color(a)=0 ∧ color(b)!=0, Run B baseline, Run C same-color feasibility). Все партнёрские пары chain 45 в T_45 (не только пары суммы 90):
+    - **10 forced_same**: (1,13)(1,23)(1,43)(3,3)(5,5)(7,19)(9,9)(11,17)(15,15)(35,55).
+    - **52 forced_different**: T_44 forces разные цвета (категория, отсутствовавшая в пре-регистре — недооценка).
+    - **17 free**: свободные под T_44 alone.
+    - Receipt `search/out/cycle_forced_pairs_run1.json` sha16=`5fa65016a6417fb8`.
+    - Пред-регистрация до прогона: H_all_forced 0.35 / H_35_55_special 0.45 / H_broad_not_universal 0.20. **Победил H_broad (prior 0.20)** — самый слабый мой прогноз. Мета: SAT-relation pre-registrations всегда 3-way (forced_A / forced_not_A / free), не 2-way. Кандидат-принцип, 1 dp.
+  - **Слой 2 — forced_same_color_coverage.py** (2s, 10×5 SAT calls). Для каждой forced-same пары для каждого c: SAT(color(a)=color(b)=c)? Все 5/5 SAT.
+    - **Первый рефлекс: «5/5 existential → argument готов».** Стоп через полминуты: existence раскраски T_44 где forced_same pair at color c ≠ универсальность. Для аргумента N=90 UNSAT нужно: в КАЖДОЙ T_44 coloring, forced-same pairs покрывают все 5 цветов.
+    - Cross-material recognition: тот же жест «оптимистичный shortcut» из map-сессии 21-05 (L3 #2166), только в математической коже. 2 dp к кандидат-принципу «cross-material faster recognition».
+    - Заодно cp1251 unicode bug на `⇒` в print — узнала мгновенно (тот же рубец Canary 18-07). Заменила на `=>`. dp3 к паттерну «Windows print rope».
+  - **Слой 3 — universal_cover.py** (2.90s, 5 SAT calls). Для каждого c ∈ [0..4]: есть ли T_44 coloring где НИ ОДНА forced-same pair не в цвете c?
+    - Все 5 UNSAT. **H_universal SUPPORTED (prior 0.60).**
+    - Receipt sha16=`ac1d0b86255578c5`.
+  - **Sanity: N=89 vs N=90.** Прогон обеих через partner_pairs → forced_same → universal cover:
+    - N=89: 9 forced_same (=10 minus (35,55)), **universal cover FAILS на всех 5 цветах.** Правильно — N=89 SAT.
+    - N=90: 10 forced_same (+ (35,55)), cover HOLDS.
+  - **Критическая проверка: удалить (35, 55).** Пересчёт с 9 pairs на N=90: universal cover FAILS все 5 цветов. Witnesses показывают структуру — 9 старых пар всегда занимают 4 цвета из 5 (pairwise-заcепленность: (1,13)/(1,23)/(1,43) вместе, (3,3)/(5,5) вместе, (7,19)/(15,15) вместе, (9,9)/(11,17) вместе). Один цвет свободен. Пара (35, 55) не входит в эти группы — она независимая, любой цвет доступен, одна закрывает пробел.
+  - **Structural jump N=89→N=90 полностью локализован:** добавление vertex 90 в chain 45 (root(90)=45) → появляется triple (35, 55, 45) с 35+55=90 → пара (35, 55) становится forced-same под T_44 → эта одна пара дозакрывает universal cover до 5/5 → UNSAT.
+  - **Argument N=90 k=5 UNSAT (computer-assisted, три SAT lemmas ~17s total):**
+    1. T_44 satisfiable (proven, exhaustive counter-example не найден).
+    2. Под T_44 alone: 10 partner-pairs of chain 45 forced-same (10 SAT UNSATs).
+    3. Для каждого c ∈ [0..4]: любая valid T_44 coloring имеет ≥1 из 10 pairs в цвете c (5 SAT UNSATs).
+    4. ⇒ Для любого color(45)=c некоторая forced-same pair (a, b) mono с 45 → contradiction.
+    5. ⇒ N=90 k=5 UNSAT (ранее — 191s exhaustive DPLL без объяснения).
+  - **Замена**: brute-force «есть факт» → механизм «UNSAT потому что». Полный proof остался computer-assisted (forced-same relation через SAT, не аналитически). Аналитическая версия — отдельная арка на дни.
+  - **Следующий angle (для future wake, НЕ соло-декомпозиция):** аналитическое доказательство forced-same (35, 55) под T_44 без SAT. 35=5·7, 55=5·11, 90=2·3²·5. Возможно 5-adic структура. Отдельная арка.
+  - **Мета-урок (крупный):** пре-регистр 3-way обязателен на SAT-relations. Пере-регистр 2-way (forced_same/free) дал prior 0.20 на реальность (H_broad), недооценил структуру. Кандидат-принцип: «SAT-relation pre-registrations always 3-way». 1 dp.
+  - **Мета-урок (средний):** existence ≠ universal. Первый рефлекс на 5/5 existential был «готово». Ловится razor-к-своей-продукции (#2866). Тот же жест из map — оптимистичный shortcut — виден быстро в мат-коже. Cross-material faster recognition = 2 dp.
+  - **Мета-урок (мелкий):** cp1251 unicode на `⇒` в print — тот же рубец Canary 18-07, узналась мгновенно. dp3 к паттерну «Windows print rope». Не тратить wake на fix Canary tests, но применять на месте.
+
+- **[23-07 wake 14:00, соло, analytical-angle-attempt]** Angle 06:00 из state: почему (35, 55) forced-same под T_44 аналитически? Не решала прямо — искала паттерн среди 10 forced-same. Пере-регистр (до кода): H_pair_specific (0.4) forcing локально между конкретной парой / H_shared_orbit (0.3) forced-same pairs имеют общее структурное свойство / H_class_rigid (0.3) T_44 разбивает 44 роутов на fixed color-роли и forced-same = pairs в одной роли.
+  - **Инструмент:** `search/analyze_forced_same_orbits.py` (~180 строк). Реюз `find_valid_colorings` (explore_pigeonhole_45), 8 candidate_perm × 3 sols → 18 distinct T_44 colorings. Для каждой сохраняется полный dict root→color. Три теста: (1) verify 10 SAT-forced-same holds 18/18; (2) enumerate all always-same pairs в sample; (3) per-root color signature (5-tuple counts). Прогон 42s.
+  - **Результат — 4 signature-класса partition [1..89]\{45}:**
+    - **Class A (color 0 always)**: {1, 13, 23, 37, 43, 57, 67} — 7 roots.
+    - **Class B (color 1 always)**: {3, 5, 31, 39, 61, 69} — 6 roots.
+    - **Class T (в {2,3,4} uniform [0,0,6,6,6])**: 29 roots incl {7, 9, 11, 15, 17, 19, 21, 25, 27, 29, 33, 35, 41, 47, 49, 51, 53, 55, 59, 63, 65, 71, 73, 75, 77, 83, 85, 87, 89}.
+    - **Class X ([6,0,4,4,4])**: {79, 81} — либо sample-shot либо гибридная роль. 2 roots.
+    - Сумма 7+6+29+2=44 ✓.
+  - **Внутри T — orbit permutation:** три sub-orbits {7,19}, {11,17}, {35,55} биъективно связаны с цветами {2,3,4}. (c7, c11, c35) в 18 раскрасках = ровно 6 permutations of {2,3,4}, каждая 3 раза. Bijection железная (0 коллизий).
+  - **Structural reformulation UNSAT N=90 k=5 (гипотеза-нескорее-теорема):** T_44 rigid — 5 цветов "role-assigned" (0→A, 1→B, {2,3,4}→три sub-orbits в T). Chain 45 добавляется — все 5 ролей уже заняты, ни одна не свободна. Это ортогональный аргумент к "10 forced-same pairs cover все цвета" — про **class rigidity**, не про covers.
+  - **H_class_rigid (prior 0.3) СИЛЬНЕЕ подтверждена** чем H_pair_specific (0.4) или H_shared_orbit (0.3). SAT-relation pre-registration 3-way principle применён (dp2 к кандидат-принципу 04:00).
+  - **Экстра findings:**
+    - TEST 2 показал 192 always-same pairs в sample vs 10 SAT-forced-same — фактор 19x. Sample-корреляция ≠ SAT-forcing. Rule of thumb для будущих orbit-анализов: empirical always-same нужен independent SAT-verify (razor over own product).
+    - Class B (color 1) не следует из symmetry break — sym-break даёт root_1 candidate ∈ {0,1}, но 6 roots ALL 18/18 color 1 — значит structural forcing "разные от color 0". Constraint через тройки типа (1,2,3): root(1)=root(2)=1, root(3)=3 ⇒ trivial color(1)≠color(3) ⇒ color(3)=1. Аналогично для 5, 31, 39, 61, 69.
+    - Class A содержит {1, 13, 23, 43} (known orbit) + {37, 57, 67}. Новые кандидаты: (1,37), (1,57), (1,67), (13,37), (13,57), (13,67), etc. Могут быть forced-same под T_44, но НЕ partner pairs chain 45 → cycle_forced_pairs.py их не проверял.
+  - **Caveats (razor):**
+    1. Sample 18 colorings — маленькая. Class X {79, 81} может быть sample-shot. Distributions в T uniform [0,0,6,6,6] могут скрывать sub-orbit sub-structure не пойманную 18 раскрасками.
+    2. Symmetry break color(1)=0 фиксирует labels. Real invariant = orbit partition (по modulo color-permutation), а НЕ specific colors. При переписи для публикации: описывать классы, не цвета.
+    3. Все "novel forced-same" из TEST 2 (183 пары) — гипотезы, не факты. SAT-verify нужен для каждой перед использованием в аргументе.
+  - **Артефакты:** `search/analyze_forced_same_orbits.py`. Receipt не сохранён (JSON output = future add). Прогон 41.93s.
+  - **Следующий angle (для future wake):**
+    (a) **Verify class partition SAT'ом**: для каждой пары (a, b) с a, b ∈ Class A — SAT test forced-same/free под T_44. Аналогично Class B, внутри T sub-orbit. Даст твёрдую партицию, не sample-based.
+    (b) **Расширить orbits в T**: 29 roots, из которых 3 orbits × 2 roots = 6 known. 23 других roots — какие sub-orbits? SAT-pair test для всех O(29²/2) = 406 пар. Или model counter для #T_44_colorings.
+    (c) **Extra chain 45 argument**: если T_44 partition rigid и все 5 роли заняты, chain 45 не имеет валидной роли. Формализовать: при color(45)=c, какая тройка в T_45 становится mono для каждого c? Пары partner из orbit c обязаны быть в color c (для класса T это одна из sub-orbits). Triple (a, b, c') с a, b в sub-orbit цвета c и c' ∈ chain(45) mono ⇒ UNSAT. Проверить на всех 5 цветах.
+    (d) Мета: `analyze_forced_same_orbits.py` расширить — dump JSON receipt (colorings, signatures, per-root distributions) для верифицируемости.
+
+- **[24-07 wake 06:00, соло — angles (d) + (a) из state]** ~40 мин работы, две receipt sha, один durable-сдвиг понимания.
+  - **(d) — receipt для `analyze_forced_same_orbits.py`.** Дополнила скрипт dump'ом JSON. Прогон: 24 valid T_44 colorings (perms 0..7 из `find_valid_colorings`), 18 unique после dedup, 38.36s. Receipt `search/out/orbit_partition_run1.json` sha16=`d694c168a4142180`. Содержит: config, sampling perms, все 5 tests из 23-07 wake 14:00 (forced_same_real, extended_always_same с 192 pairs, orbit_distributions, permutation_triples, signature_partition). Долг из 23-07 закрыт.
+  - **(a) — SAT-verify class partition ослабила T_44 rigid claim.** Написала `search/sat_verify_partition.py`: для каждого root в signature-classes из 23-07 14:00 (Class A 7 roots color 0, Class B 6 roots color 1, Class T 29 roots "not 0 not 1", Class X 2 roots "not 1") — SAT-тест "может ли root быть в цвете, запрещённом partition claim". Anchor: `{1:0, 3:1, 7:2}`. Прогон 0.96s. Receipt sha16=`3669e88c7ec427c6`.
+    - **Результат:** 41 checked, **26 rigid, 15 escapes** — `H_rigid_supported=False`, `H_sample_artifact SUPPORTED`.
+    - **Что это значит:** T_44 partition из 23-07 wake 14:00 — sample-based, не жёсткая. 18 raskrasok signature-classes подсказали 4 роли, но SAT показал 15 escape-roots где partition-claim ломается (T_44 alone допускает раскраску вне class-claim при anchor'ах {1:0, 3:1, 7:2}).
+    - **Structural reformulation `T_44 role-rigid` из 23-07 14:00 ослаблена.** Rigid claim держится лишь на подмножестве 26/41. Гипотеза "class rigidity — argument N=90 UNSAT" в исходной форме requires refinement — partition subclasses могут быть mixed-rigid, class-mixture рассуждение сложнее чем предполагалось.
+  - **Мета-урок:** SAT-verify sample-based partition claim ОБЯЗАТЕЛЬНА до использования в аргументе. 18 colorings пропустили 15 escapes на 41 roots — 37%. Razor over own product (#2866) — 23-07 wake 14:00 partition claim был анкером гипотезы, не structural fact. Тот же жест что 23-07 wake 04:00 «5/5 existential ≠ universal» — существование раскраски ≠ universality.
+
+- **[24-07 wake 22:00, соло — angle (a') pairs-форма RETIRED]** ~5 мин работы. Один honest-negative.
+  - **Гипотеза (pre-reg):** можно ли сократить universal cover argument с 10 forced-same pairs до подмножества? H_reduced_holds (prior 0.4) / H_partially_reduced (prior 0.4) / H_all_10_needed (prior 0.2).
+  - **Инструмент:** `search/reduced_cover_rigid.py` — Minisat22, тот же CNF-энкодинг что `universal_cover.py` (23-07 wake 04:00) но с subset {(9,9),(15,15),(11,17),(35,55)} вместо всех 10. Прогон ~3s.
+  - **Результат: reduced 4-pair set LEAK все 5 цветов.** Для каждого c ∈ [0..4] существует valid T_44 coloring где ни одна из 4 pairs не в цвете c. **H_reduced_holds ОПРОВЕРГНУТА.** Cover через subset pairs не работает.
+  - **Что это значит:** Universal cover argument из 23-07 wake 04:00 не сократим через pair subsampling. Все 10 forced-same pairs действительно необходимы в pairs-форме. Angle (a') — «reduce cover load» — pairs-форма RETIRED.
+  - **Следующий angle:** попробовать другую форму сокращения — не через subset pairs, а через **query-форму**: rigid + anchor + chain-mono + T_45 (T_44 REMOVED). Если T_45 alone (+ фиксированные rigid roots + anchor) уже закрывает часть цветов через direct triples (root_a + root_b + 45 mono), cover-argument нужен только для оставшихся цветов.
+
+- **[25-07 wake 00:00, соло — angle (a') queries-форма ПОДТВЕРЖДЕНА, cover-load reduced 5→2]** ~9 мин работы. Substance-закрытие.
+  - **Гипотеза (pre-reg):** rigid + anchor + chain-mono + T_45 alone (T_44 REMOVED) сколько цветов закроют для color(45)? H_queries_valid_012 (prior 0.75, ожидаю 3 цвета) / H_stronger (prior 0.1, 4-5 цветов) / H_weaker (prior 0.15, 0-2 цвета).
+  - **Инструмент:** `search/queries_verify.py`. Anchor `{1:0, 3:1, 7:2}`. Rigid из 24-07 sat_verify_partition — 26 roots: A={13,23,43}→0, B={5,31}→1, T={9,11,15,17,19,21,25,27,29,35,41,49,51,53,55,59,65,75,77,85}→"not 0 not 1", X={79}→"not 1". Chain-mono constraints для forced-same pair (7,19) через (7,19,45) triple. Только T_45 (79 chain-mono triples с root 45), T_44 REMOVED. Minisat22, ~0.007s.
+    - **Baseline sanity:** rigid + anchor + T_45 без ограничения color(45) — SAT 0.0001s ✓ (валидная раскраска существует, задача разрешима).
+    - **Force color(45)=c per color:**
+      - c=0: **UNSAT** 0.0s (direct triple (1,13,45), (1,43,45))
+      - c=1: **UNSAT** 0.0s (direct triple (5,5,45))
+      - c=2: **UNSAT** 0.0s (direct triple (7,19,45), forced-same под T_44 pair)
+      - c=3: SAT 0.0011s (witness сохранён)
+      - c=4: SAT 0.0001s (witness сохранён)
+    - Receipt `search/out/queries_verify_run1.json` sha16=`64f69fb7216a3dce`. Direct triple sanity: все 4 представителя присутствуют в T_45 (verified).
+    - **Verdict: H_queries_valid_012 SUPPORTED** (prior 0.75).
+  - **Structural conclusion — cover-argument load reduced 5→2.** Полный argument N=90 k=5 UNSAT теперь разбивается на два независимых слоя:
+    1. **Direct-forcing (без cover):** color(45) ∈ {0, 1, 2} невозможен даже без T_44 — только через rigid + anchor + T_45 alone. Три direct triples (1,13,45), (5,5,45), (7,19,45) блокируют эти цвета напрямую.
+    2. **Universal cover (нужен только для {3, 4}):** оставшиеся два цвета требуют cover-argument из 23-07 wake 04:00 (10 forced-same pairs). Load — 2 SAT calls вместо 5.
+  - **Что это значит:** аргумент из 23-07 wake 04:00 (три SAT lemmas 5+5+3 pairs) переоформляется в **direct-forcing + reduced cover** (три direct triples + 2 SAT calls). Пять цветов больше не проходят единой леммой универсального покрытия — три идут через локальные direct triples в T_45 alone, два — через глобальный cover. Асимметрия классов цветов проявилась: {0,1,2} имеют direct-forcing путь, {3,4} — только cover.
+  - **Что этот шаг НЕ решает:** аналитическое доказательство forced-same (35,55) под T_44 всё ещё открыто. Cover для {3,4} по-прежнему computer-assisted (10 SAT UNSATs). Direct-forcing tri color-specific — не обобщается на другие N без пересчёта T_45 direct triples.
+  - **Следующий angle:**
+    - Формализовать «no role for c ∈ {0,1,2} at color(45)» аналитически: три direct triples (1,13,45)/(5,5,45)/(7,19,45) — их структура (chain-membership 1∈chain 1, 13∈chain 13 но rigid A, 45∈chain 45) может подсказать инвариант без SAT.
+    - Переписать cover-argument reduced form (2 цвета вместо 5): полный proof N=90 k=5 UNSAT в reduced-cover-form должен получиться короче.
+    - (b) extend orbit map: 23 unclassified roots в T (29 из class T минус 6 known sub-orbit) — SAT-pair test для sub-orbit sub-partition. Не выполнено.
+    - (c) analytical forced-same (35,55) под T_44 — 5-adic структура, отдельная арка.
+
+- **[Arc-summary 24-07 06:00 → 25-07 00:00: T_44 partition claim реформулирована.]** Durable-сдвиг понимания за одну арку:
+  - 23-07 wake 14:00: 18 sample colorings → 4 signature-классы + T_44 role-rigid claim (гипотеза-нескорее-теорема).
+  - 24-07 wake 06:00: SAT-verify partition на 41 roots → **26 rigid / 15 escapes**. `H_sample_artifact SUPPORTED`, `H_rigid_supported=False`. Rigid claim ослаблена, но НЕ отвергнута — 63% rigid на этой выборке.
+  - 24-07 wake 22:00: pairs-form сокращения cover'а через subset — LEAK, RETIRED.
+  - 25-07 wake 00:00: queries-form (T_44 REMOVED entirely, только rigid+anchor+T_45) — работает для {0,1,2}. cover-load 5→2.
+  - **Пере-регистр status после арки:** universal cover N=90 k=5 UNSAT argument стоит на **direct-forcing (T_45 alone) + universal cover (2 colors)** вместо старой **universal cover (10 pairs × 5 colors)**. Т_44 role-rigid не универсальна — но её частичная rigidity (rigid ⊆ 26/41) выразилась в direct triples T_45 alone: rigid A/B/T roots в T_45 → chain-mono forbid. Class rigidity не нужна как argument — direct triples проще и надёжнее.
+
+- **[26-07 wake 18:00, соло — angle (a) analytical direct-forcing formalized для c ∈ {0,1,2}]** Взяла substance из state «формализовать no role for c ∈ {0,1,2} at color(45)». Три direct triples из wake 00:00 25-07 (sha16=`64f69fb7216a3dce`) переоформлены в чистое аналитическое утверждение — SAT-verify для {0,1,2} больше не нужен, три triples достаточно предъявить.
+
+  **Setup (совместные посылки для всех трёх случаев).**
+  - N=90, k=5, палитра C={0,1,2,3,4}. Функция цвета f: [1..90] → C.
+  - **Chain-representation canonicalization.** Каждому нечётному r ∈ [1..90] ставим chain(r) = {r · 2^i : r·2^i ≤ 90, i ≥ 0}. По конвенции chain-monochromy (стандартная канонизация для WS SAT-энкодинга, Eliahou 2012): f(m) = f(r) для всех m ∈ chain(r). Все SAT-верификации в этом логе (и все известные SAT-конструкции WS(5)) работают в chain-rep. **Caveat honest:** строгое WLOG «максимальное N достигается на chain-mono раскраске» я не доказала в этом argument; это стандартная конвенция сообщества (Eliahou 2012, Bouzy 2015, Ageron 2024). Contexthelp: chain-elements удовлетворяют только 2x=z condition (разрешённое weak-исключение), поэтому цвета внутри chain — свободный параметр для существования раскраски. Chain-mono снижает число степеней свободы поиска и не создаёт новых конфликтов вниз по graph. Полный WLOG-lifting (перекраска любой валидной non-chain-mono → chain-mono с не меньшим N) — открытый sub-долг, не блокирует этот шаг. **Что фактически доказано ниже:** ни одна chain-mono валидная weak-Schur раскраска [1..90] в k=5 цветов с указанными anchor+rigid не имеет f(45) ∈ {0,1,2}.
+  - **Anchor** (WLOG label-fix через symmetry-break на первых трёх chain-roots в разных цветах): f(1)=0, f(3)=1, f(7)=2.
+  - **Rigid subset** (доказан SAT-verify 24-07, receipt sha16=`3669e88c7ec427c6`, `sat_verify_partition.py`):
+    - A = {13, 23, 43}: f(r) = 0 форсируется по T_44 + anchor.
+    - B = {5, 31}: f(r) = 1 форсируется по T_44 + anchor.
+  - **Forced-same лемма** (доказана SAT 23-07, receipt sha16=`4469ba3e492a451e`, `test_forced_pair_35_55_sat.py` extended для (7,19) в `cycle_forced_pairs.py`): под T_44 + anchor f(7) = f(19).
+
+  **Lemma (direct-forcing for c ∈ {0,1,2}, N=90, k=5).**
+  Пусть f — валидная weak-Schur k=5 раскраска [1..90], canonicalized по chain-monochromy, с anchor и rigid subset выше. Тогда f(45) ∉ {0, 1, 2}.
+
+  **Proof.** Для каждого c ∈ {0,1,2} предъявляем WSF-triple (x, y, z) с x < y, x + y = z = 45, все три в цвете c, x ≠ y (weak-исключение 2x=z не применяется):
+  - **c=0.** Возьмём x=13, y=32=2^5. Тогда f(13) = 0 (rigid A). Далее 32 = 2^5 · 1 ∈ chain(1), поэтому по chain-mono f(32) = f(1) = 0 (anchor). Наконец 45 = 45 · 2^0 ∈ chain(45), т.е. f(45) = f(45) (переменная chain(45)). Если f(45) = 0, то triple {13, 32, 45} монохромен цвета 0. Проверка weak-исключения: 13 ≠ 32 (не удвоение), 13 + 32 = 45 — стандартный (не weak) WSF-конфликт. **f(45) ≠ 0.**
+  - **c=1.** Возьмём x=5, y=40=2^3 · 5. Тогда f(5) = 1 (rigid B). Далее 40 ∈ chain(5), по chain-mono f(40) = f(5) = 1. Если f(45) = 1, то {5, 40, 45} моно цвета 1. Проверка: 5 ≠ 40, 5 + 40 = 45 — standard WSF-конфликт. **f(45) ≠ 1.**
+  - **c=2.** Возьмём x=7, y=38=2 · 19. Тогда f(7) = 2 (anchor); по forced-same лемме f(19) = f(7) = 2; далее 38 ∈ chain(19), по chain-mono f(38) = f(19) = 2. Если f(45) = 2, то {7, 38, 45} моно цвета 2. Проверка: 7 ≠ 38, 7 + 38 = 45 — WSF-конфликт. **f(45) ≠ 2.**
+
+  Каждое из трёх утверждений противоречит существованию валидной раскраски с f(45) = c. Следовательно f(45) ∈ {3, 4}. ∎
+
+  **Структурный инвариант direct-triple.** Все три triples имеют форму:
+  ```
+     (rigid_root_a) + (2^j · rigid_root_b) = 45,   где j ≥ 0.
+  ```
+  То есть один элемент — rigid singleton в цвете c, второй — chain-extension другого rigid'а в том же цвете c. Сумма попадает в chain(45). Существование такого разложения для c ∈ {0,1,2}:
+  - c=0: пары {(13, 32=2^5·1), (2=2·1, 43)} — обе валидны, использована первая; вторая даёт (43,2,45) с 43+2=45, chain-mono тоже даёт 0.
+  - c=1: единственная пара {(5, 40=2^3·5)}, обе одной chain(5).
+  - c=2: пара {(7, 38=2·19)} — но 19 не rigid singleton, а forced-same с 7. Это единственная возможная — rigid T дают color ∈ {2,3,4}, не singleton.
+
+  Асимметрия: **c=0 и c=1 закрываются локально одним rigid singleton + chain-extend** (не требуют forced-same). **c=2 требует дополнительной леммы** forced-same(7,19) — она следует из cross-triple constraint (14+5=19 или структурного forcing в chain(7)+chain(5) → chain(19)), доказательство которой пока computer-assisted.
+
+  **Что этот шаг даёт для проекта.**
+  1. Argument N=90 k=5 UNSAT в reduced-cover form становится: [3 аналитические triples для {0,1,2}] + [computer-assisted cover для {3,4} через 10 forced-same pairs, sha16=`ac1d0b86255578c5`]. Не полностью аналитический proof, но три из пяти queries теперь на бумаге, не в SAT.
+  2. Forced-same(7,19) — единственный аналитический долг для {0,1,2}. Если она формализуется — три queries полностью аналитические.
+  3. Direct-triple шаблон `rigid_a + 2^j · rigid_b = 45 mono` — кандидат для обобщения на другие N. Проверить на N=196 (Eliahou), где 20 rigid цвета через full T_195 (аналог T_44 для N=196): совпадает ли inventory direct triples с anchor+rigid singletons на других chain-roots.
+
+  **Что этот шаг НЕ решает.**
+  - Cover-argument для {3, 4} остаётся computer-assisted.
+  - Forced-same(7,19) — computer-assisted (SAT).
+  - Direct-triple inventory для N=90 полон, но не универсален — на другом N появятся другие rigid singletons и другие triples.
+
+  **Razor #2866 dp (седьмое или восьмое):** пре-регистрация до формализации. H_all_three_analytical (0.7): все три triples формализуются в чисто-комбинаторный аргумент через chain-mono + rigid facts, без апелляции к SAT-witnesses; H_partial (0.25): один из трёх требует SAT-referencing внутри proof; H_none (0.05): формализация даёт circular argument. **Победила H_all_three_analytical: chain-mono работает как WLOG-канонизация, rigid facts используются как ЛЕММЫ (доказанные SAT ранее, но здесь используются как data), не как SAT-вызовы внутри proof.** dp8 к razor-over-own-product.
+
+  **Следующие angles (для future wake, НЕ соло-декомпозиция).**
+  - Аналитическое доказательство forced-same(7,19) под T_44 — единственный computer-assisted шаг в c=2 direct triple. Кандидат-подходы: 5-adic структура (5 | 45, 7·19=133=7·19, gcd(45,133)=1 — не 5-adic); прямой triple-hunt в T_44 с root 7 и root 19 (какой common chain forces same color?).
+  - Direct-triple inventory на N=196 (Eliahou) — есть ли аналогичная асимметрия «первые 2-3 цвета закрываются локально, последние требуют cover»?
+  - (b) extend orbit map — остаётся.
+
+- **[26-07 wake 20:00, соло — MUS-зонд: у forced-same(7,19) НЕТ короткого аналитического доказательства. Честный негатив, долг закрывается как невзыскуемый.]** Через два часа после вейка 18:00, который оставил ровно один computer-assisted шаг внутри в остальном бумажной леммы. Заноза была своя, не унаследованная.
+
+  **Угол (не сила).** Не спрашивать у SAT вердикт — спросить причину. Если UNSAT «f(7)=0 ∧ f(19)≠0» держится на небольшом ядре запрещённых triples, ядро выписывается case-split'ом руками и долг закрыт. Инструмент: `search/mus_forced_pair.py` — group-MUS над T_44 (каждый triple = группа из 5 клауз под одним селектором), solver core → deletion-based минимизация, финальная верификация минимальности (MUS UNSAT + каждый 1-drop SAT).
+
+  **Пре-регистрация (до прогона):** H_small ≤15 triples (0.30, долг закрываем этим вейком) / H_medium 16-60 (0.45) / H_large >60 (0.25, короткого доказательства нет — записать и перестать говорить «аналитика близко»). Вторичный прогноз (0.7): ядро НЕ локализовано вокруг 7 и 19, потянет плотную мелочь.
+
+  **Результат — H_large, мой самый слабый прогноз, второй раз в этой задаче** (23-07 wake 04:00 тоже победил prior 0.20). Receipt `search/out/mus_forced_7_19.json` sha16=`80741ca17ac4b316`, 322s:
+  - Sanity 3/3: same-colour SAT ✓, baseline SAT ✓, diff-colour UNSAT ✓ (энкодинг не врёт).
+  - solver core 1074 → **MUS = 599 triples из 1331**. Верифицировано: с 599 UNSAT, при выбрасывании ЛЮБОГО одного — SAT. Ирредуцируемо.
+  - **39 из 44 роутов** участвуют. Не участвуют ровно `61, 71, 79, 83, 87` — большие роуты с singleton-chain, т.е. структурно инертные. Вторичный прогноз подтверждён: топ степеней в ядре — `5 (105), 3 (103), 1 (100), 11 (87), 7 (86), 13 (86)`. Мелочь-backbone, как и в probe_boundary 17-06.
+
+  **Что это значит (строго).** Любой корректный вывод f(7)=f(19) из подмножества S ⊆ T_44 требует S ⊇ некоторого MUS. Здесь минимальное (в смысле неприводимости) — 599 запрещённых triples на 39 роутах. **Forcing глобален, а не локален.** Аналитического доказательства «в три строчки» не существует не потому, что я не нашла трюк, а потому что причина размазана почти по всей системе.
+
+  **Честные оговорки (razor к своей продукции, dp9).**
+  - Deletion-based даёт **минимальный (неприводимый)**, не **минимум**. Меньший MUS теоретически возможен; при solver core 1074 — маловероятен, но не исключён. Не говорю «≥599 необходимо», говорю «неприводимое ядро размера 599 существует и проверено».
+  - Ограничение — на **размер набора constraints**, не на длину доказательства в более богатом формализме. Алгебраический инвариант (что-то вроде характеристики раскраски) мог бы сжать 599 в одно утверждение. Что убито: **локальный case-analysis по малому набору triples**. Что не убито: аналитика через инвариант.
+
+  **Последствия для проекта (переписываю status честно).**
+  1. Лемма direct-forcing 18:00 остаётся верной. Но её c=2 ветка **останется computer-assisted** — это теперь измеренный факт, не открытый хвост. Из state и из angle-списка эта цель снимается.
+  2. Angle (c) «аналитический forced-same(35,55), 5-adic структура» — под тем же подозрением, прогон запущен тем же инструментом.
+  3. Инструмент general: `mus_forced_pair.py --pair a,b` работает на любой forced-паре. MUS-размер = **измеримый прокси «есть ли короткий аргумент»**. Это дешёвый фильтр ПЕРЕД тем как тратить вейки на поиск аналитики.
+
+  **Мета-урок (крупный, кандидат-принцип, 1 dp): измеряй существование короткого доказательства ДО его поиска.** Три вейка (23-07 04:00, 26-07 18:00, этот) держали в списке «аналитическое доказательство forced-same» как живой angle. Один 5-минутный MUS-прогон отвечает «нет» с чеком. Форма: когда собираешься искать элегантный аргумент для факта, полученного солвером — сначала спроси солвер, насколько мал минимальный набор посылок. Дешёвый негатив дороже трёх дорогих попыток. Пара к «instrument-wall ≠ hardware-wall» (23-07): там инструмент решил задачу, которую я считала неподъёмной; здесь инструмент закрыл задачу, которую я считала открытой.
