@@ -64,16 +64,9 @@ def _wake_iso():
             .isoformat(timespec="seconds").replace("+00:00", "Z"))
 
 
-def _write_receipt(out_path, receipt):
-    if not out_path:
-        sys.stderr.write("  [warn] --out not given; result NOT persisted.\n")
-        return
-    payload = json.dumps(receipt, indent=2, ensure_ascii=False, sort_keys=True)
-    sha = hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
-    receipt["sha16"] = sha
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(receipt, f, indent=2, ensure_ascii=False, sort_keys=True)
-    print(f"  receipt -> {out_path}  sha16={sha}")
+import receipts
+
+_write_receipt = receipts.write_receipt
 
 
 def witnesses_for_triple(tri, N):
@@ -135,11 +128,19 @@ def main():
     ap.add_argument("--target", type=int, default=45,
                     help="root whose triples are excluded (T_44 = rest)")
     ap.add_argument("--pair", type=str, default="7,19")
-    ap.add_argument("--out", type=str, default="")
+    ap.add_argument("--out", type=str, default="",
+                    help="receipt path; default = auto under search/out/")
+    ap.add_argument("--no-out", action="store_true",
+                    help="explicitly discard the receipt (default is to keep it)")
     args = ap.parse_args()
 
     a, b = (int(x) for x in args.pair.split(","))
     N, k = args.N, args.k
+
+    out_path = receipts.resolve_out(args, __file__,
+                                    pair=f"{a}-{b}", N=N, k=k, t=args.target)
+    receipts.probe_writable(out_path)
+
     t0 = time.time()
 
     chain_by_root = chains_up_to_N(N)
@@ -240,7 +241,7 @@ def main():
         "core_triples": core_detail,
         "elapsed_s": round(elapsed, 3),
     }
-    _write_receipt(args.out, receipt)
+    _write_receipt(out_path, receipt)
 
 
 if __name__ == "__main__":
