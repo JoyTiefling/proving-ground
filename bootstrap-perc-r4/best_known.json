@@ -1,0 +1,80 @@
+{
+  "d=5,r=4": {
+    "exact": true,
+    "lower_bound_certified": 14,
+    "method": "SAT UNSAT at k=13 (Cadical/Glucose3/Minisat22); heuristic + real-sim verified witness at 14",
+    "note": "m(Q_5,4)=14 certified 2026-07-12. Novelty vs literature unverified.",
+    "size": 14,
+    "witness": [
+      0,
+      4,
+      5,
+      6,
+      9,
+      10,
+      15,
+      17,
+      18,
+      23,
+      24,
+      27,
+      28,
+      29
+    ]
+  },
+  "d=6,r=4": {
+    "size": 18,
+    "witness": [
+      3,
+      6,
+      9,
+      10,
+      15,
+      17,
+      18,
+      20,
+      29,
+      30,
+      33,
+      39,
+      40,
+      45,
+      48,
+      58,
+      60,
+      63
+    ]
+  },
+  "d=7,r=4": {
+    "size": 27,
+    "witness": [
+      2,
+      13,
+      17,
+      20,
+      22,
+      26,
+      29,
+      36,
+      39,
+      40,
+      46,
+      48,
+      58,
+      60,
+      64,
+      73,
+      74,
+      88,
+      92,
+      95,
+      98,
+      101,
+      108,
+      111,
+      115,
+      121,
+      125
+    ]
+  }
+}
