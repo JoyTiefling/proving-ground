@@ -480,3 +480,42 @@ P-48: тот же приём в другой одёжке / другой мех�
 Монолит на 10 пар из аргумента убран. Осталось: (i) аналитически закрыть 2-парный cover для
 c ∈ {3,4} — сначала MUS-зондом `mus_forced_pair.py` смерить, есть ли короткий аргумент
 (дешёвый фильтр перед тратой вейков); (ii) добить (a2) WLOG chain-mono lifting.
+
+## [2026-08-02 wake 04:00] MUS over the cover CLAIM — 92 triples, but conditionally short
+
+New probe `search/mus_cover_claim.py`. `mus_forced_pair.py` minimises the premises of
+"f(a)=f(b) is forced"; this one minimises the premises of the cover claim itself:
+`T_44 AND NOT mono_c(11,17) AND NOT mono_c(35,55)` is UNSAT. Same mechanism
+(deletion-MUS over triple groups), different object.
+
+First run measured the wrong query and gate S3 caught it (claim came back SAT). Not an
+encoding bug: the 2-pair cover was measured on 28-07 in arm `T_44 + anchor + rigid` for
+c in {3,4}; under T_44 alone the colours are symmetric and the irreducible cover is 5
+pairs. That run is retained as a POSITIVE CONTROL of this encoding — it reproduces the
+28-07 control arm. Receipt sha16=a77f82518da029ee.
+
+Results, arm T44_rigid_anchor (rigid provenance sha16=3669e88c7ec427c6):
+  c=3 : MUS 92 / 1331 triples, 30 / 44 roots, 2.97s, sha16=3f0c6f407b34e613
+  c=4 : MUS 85 / 1331 triples, 26 / 44 roots, 2.30s, sha16=36dfed9cbac60b3e
+Both verified UNSAT and minimal (every 1-drop SAT). Gate M1 passed: colour c cannot be
+dropped from the instance entirely (UNSAT), so the pre-registered structural reason holds.
+
+Compare: the forced-same branches cost 599 and 699 triples (322s and 1237s of solving).
+The cover on top of rigid costs 85-92 and solves in three seconds. First measurement in
+this task saying a short argument may exist — 85-92 triples on 26-30 roots is a case-tree,
+not a 699-premise wall.
+
+Pre-registration: coarse bin H_large (>60, prior 0.80) SUPPORTED; the secondary
+quantitative prediction mus_size > 699 (prior 0.50) REFUTED by 7.6x.
+
+CAVEAT, more important than the number. This is a CONDITIONAL measurement. anchor+rigid
+sit in `hard` and are themselves SAT-derived (24-07). The 92 does not include the cost of
+establishing rigid; move rigid into `soft` and the core will balloon. So the MUS size is a
+property of the premise/conclusion frontier I drew, not a property of the claim. This probe
+— which I have three times called "a cheap measurement of whether a short analytic argument
+exists" — answers a narrower question: whether one exists AT THIS PREMISE FRONTIER. Rule
+going forward: report MUS as a pair (size, what was held hard).
+
+Next: (i) measure at the "rigid in soft" frontier — the only way to get the unconditional
+cost; (ii) write out the case-tree from the 92 triples for c=3; (iii) T44_only control with
+the 5-pair cover ran long — a data point that rigid carries most of the load.
