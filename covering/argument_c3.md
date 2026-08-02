@@ -1,8 +1,10 @@
 # The 2-pair cover claim at c=3, written out by hand — head of the argument
 
-Status: **PARTIAL.** The shared prefix, the branch structure and one fully worked
-leaf are written below. The remaining 75 leaves are not. This file is the first
-instalment of "write the 76 cases out in prose", not its completion.
+Status: **PARTIAL.** The shared prefix, the branch structure, one typical leaf
+(§3) and the single exceptional leaf (§4) are written below, together with what
+the cover blocks do across the whole tree (§4.1). The remaining 74 leaves are
+not. This file is the second instalment of "write the 76 cases out in prose",
+not its completion.
 
 Source of every number and every step quoted here:
 `search/case_tree_witnesses.py` (wake 20:00, 02-08-2026), payload
@@ -32,19 +34,56 @@ A check that cannot fail certifies nothing. So each step below names the clause
 it uses and the pinned roots that make that clause fire; a reader validates a
 step without re-running any search.
 
-Two step kinds appear:
+Two clause families appear, and each of them can either prune or kill:
 
 - **prune** — clause `C` with all-but-one of its roots already pinned to colour
   `x` removes `x` from the domain of the remaining root;
 - **conflict** — a clause all of whose roots are pinned to one colour. This is
   where a case dies.
 
-Across all 76 cases there are 2347 prune steps, 368 pins, **75 leaves closing on
-a monochromatic triple and exactly one on a cover pair**. Written case-by-case
-that is 2840 steps; with shared prefixes written once it is **1116 distinct
-steps**. 1116 — not 76, and not 92 — is the number that decides whether this is
-writable by hand. (Three different magnitudes for one question, each of which I
-announced in turn as the answer; the one that decides is the one a floor below.)
+The families are the **92 forbidden triples** of the MUS core, and the **two
+cover blocks** `¬(11=3 ∧ 17=3)`, `¬(35=3 ∧ 55=3)` — the negation of the claim
+being argued. The blocks are binary and live on colour 3 only, but they are
+otherwise ordinary clauses in the derivation, not a goal sitting outside it.
+
+Across all 76 cases the step ledger is:
+
+| kind | count |
+|------|-------|
+| `mono_prune` (triple prunes) | 2347 |
+| `pair_prune` (block prunes) | 49 |
+| `pin` (case splits) | 368 |
+| `mono_conflict` (dies on a monochromatic triple) | 75 |
+| `pair_conflict` (dies on a cover block) | 1 |
+| **total, case-by-case** | **2840** |
+
+With shared prefixes written once it is **1116 distinct steps**. 1116 — not 76,
+and not 92 — is the number that decides whether this is writable by hand. (Three
+different magnitudes for one question, each of which I announced in turn as the
+answer; the one that decides is the one a floor below.)
+
+**"Distinct" needs its definition attached, because there are two and they
+differ by a factor of four.** Under prefix-tree compression — a step is written
+once if every case reaching it has followed the same derivation to that point —
+the count is **1116**. Under step *signature* — the same clause firing on the
+same root to remove the same colour, counted once no matter where in the tree —
+it is **289**. The writable-by-hand number is 1116, and the reason is the
+reader, not the tree: someone following case 40 cannot reuse a prune written out
+under case 12's prefix, because reaching it requires case 12's pins. 289 is what
+the argument costs a machine that can hash; 1116 is what it costs a reader. The
+figure was published in the first instalment without this definition and is not
+recorded in the receipt at all — it was computed by hand at the time of writing
+and has now been recomputed from the payload and reproduced exactly. Same shape
+of question as the 92-vs-76-vs-1116 series above, one level in again.
+
+*Correction to the first instalment of this file.* It stated the vocabulary as
+two kinds and gave the ledger as `2347 + 368 + 75 + 1`, which is 2791, against a
+total of 2840 quoted in the same sentence. The missing 49 are `pair_prune`, a
+kind I did not know existed: I read the step vocabulary off the one leaf I had
+worked in full (§3), and that leaf happens to contain no block step at all. The
+totals were quoted from the payload and the components from my sample, so the
+sum was never made to close. It closes now — 2347+49+368+75+1 = 2840 — and the
+arithmetic is the check.
 
 ---
 
@@ -158,13 +197,94 @@ distrusting: "depth 3" describes the *decisions*, not the *work*.
 
 ---
 
-## 4. What remains
+## 4. The exception, worked in full — path `11↦2, 9↦4, 17↦3` (depth 3, 41 steps)
 
-75 leaves. By the step counts above, roughly 1080 further distinct steps, of
-which the depth-5 band (44 leaves) is the bulk. One leaf — the single
-`pair_conflict` — closes differently from the other 75 and should be written
-next, ahead of the bulk: an exception written last is an exception written
-under pressure to conform.
+This is the one leaf of the 76 that does **not** die on a monochromatic triple.
+It is written here ahead of the bulk on purpose: an exception written last is an
+exception written under pressure to conform to the 75 cases already on the page.
+
+It is also the immediate sibling of §3 — same first split, and the second split
+takes the other child (`9 = 4` where §3 took `9 = 3`). Prefix steps 1–8 and the
+seven prunes of `11 = 2` are identical to §3 and are not repeated.
+
+**Split 2 — pin `9 = 4`** (domain `{3,4}`, so this is the other child):
+
+- `{9, 27}` ⟹ `27` loses 4, domain `{2,3}`
+- `{9, 63}` ⟹ `63` loses 4, domain `{1,3}`
+
+**Split 3 — pin `17 = 3`.** Twenty prunes, in the order the propagation queue
+produces them:
+
+- `{17, 51}` ⟹ `51` loses 3, domain `{4}`
+- `{9, 21, 51}` (9, 51 at 4) ⟹ `21` loses 4, domain `{3}`
+- `{17, 19, 21}` (17, 21 at 3) ⟹ `19` loses 3, domain `{2,4}`
+- `{17, 21, 25}` ⟹ `25` loses 3, domain `{4}`
+- `{19, 25, 51}` (25, 51 at 4) ⟹ `19` loses 4, domain `{2}` — **19 is now pinned**
+- `{21, 63}` ⟹ `63` loses 3, domain `{1}`
+- `{25, 75}` ⟹ `75` loses 4, domain `{2,3}`
+- `{3, 33, 63}` ⟹ `33` loses 1, domain `{3,4}`
+- `{3, 39, 63}` ⟹ `39` loses 1, domain `{2,3,4}`
+- `{5, 63, 73}` ⟹ `73` loses 1, domain `{2,3,4}`
+- `{7, 19, 75}` (7 anchored at 2, 19 at 2) ⟹ `75` loses 2, domain `{3}` — **75 pinned**
+- `{9, 25, 59}` ⟹ `59` loses 4, domain `{2,3}`
+- `{11, 19, 27}` (11, 19 at 2) ⟹ `27` loses 2, domain `{3}`
+- `{11, 19, 41}` ⟹ `41` loses 2, domain `{3,4}`
+- `{15, 75}` (75 at 3) ⟹ `15` loses 3, domain `{4}` — **15 pinned**
+- `{15, 25, 35}` (15, 25 at 4) ⟹ `35` loses 4, domain `{3}`
+- `{15, 25, 55}` (15, 25 at 4) ⟹ `55` loses 4, domain `{3}`
+- `{17, 27, 41}` ⟹ `41` loses 3, domain `{4}`
+- `{17, 29, 75}` ⟹ `29` loses 3, domain `{2,4}`
+- `{21, 27, 33}` ⟹ `33` loses 3, domain `{4}`
+
+**Conflict.** `35` and `55` are both squeezed to the singleton `{3}` — by the
+two triples `{15, 25, 35}` and `{15, 25, 55}`, which are the same clause twice
+over with the third root swapped. The cover block `¬(35 = 3 ∧ 55 = 3)` fires.
+The case is dead, and this is the only case in the tree that ends this way.
+
+**Why the exception is not structurally exceptional.** Compare the two endings.
+In §3 the kill came from `19` and `75` squeezed to colour 2, with the anchor
+`7 = 2` supplying the third root of `{7, 19, 75}`. Here it comes from `35` and
+`55` squeezed to colour 3, with the *block* supplying what would otherwise be a
+third root. Same shape: two roots forced to singletons far downstream, a fixed
+partner completing the constraint. The anchor does for colour 2 what the negated
+claim does for colour 3 — turns clauses binary. And in both cases the roots that
+were split on — `11`, `9`, `17` — appear nowhere in the closing clause.
+
+Note too the funnel: `21 → 63 → 33` and `19 → 75 → 15` are two chains of forced
+singletons, and the second one is what actually delivers the kill. `15` is not a
+branch root here; it arrives at `{4}` twelve steps after the last decision.
+
+### 4.1 What the blocks actually do across the tree
+
+Having found that I had never seen a block step, I measured their whole
+footprint rather than assume this leaf was it:
+
+| block | prunes | conflicts |
+|-------|--------|-----------|
+| `¬(11 = 3 ∧ 17 = 3)` | 26 | 0 |
+| `¬(35 = 3 ∧ 55 = 3)` | 23 | 1 |
+
+**50 of the 76 cases contain at least one block step.** So the negated claim is
+not a rarely-touched goal that one unlucky branch stumbles into — it is load-
+bearing in two thirds of the tree, almost always as a pruner and exactly once as
+the executioner. That is invisible in the leaf-closure counts, which is why the
+counts said "one exception" and the derivations say "one exceptional *ending*".
+
+---
+
+## 5. What remains
+
+74 leaves. The two written here (§3, §4) share a 16-step prefix and so cover
+**64 of the 1116 distinct steps** — 5.7%, against 2/76 = 2.6% of the leaves,
+because both sit in the shallow depth-3 band. The remaining ~1052 distinct steps
+are dominated by the depth-5 band (44 leaves), where prefixes are longer and
+each new leaf adds less. No shortcut is claimed for them: they are the bulk and
+they are ordinary.
+
+The exception is now written (§4) and it cost one correction to the file rather
+than none — writing it is what surfaced the `pair_prune` kind and the broken
+step ledger in §0. Had it been left for last, the ledger would have been wrong
+in every intervening instalment.
 
 Open, unchanged by this file: the same treatment for `c=4` (85 triples), and the
 standing debt of moving `rigid` into `soft`, which would change every number
