@@ -272,14 +272,84 @@ counts said "one exception" and the derivations say "one exceptional *ending*".
 
 ---
 
-## 5. What remains
+## 5. A leaf from the deep band, worked in full — path `11↦2, 9↦3, 17↦2, 19↦2, 21↦3` (depth 5, 31 steps)
 
-74 leaves. The two written here (§3, §4) share a 16-step prefix and so cover
-**64 of the 1116 distinct steps** — 5.7%, against 2/76 = 2.6% of the leaves,
-because both sit in the shallow depth-3 band. The remaining ~1052 distinct steps
-are dominated by the depth-5 band (44 leaves), where prefixes are longer and
-each new leaf adds less. No shortcut is claimed for them: they are the bulk and
-they are ordinary.
+§3 and §4 both sit at depth 3. This one is taken from the depth-5 band, the 44
+leaves the previous instalment called "the bulk", to see whether the bulk is in
+fact heavier.
+
+It shares a **19-step prefix** with §3: the eight rigid deductions of §1, the
+pin `11 = 2` with its seven prunes, and the pin `9 = 3` with its two. §3 then
+splits `17 = 3`; here the other child is taken.
+
+**Split 3 — pin `17 = 2`.** `17` still has `{2,3,4}`, so this is a live child:
+
+- `{7, 17, 27}` with 7, 17 at colour 2 ⟹ `27` loses 2, domain `{4}`
+- `{7, 17, 75}` ⟹ `75` loses 2, domain `{3,4}`
+- `{11, 17, 39}` ⟹ `39` loses 2, domain `{1,3,4}`
+
+**Split 4 — pin `19 = 2`.** One prune:
+
+- `{11, 19, 41}` ⟹ `41` loses 2, domain `{3,4}`
+
+**Split 5 — pin `21 = 3`** (its domain is `{3,4}` since prefix step 4):
+
+- `{9, 15, 21}` with 9, 21 at colour 3 ⟹ `15` loses 3, domain `{4}`
+- `{9, 21, 33}` ⟹ `33` loses 3, domain `{1,4}`
+- `{9, 21, 51}` ⟹ `51` loses 3, domain `{4}`
+- `{9, 21, 75}` ⟹ `75` loses 3, domain `{4}`
+
+**Conflict.** `15` and `75` are both squeezed to `{4}` by the last split, and
+`{15, 75}` is a clause. It is monochromatic at colour 4. The case is dead.
+
+### 5.1 Depth is not work, and the deep band is the *cheap* one
+
+I expected the deeper band to be heavier and wrote as much in the previous
+instalment. It is not. Steps per leaf, by band:
+
+| depth | leaves | shortest | longest |
+|-------|--------|----------|---------|
+| 3 | 4 | 39 | 41 |
+| 4 | 16 | 31 | 44 |
+| 5 | 44 | 30 | 44 |
+| 6 | 12 | 37 | 48 |
+
+The leaf above is 31 steps; §3, three splits shallower, is 39. The depth-5 band
+has the lowest median of the four. The reason is visible in the derivation: a
+shallow leaf has to be killed by propagation alone, so it runs a long cascade
+(§3 spends eighteen steps after its last split); a deep leaf gets more of its
+domains cut by decisions, and each decision then has less left to propagate.
+Depth counts decisions; steps count work; the two run *against* each other here
+over most of the range.
+
+### 5.2 The killing clause: a majority shape, not the shape
+
+§3 and §4 both ended on a clause containing none of the roots that had been
+split on, and I wrote that up as "the shape of the ending" from those two
+examples. Measured over all 76: **26 leaves have a split root in their killing
+clause, and 50 do not.** So it is what two thirds of the tree does, not what the
+tree does. The leaf above is in the majority — it dies on `{15, 75}` while the
+splits were on `11, 9, 17, 19, 21`. Two examples were enough to see the shape
+and not enough to quantify it; the correction is recorded here rather than in
+the file's history.
+
+### 5.3 What a leaf costs the reader, once the prefixes overlap
+
+This leaf is 31 steps but adds only **12** steps the prefix tree had not already
+seen, because 19 of them are §3's. Three worked leaves now cover **76 of the
+1116 distinct steps**. The first two, 39 and 41 steps, bought 64; the third, at
+31 steps, buys 12. That is the curve that decides whether the remaining 73 are
+writable by hand, and it is bending the right way — but it bends because the
+leaves were chosen adjacent, and adjacency is a choice I made, not a property of
+the tree. Whether it holds across the band is not established here.
+
+---
+
+## 6. What remains
+
+73 leaves. No shortcut is claimed for them: they are ordinary, and after §5 they
+are also known to be no worse per leaf than the ones already written. §3 and §4
+share a 16-step prefix with each other; §5 shares nineteen steps with §3.
 
 The exception is now written (§4) and it cost one correction to the file rather
 than none — writing it is what surfaced the `pair_prune` kind and the broken

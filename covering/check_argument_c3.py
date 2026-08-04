@@ -43,6 +43,7 @@ PROSE = ROOT / "covering" / "argument_c3.md"
 WORKED = {
     "3": [[11, 2], [9, 3], [17, 3]],
     "4": [[11, 2], [9, 4], [17, 3]],
+    "5": [[11, 2], [9, 3], [17, 2], [19, 2], [21, 3]],
 }
 
 
@@ -82,12 +83,40 @@ def derive(payload):
 
     idx = {tuple(map(tuple, c["path"])): i for i, c in enumerate(cases)}
     worked = {k: idx[tuple(map(tuple, p))] for k, p in WORKED.items()}
-    a, b = (cases[worked["3"]]["steps"], cases[worked["4"]]["steps"])
-    shared = 0
-    for x, y in zip(a, b):
-        if step_key(x) != step_key(y):
-            break
-        shared += 1
+    a, b, e = (cases[worked[s]]["steps"] for s in ("3", "4", "5"))
+
+    def shared_prefix(x, y):
+        n = 0
+        for u, v in zip(x, y):
+            if step_key(u) != step_key(v):
+                break
+            n += 1
+        return n
+
+    def trie_size(step_lists):
+        t, n = {}, 0
+        for steps in step_lists:
+            node = t
+            for k in (step_key(st) for st in steps):
+                if k not in node:
+                    node[k] = {}
+                    n += 1
+                node = node[k]
+        return n
+
+    shared = shared_prefix(a, b)
+
+    # Steps per leaf, per depth band -- the claim of section 5.1.
+    band = {}
+    for c in cases:
+        band.setdefault(c["depth"], []).append(len(c["steps"]))
+
+    # Does the clause that kills a leaf mention a root that was split on?
+    touches = sum(
+        1
+        for c in cases
+        if set(c["steps"][-1]["clause"] or ()) & {r for r, _ in c["path"]}
+    )
 
     return {
         "leaves": len(cases),
@@ -105,9 +134,19 @@ def derive(payload):
         "block_35_55_conflicts": blocks[((35, 55), "pair_conflict")],
         "cases_touching_a_block": len(touched),
         "worked_shared_prefix": shared,
-        "worked_distinct_covered": len(a) + len(b) - shared,
+        "worked_distinct_covered": trie_size([a, b, e]),
         "steps_sec3": len(a),
         "steps_sec4": len(b),
+        "steps_sec5": len(e),
+        "shared_prefix_3_5": shared_prefix(a, e),
+        "marginal_sec5": trie_size([a, b, e]) - trie_size([a, b]),
+        "leaves_remaining": len(cases) - len(WORKED),
+        "kill_touches_split_root": touches,
+        "kill_avoids_split_root": len(cases) - touches,
+        "band3_min": min(band[3]), "band3_max": max(band[3]),
+        "band4_min": min(band[4]), "band4_max": max(band[4]),
+        "band5_min": min(band[5]), "band5_max": max(band[5]),
+        "band6_min": min(band[6]), "band6_max": max(band[6]),
         "worked_index": worked,
     }
 
@@ -133,9 +172,28 @@ ANCHORS = {
     "block_35_55_conflicts": r"\| `¬\(35 = 3 ∧ 55 = 3\)` \| \d+ \| (\d+) \|",
     "cases_touching_a_block": r"\*\*(\d+) of the 76 cases contain at least one block step\.\*\*",
     "worked_shared_prefix": r"share a (\d+)-step prefix",
-    "worked_distinct_covered": r"cover\n\*\*(\d+) of the 1116 distinct steps\*\*",
-    "steps_sec3": r"## 3\..*?\(depth \d+, (\d+) steps\)",
-    "steps_sec4": r"## 4\..*?\(depth \d+, (\d+) steps\)",
+    "worked_distinct_covered": r"cover \*\*(\d+) of the\n1116 distinct steps\*\*",
+    # The section anchors must start at a real `## N.` heading. Without the
+    # leading newline, `## 4\.` also matches inside `### 4.1` -- harmless until
+    # section 5 arrived and gave that stray match a `(depth …, … steps)` to
+    # bind to. The heading level was never part of the pattern; adding section 5
+    # is what made the omission visible.
+    "steps_sec3": r"\n## 3\..*?\(depth \d+, (\d+) steps\)",
+    "steps_sec4": r"\n## 4\..*?\(depth \d+, (\d+) steps\)",
+    "steps_sec5": r"\n## 5\..*?\(depth \d+, (\d+) steps\)",
+    "shared_prefix_3_5": r"shares a \*\*(\d+)-step prefix\*\* with §3",
+    "marginal_sec5": r"adds only \*\*(\d+)\*\* steps the prefix tree",
+    "leaves_remaining": r"## 6\. What remains\n\n(\d+) leaves\.",
+    "kill_touches_split_root": r"\*\*(\d+) leaves have a split root in their killing",
+    "kill_avoids_split_root": r"killing\nclause, and (\d+) do not\.\*\*",
+    "band3_min": r"\| 3 \| 4 \| (\d+) \| \d+ \|",
+    "band3_max": r"\| 3 \| 4 \| \d+ \| (\d+) \|",
+    "band4_min": r"\| 4 \| 16 \| (\d+) \| \d+ \|",
+    "band4_max": r"\| 4 \| 16 \| \d+ \| (\d+) \|",
+    "band5_min": r"\| 5 \| 44 \| (\d+) \| \d+ \|",
+    "band5_max": r"\| 5 \| 44 \| \d+ \| (\d+) \|",
+    "band6_min": r"\| 6 \| 12 \| (\d+) \| \d+ \|",
+    "band6_max": r"\| 6 \| 12 \| \d+ \| (\d+) \|",
 }
 
 
@@ -234,6 +292,17 @@ def main():
             ),
             "M4 corrupt a bullet's clause": lambda t: t.replace(
                 "`{15, 25, 55}` (15, 25 at 4)", "`{15, 25, 57}` (15, 25 at 4)"
+            ),
+            # M5-M7 exist because M1-M4 all land in sections 3-4. A gate proven
+            # on the old sections says nothing about the new one.
+            "M5 corrupt a section-5 bullet domain": lambda t: t.replace(
+                "⟹ `41` loses 2, domain `{3,4}`", "⟹ `41` loses 2, domain `{2,4}`"
+            ),
+            "M6 corrupt the depth-5 band row": lambda t: t.replace(
+                "| 5 | 44 | 30 | 44 |", "| 5 | 44 | 32 | 44 |"
+            ),
+            "M7 corrupt the killing-clause split": lambda t: t.replace(
+                "**26 leaves have a split root", "**27 leaves have a split root"
             ),
         }
         print("positive control (unmutated):", "PASS" if not failures else "FAIL")
