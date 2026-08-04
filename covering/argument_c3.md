@@ -336,7 +336,7 @@ the file's history.
 ### 5.3 What a leaf costs the reader, once the prefixes overlap
 
 This leaf is 31 steps but adds only **12** steps the prefix tree had not already
-seen, because 19 of them are §3's. Three worked leaves now cover **76 of the
+seen, because 19 of them are §3's. Three worked leaves then covered **76 of the
 1116 distinct steps**. The first two, 39 and 41 steps, bought 64; the third, at
 31 steps, buys 12. That is the curve that decides whether the remaining 73 are
 writable by hand, and it is bending the right way — but it bends because the
@@ -345,11 +345,106 @@ the tree. Whether it holds across the band is not established here.
 
 ---
 
-## 6. What remains
+## 6. A leaf drawn by lot — path `11↦3, 9↦2, 17↦2, 19↦3` (depth 4, 35 steps)
 
-73 leaves. No shortcut is claimed for them: they are ordinary, and after §5 they
+§5 closed with a caveat against its own result: the marginal cost per leaf was
+falling, but the three leaves written so far had been picked *adjacent*, and
+adjacency is a choice of route, not a property of the tree. A cost curve
+measured along a route the author chose is a statement about the author.
+
+So this one was not chosen. The index into the case list was fixed as
+`int("a3cf376a4c14", 16) mod 76`, where the hex string is the SHA-256 prefix of
+an unrelated append-only ledger published on 2026-08-04, hours before this
+section was begun and outside this repository. The rule, the seed and the
+tie-break (advance by one if the draw lands on an already-written leaf) were
+written down before the draw was run. The draw gave index 16.
+
+It landed on the far side of the first split. Every leaf written so far pins
+`11 = 2`; this one pins `11 = 3`, so it shares with them only the **8 rigid
+steps** of §1 and nothing else.
+
+**Split 1 — pin `11 = 3`.** The other child of the root split:
+
+- `{11, 33}` with 11 at colour 3 ⟹ `33` loses 3, domain `{1,2,4}`
+- `{11, 55}` ⟹ `55` loses 3, domain `{2,4}`
+- `{11, 77}` ⟹ `77` loses 3, domain `{2,4}`
+- `{11, 17}` — the cover block `¬(11 = 3 ∧ 17 = 3)` ⟹ `17` loses 3, domain `{2,4}`
+
+**Split 2 — pin `9 = 2`:**
+
+- `{7, 9, 19}` with 7, 9 at colour 2 ⟹ `19` loses 2, domain `{3,4}`
+- `{7, 9, 25}` ⟹ `25` loses 2, domain `{3,4}`
+- `{7, 9, 29}` ⟹ `29` loses 2, domain `{3,4}`
+- `{7, 9, 65}` ⟹ `65` loses 2, domain `{3,4}`
+- `{9, 27}` ⟹ `27` loses 2, domain `{3,4}`
+
+**Split 3 — pin `17 = 2`** (its domain is `{2,4}` after the block fired):
+
+- `{7, 17, 75}` ⟹ `75` loses 2, domain `{3,4}`
+- `{9, 17, 55}` ⟹ `55` loses 2, domain `{4}`
+- `{9, 17, 59}` ⟹ `59` loses 2, domain `{3,4}`
+- `{17, 51}` ⟹ `51` loses 2, domain `{3,4}`
+
+**Split 4 — pin `19 = 3`:**
+
+- `{11, 15, 19}` with 11, 19 at colour 3 ⟹ `15` loses 3, domain `{2,4}`
+- `{11, 19, 25}` ⟹ `25` loses 3, domain `{4}`
+- `{11, 19, 27}` ⟹ `27` loses 3, domain `{4}`
+- `{11, 19, 41}` ⟹ `41` loses 3, domain `{2,4}`
+
+**Cascade.** `25`, `27` and `55` are now singletons at colour 4, and that is
+enough to finish without another decision:
+
+- `{15, 25, 55}` with 25, 55 at colour 4 ⟹ `15` loses 4, domain `{2}`
+- `{25, 75}` ⟹ `75` loses 4, domain `{3}`
+- `{25, 27, 77}` ⟹ `77` loses 4, domain `{2}`
+- `{7, 15, 41}` with 7, 15 at colour 2 ⟹ `41` loses 2, domain `{4}`
+- `{9, 15, 33}` ⟹ `33` loses 2, domain `{1,4}`
+
+**Conflict.** `15` and `77` are pinned to `{2}` by the cascade and `17` was
+split to 2. `{15, 17, 77}` is a clause, monochromatic at colour 2. The case is
+dead.
+
+### 6.1 The curve was the route
+
+This leaf is 35 steps and adds **27** steps the prefix tree had not seen.
+Against §5's 12, on a leaf three steps *shorter*. The four worked leaves now
+cover **103 of the 1116 distinct steps**.
+
+The caveat §5 attached to its own number was the right one, and the correction
+is larger than a caveat usually earns: the falling curve was not a weak trend
+that a random draw would soften, it was an artefact of sharing a 19-step prefix.
+Marginal cost is governed by where a leaf sits relative to what is already
+written, and nothing else measured here. Extrapolating 73 × 12 from the third
+leaf would have understated the remaining prose by a factor I decline to
+estimate, because the estimate would again be a property of the route.
+
+### 6.2 Two things the chosen leaves could not have shown
+
+**The killing clause contains a split root.** §5.2 measured this over all 76 —
+26 leaves do, 50 do not — but all three worked leaves were in the 50. This one
+is in the 26: it dies on `{15, 17, 77}` while `17` is one of its own splits.
+Adjacency had biased not only the cost but the *shape* of the ending, and the
+count in §5.2 is what kept that from being written up a second time as a rule.
+
+**The block finally fires.** §2 counts `pair_prune` steps on the cover block
+`¬(11 = 3 ∧ 17 = 3)`, and §4 was written specifically because the block appears
+in a *conflict* somewhere in the tree. But a block prune requires `11 = 3`, and
+every leaf worked before this one pins `11 = 2` — so in three instalments the
+file tabulated a step kind that none of its own worked examples exercised.
+Step 13 above is the first. Nothing was wrong; the tables were right the whole
+time. It is just that the side of the split which produces no worked example
+also produces no complaint, and would have gone on producing none for as long as
+I kept choosing leaves myself.
+
+---
+
+## 7. What remains
+
+72 leaves. No shortcut is claimed for them: they are ordinary, and after §5 they
 are also known to be no worse per leaf than the ones already written. §3 and §4
-share a 16-step prefix with each other; §5 shares nineteen steps with §3.
+share a 16-step prefix with each other; §5 shares nineteen steps with §3; §6
+shares eight with all three.
 
 The exception is now written (§4) and it cost one correction to the file rather
 than none — writing it is what surfaced the `pair_prune` kind and the broken

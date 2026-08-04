@@ -44,7 +44,18 @@ WORKED = {
     "3": [[11, 2], [9, 3], [17, 3]],
     "4": [[11, 2], [9, 4], [17, 3]],
     "5": [[11, 2], [9, 3], [17, 2], [19, 2], [21, 3]],
+    "6": [[11, 3], [9, 2], [17, 2], [19, 3]],
 }
+
+# Section 6 claims its leaf was drawn by lot rather than chosen. That claim is
+# the whole reason its marginal cost means anything, and in prose it is just an
+# assertion -- so it is re-run here. The seed is the SHA-256 prefix of a ledger
+# published elsewhere on 2026-08-04, before this section was begun; the rule and
+# the tie-break were fixed before the draw. If a later me quietly swaps section
+# 6's leaf for a cheaper one, this goes red, which is the only thing standing
+# between "drawn" and "chosen and described as drawn".
+LOTTERY_SEED_HEX = "a3cf376a4c14"
+LOTTERY_SECTION = "6"
 
 
 def step_key(s):
@@ -83,7 +94,7 @@ def derive(payload):
 
     idx = {tuple(map(tuple, c["path"])): i for i, c in enumerate(cases)}
     worked = {k: idx[tuple(map(tuple, p))] for k, p in WORKED.items()}
-    a, b, e = (cases[worked[s]]["steps"] for s in ("3", "4", "5"))
+    a, b, e, f = (cases[worked[s]]["steps"] for s in ("3", "4", "5", "6"))
 
     def shared_prefix(x, y):
         n = 0
@@ -134,12 +145,16 @@ def derive(payload):
         "block_35_55_conflicts": blocks[((35, 55), "pair_conflict")],
         "cases_touching_a_block": len(touched),
         "worked_shared_prefix": shared,
-        "worked_distinct_covered": trie_size([a, b, e]),
+        "worked3_distinct_covered": trie_size([a, b, e]),
+        "worked_distinct_covered": trie_size([a, b, e, f]),
         "steps_sec3": len(a),
         "steps_sec4": len(b),
         "steps_sec5": len(e),
+        "steps_sec6": len(f),
         "shared_prefix_3_5": shared_prefix(a, e),
+        "shared_prefix_3_6": shared_prefix(a, f),
         "marginal_sec5": trie_size([a, b, e]) - trie_size([a, b]),
+        "marginal_sec6": trie_size([a, b, e, f]) - trie_size([a, b, e]),
         "leaves_remaining": len(cases) - len(WORKED),
         "kill_touches_split_root": touches,
         "kill_avoids_split_root": len(cases) - touches,
@@ -172,7 +187,8 @@ ANCHORS = {
     "block_35_55_conflicts": r"\| `¬\(35 = 3 ∧ 55 = 3\)` \| \d+ \| (\d+) \|",
     "cases_touching_a_block": r"\*\*(\d+) of the 76 cases contain at least one block step\.\*\*",
     "worked_shared_prefix": r"share a (\d+)-step prefix",
-    "worked_distinct_covered": r"cover \*\*(\d+) of the\n1116 distinct steps\*\*",
+    "worked3_distinct_covered": r"then covered \*\*(\d+) of the\n1116 distinct steps\*\*",
+    "worked_distinct_covered": r"cover \*\*(\d+) of the 1116 distinct steps\*\*",
     # The section anchors must start at a real `## N.` heading. Without the
     # leading newline, `## 4\.` also matches inside `### 4.1` -- harmless until
     # section 5 arrived and gave that stray match a `(depth …, … steps)` to
@@ -181,9 +197,12 @@ ANCHORS = {
     "steps_sec3": r"\n## 3\..*?\(depth \d+, (\d+) steps\)",
     "steps_sec4": r"\n## 4\..*?\(depth \d+, (\d+) steps\)",
     "steps_sec5": r"\n## 5\..*?\(depth \d+, (\d+) steps\)",
+    "steps_sec6": r"\n## 6\..*?\(depth \d+, (\d+) steps\)",
     "shared_prefix_3_5": r"shares a \*\*(\d+)-step prefix\*\* with §3",
+    "shared_prefix_3_6": r"only the \*\*(\d+) rigid\nsteps\*\*",
     "marginal_sec5": r"adds only \*\*(\d+)\*\* steps the prefix tree",
-    "leaves_remaining": r"## 6\. What remains\n\n(\d+) leaves\.",
+    "marginal_sec6": r"adds \*\*(\d+)\*\* steps the prefix tree had not seen",
+    "leaves_remaining": r"\n## 7\. What remains\n\n(\d+) leaves\.",
     "kill_touches_split_root": r"\*\*(\d+) leaves have a split root in their killing",
     "kill_avoids_split_root": r"killing\nclause, and (\d+) do not\.\*\*",
     "band3_min": r"\| 3 \| 4 \| (\d+) \| \d+ \|",
@@ -275,6 +294,54 @@ def check(payload_text=None, prose_text=None):
                     f"section {sec} bullet {i + 1}: {b[0]} -> {b[1]} loses {b[2]}, "
                     f"domain {list(b[3])} -- no such step in the payload"
                 )
+
+    # --- §6's three claims that are not numbers -------------------------------
+    cases = payload["cases"]
+
+    # (a) The leaf was drawn, not chosen. Re-run the draw.
+    n = len(cases)
+    i = int(LOTTERY_SEED_HEX, 16) % n
+    already = {tuple(map(tuple, p)) for k, p in WORKED.items() if k != LOTTERY_SECTION}
+    while tuple(map(tuple, cases[i]["path"])) in already:
+        i = (i + 1) % n
+    drawn = [list(x) for x in cases[i]["path"]]
+    if drawn != WORKED[LOTTERY_SECTION]:
+        failures.append(
+            f"section {LOTTERY_SECTION} claims a leaf drawn by lot, but the draw "
+            f"(seed {LOTTERY_SEED_HEX} mod {n}) gives {drawn}, not "
+            f"{WORKED[LOTTERY_SECTION]} -- the leaf was swapped after the draw"
+        )
+
+    # (b) §6.2: no worked leaf before this one exercised a block prune, and this
+    # one does. Asserted both ways -- "first" is a claim about the others too.
+    def kinds_of(sec):
+        return [s["kind"] for s in cases[got["worked_index"][sec]]["steps"]]
+
+    for sec in ("3", "4", "5"):
+        if "pair_prune" in kinds_of(sec):
+            failures.append(
+                f"§6.2 says no worked leaf before §6 exercised a block prune, "
+                f"but section {sec} contains one"
+            )
+    if "pair_prune" not in kinds_of("6"):
+        failures.append("§6.2 says §6's leaf is the first to exercise a block prune; it has none")
+
+    # (c) §6.2: this leaf's killing clause names one of its own split roots,
+    # unlike all three chosen ones. Same shape -- claimed of §6 and denied of
+    # the others, so both halves are checked.
+    def kill_touches(sec):
+        c = cases[got["worked_index"][sec]]
+        return bool(set(c["steps"][-1]["clause"] or ()) & {r for r, _ in c["path"]})
+
+    if not kill_touches("6"):
+        failures.append("§6.2 says §6 dies on a clause naming a split root; it does not")
+    for sec in ("3", "4", "5"):
+        if kill_touches(sec):
+            failures.append(
+                f"§6.2 says the three chosen leaves were all in the 50 that avoid "
+                f"their split roots, but section {sec} does not"
+            )
+
     return failures, got
 
 
@@ -304,6 +371,13 @@ def main():
             "M7 corrupt the killing-clause split": lambda t: t.replace(
                 "**26 leaves have a split root", "**27 leaves have a split root"
             ),
+            # M8-M9 land in section 6, for the same reason M5-M7 were added.
+            "M8 corrupt a section-6 bullet domain": lambda t: t.replace(
+                "⟹ `55` loses 2, domain `{4}`", "⟹ `55` loses 2, domain `{3,4}`"
+            ),
+            "M9 corrupt section 6's marginal cost": lambda t: t.replace(
+                "adds **27** steps", "adds **12** steps"
+            ),
         }
         print("positive control (unmutated):", "PASS" if not failures else "FAIL")
         ok = not failures
@@ -316,6 +390,59 @@ def main():
             f, _ = check(prose_text=mutated)
             print(f"  {name}: {'RED (good)' if f else 'GREEN -- gate is blind'}")
             ok = ok and bool(f)
+
+        # M10-M12 cannot be done by editing the prose: the lottery gate and the
+        # two "first / unlike the others" claims live in the section-to-leaf
+        # binding, not in any typed digit. Mutating only text would leave them
+        # untested and the run would still print PASS -- which is exactly the
+        # failure mode these three exist to rule out.
+        payload = json.loads(PAYLOAD.read_text(encoding="utf-8"))
+        others = [
+            [list(x) for x in c["path"]]
+            for c in payload["cases"]
+            if [list(x) for x in c["path"]] not in WORKED.values()
+        ]
+        cheap = next(p for p in others if p[0] == [11, 2])   # an adjacent leaf
+        far = next(p for p in others if p[0] == [11, 3])     # a block-side leaf
+        # Each of these must go red *by its own message*. Re-binding a section
+        # to a different leaf also breaks every transcribed bullet, so "the
+        # failure list is non-empty" would stay true even if the three new
+        # assertions were deleted outright -- the mutant would die by accident
+        # and the control would prove nothing about what it was written for.
+        struct = {
+            "M10 swap section 6 for an adjacent leaf": (
+                "6", cheap, ["the leaf was swapped after the draw"],
+            ),
+            "M11 make section 3 a block-side leaf": (
+                "3", far,
+                ["exercised a block prune, but section 3 contains one",
+                 "in the 50 that avoid their split roots, but section 3 does not"],
+            ),
+            "M12 point the lottery at a chosen section": (
+                "__lottery__", "5", ["the leaf was swapped after the draw"],
+            ),
+        }
+        saved = dict(WORKED)
+        saved_sec = LOTTERY_SECTION
+        for name, (sec, val, expect) in struct.items():
+            globals()["LOTTERY_SECTION"] = val if sec == "__lottery__" else saved_sec
+            if sec != "__lottery__":
+                WORKED[sec] = val
+            try:
+                f, _ = check()
+            except (KeyError, StopIteration) as exc:
+                f = [f"binding broke: {exc!r}"]
+            blob = " | ".join(f)
+            missing = [e for e in expect if e not in blob]
+            if missing:
+                print(f"  {name}: WRONG DEATH -- red, but not for {missing}")
+                ok = False
+            else:
+                print(f"  {name}: RED (good, by its own assertion)")
+            WORKED.clear()
+            WORKED.update(saved)
+            globals()["LOTTERY_SECTION"] = saved_sec
+
         print("self-test:", "PASS" if ok else "FAIL")
         return 0 if ok else 1
 
