@@ -22,6 +22,12 @@ checked; a dropped bullet leaves those untouched, so the guard is partial. If a
 later instalment claims a leaf is written "in full", that claim needs its own
 check and does not have one yet.
 
+One assertion here is unexercised and said so rather than counted as covered:
+§7.2's "the two 26s are different sets" cannot be made red by editing the prose,
+because both sets are derived from the payload. It is a tripwire against a
+future payload in which the coincidence becomes an identity, not a gate on the
+text, and no mutant below demonstrates it failing.
+
 Usage:
     python covering/check_argument_c3.py
     python covering/check_argument_c3.py --self-test
@@ -45,6 +51,7 @@ WORKED = {
     "4": [[11, 2], [9, 4], [17, 3]],
     "5": [[11, 2], [9, 3], [17, 2], [19, 2], [21, 3]],
     "6": [[11, 3], [9, 2], [17, 2], [19, 3]],
+    "7": [[11, 3], [9, 4], [17, 2], [19, 2], [21, 3]],
 }
 
 # Section 6 claims its leaf was drawn by lot rather than chosen. That claim is
@@ -54,8 +61,10 @@ WORKED = {
 # the tie-break were fixed before the draw. If a later me quietly swaps section
 # 6's leaf for a cheaper one, this goes red, which is the only thing standing
 # between "drawn" and "chosen and described as drawn".
-LOTTERY_SEED_HEX = "a3cf376a4c14"
-LOTTERY_SECTION = "6"
+# Section 7 repeats the draw with a second seed. Its provenance is weaker and
+# the prose says so: the seed is a private snapshot digest, so this gate proves
+# the leaf matches the seed, not that the seed predates the leaf.
+LOTTERIES = {"6": "a3cf376a4c14", "7": "3c9b7d5c6a83"}
 
 
 def step_key(s):
@@ -94,7 +103,36 @@ def derive(payload):
 
     idx = {tuple(map(tuple, c["path"])): i for i, c in enumerate(cases)}
     worked = {k: idx[tuple(map(tuple, p))] for k, p in WORKED.items()}
-    a, b, e, f = (cases[worked[s]]["steps"] for s in ("3", "4", "5", "6"))
+    a, b, e, f, g = (cases[worked[s]]["steps"] for s in ("3", "4", "5", "6", "7"))
+
+    # §7.1: roots driven to a singleton by propagation (never split on this
+    # path) and then cited as the reason for a later step. Counted over the
+    # whole tree, because the section claims it is a property of the tree and
+    # not of its own leaf.
+    def deduced_pins(c):
+        split = {r for r, _ in c["path"]}
+        singles, reused = {}, set()
+        for st in c["steps"]:
+            if st["kind"] == "mono_prune" and len(st["left"]) == 1 and st["root"] not in split:
+                singles.setdefault(st["root"], True)
+            for why in st.get("because") or ():
+                if why in singles:
+                    reused.add(why)
+        return len(singles), len(reused)
+
+    pins = [deduced_pins(c) for c in cases]
+
+    def median(xs):
+        xs = sorted(xs)
+        n = len(xs)
+        return xs[n // 2] if n % 2 else (xs[n // 2 - 1] + xs[n // 2]) // 2
+
+    # §7.2: the two 26s. Equal counts, and the section claims different sets.
+    block_side = {i for i, c in enumerate(cases) if c["path"][0][1] == 3}
+    kill_side = {
+        i for i, c in enumerate(cases)
+        if set(c["steps"][-1]["clause"] or ()) & {r for r, _ in c["path"]}
+    }
 
     def shared_prefix(x, y):
         n = 0
@@ -147,14 +185,26 @@ def derive(payload):
         "worked_shared_prefix": shared,
         "worked3_distinct_covered": trie_size([a, b, e]),
         "worked_distinct_covered": trie_size([a, b, e, f]),
+        "worked5_distinct_covered": trie_size([a, b, e, f, g]),
         "steps_sec3": len(a),
         "steps_sec4": len(b),
         "steps_sec5": len(e),
         "steps_sec6": len(f),
+        "steps_sec7": len(g),
         "shared_prefix_3_5": shared_prefix(a, e),
         "shared_prefix_3_6": shared_prefix(a, f),
+        "shared_prefix_6_7": shared_prefix(f, g),
+        "shared_prefix_3_7": shared_prefix(a, g),
         "marginal_sec5": trie_size([a, b, e]) - trie_size([a, b]),
         "marginal_sec6": trie_size([a, b, e, f]) - trie_size([a, b, e]),
+        "marginal_sec7": trie_size([a, b, e, f, g]) - trie_size([a, b, e, f]),
+        "band5_median": median(band[5]),
+        "deduced_pins_sec7": deduced_pins(cases[worked["7"]])[0],
+        "deduced_median": median([x for x, _ in pins]),
+        "deduced_reused_median": median([y for _, y in pins]),
+        "leaves_reusing_a_deduced_pin": sum(1 for _, y in pins if y > 0),
+        "block_side": len(block_side),
+        "block_side_only": len(block_side - kill_side),
         "leaves_remaining": len(cases) - len(WORKED),
         "kill_touches_split_root": touches,
         "kill_avoids_split_root": len(cases) - touches,
@@ -188,7 +238,7 @@ ANCHORS = {
     "cases_touching_a_block": r"\*\*(\d+) of the 76 cases contain at least one block step\.\*\*",
     "worked_shared_prefix": r"share a (\d+)-step prefix",
     "worked3_distinct_covered": r"then covered \*\*(\d+) of the\n1116 distinct steps\*\*",
-    "worked_distinct_covered": r"cover \*\*(\d+) of the 1116 distinct steps\*\*",
+    "worked_distinct_covered": r"four worked leaves now\s+cover \*\*(\d+) of the 1116",
     # The section anchors must start at a real `## N.` heading. Without the
     # leading newline, `## 4\.` also matches inside `### 4.1` -- harmless until
     # section 5 arrived and gave that stray match a `(depth …, … steps)` to
@@ -202,7 +252,19 @@ ANCHORS = {
     "shared_prefix_3_6": r"only the \*\*(\d+) rigid\nsteps\*\*",
     "marginal_sec5": r"adds only \*\*(\d+)\*\* steps the prefix tree",
     "marginal_sec6": r"adds \*\*(\d+)\*\* steps the prefix tree had not seen",
-    "leaves_remaining": r"\n## 7\. What remains\n\n(\d+) leaves\.",
+    "steps_sec7": r"\n## 7\..*?\(depth \d+, (\d+) steps\)",
+    "shared_prefix_6_7": r"shares the \*\*(\d+)-step prefix\*\* of §6",
+    "shared_prefix_3_7": r"and (\d+) steps with each of §3, §4, §5",
+    "marginal_sec7": r"36 steps, of which \*\*(\d+)\*\* are new",
+    "worked5_distinct_covered": r"Five worked\s+leaves now cover \*\*(\d+) of the 1116",
+    "band5_median": r"30 to 44 with median (\d+)",
+    "deduced_pins_sec7": r"\*\*(\d+) more roots pinned by deduction\*\*",
+    "deduced_median": r"with a median of \*\*(\d+)\*\* such singletons",
+    "deduced_reused_median": r"and \*\*(\d+)\*\* of them load-bearing",
+    "leaves_reusing_a_deduced_pin": r"\*\*all (\d+) leaves\*\* reuse at least",
+    "block_side": r"Exactly \*\*(\d+)\*\* leaves\npin `11 = 3`",
+    "block_side_only": r"(\d+) leaves are in each without the other",
+    "leaves_remaining": r"\n## 8\. What remains\n\n(\d+) leaves\.",
     "kill_touches_split_root": r"\*\*(\d+) leaves have a split root in their killing",
     "kill_avoids_split_root": r"killing\nclause, and (\d+) do not\.\*\*",
     "band3_min": r"\| 3 \| 4 \| (\d+) \| \d+ \|",
@@ -298,19 +360,20 @@ def check(payload_text=None, prose_text=None):
     # --- §6's three claims that are not numbers -------------------------------
     cases = payload["cases"]
 
-    # (a) The leaf was drawn, not chosen. Re-run the draw.
+    # (a) The leaf was drawn, not chosen. Re-run every draw.
     n = len(cases)
-    i = int(LOTTERY_SEED_HEX, 16) % n
-    already = {tuple(map(tuple, p)) for k, p in WORKED.items() if k != LOTTERY_SECTION}
-    while tuple(map(tuple, cases[i]["path"])) in already:
-        i = (i + 1) % n
-    drawn = [list(x) for x in cases[i]["path"]]
-    if drawn != WORKED[LOTTERY_SECTION]:
-        failures.append(
-            f"section {LOTTERY_SECTION} claims a leaf drawn by lot, but the draw "
-            f"(seed {LOTTERY_SEED_HEX} mod {n}) gives {drawn}, not "
-            f"{WORKED[LOTTERY_SECTION]} -- the leaf was swapped after the draw"
-        )
+    for sec, seed in LOTTERIES.items():
+        i = int(seed, 16) % n
+        already = {tuple(map(tuple, p)) for k, p in WORKED.items() if k != sec}
+        while tuple(map(tuple, cases[i]["path"])) in already:
+            i = (i + 1) % n
+        drawn = [list(x) for x in cases[i]["path"]]
+        if drawn != WORKED[sec]:
+            failures.append(
+                f"section {sec} claims a leaf drawn by lot, but the draw "
+                f"(seed {seed} mod {n}) gives {drawn}, not "
+                f"{WORKED[sec]} -- the leaf was swapped after the draw"
+            )
 
     # (b) §6.2: no worked leaf before this one exercised a block prune, and this
     # one does. Asserted both ways -- "first" is a claim about the others too.
@@ -341,6 +404,65 @@ def check(payload_text=None, prose_text=None):
                 f"§6.2 says the three chosen leaves were all in the 50 that avoid "
                 f"their split roots, but section {sec} does not"
             )
+
+    # --- §7's claims that are not numbers -------------------------------------
+    # (d) §7.2 says BOTH drawn leaves are in the 26; that is a claim about §7
+    # as much as about §6, and it is the claim that keeps "2 of 2" honest.
+    if not kill_touches("7"):
+        failures.append("§7.2 says §7 is also in the 26 that die on a split root; it is not")
+
+    # (e) §7.2's coincidence: the two 26s must be equal in size and different
+    # as sets. If a later payload ever makes them the same set, the sentence
+    # "they are different sets" becomes false and this must go red -- the
+    # section exists precisely to stop that reading being adopted silently.
+    block_side = {i for i, c in enumerate(cases) if c["path"][0][1] == 3}
+    kill_side = {
+        i for i, c in enumerate(cases)
+        if set(c["steps"][-1]["clause"] or ()) & {r for r, _ in c["path"]}
+    }
+    if len(block_side) != len(kill_side):
+        failures.append(
+            f"§7.2 says the two counts coincide at 26, but they are "
+            f"{len(block_side)} and {len(kill_side)}"
+        )
+    if block_side == kill_side:
+        failures.append(
+            "§7.2 says the two 26s are different sets; in this payload they are "
+            "the same set, which would make the coincidence a mechanism"
+        )
+
+    # (f) §7.1 names five roots pinned by deduction and says each is later
+    # cited as a reason. Named, not counted -- a count alone would survive the
+    # wrong roots being listed.
+    c7 = cases[got["worked_index"]["7"]]
+    split7 = {r for r, _ in c7["path"]}
+    singles, reused = [], set()
+    for st in c7["steps"]:
+        if st["kind"] == "mono_prune" and len(st["left"]) == 1 and st["root"] not in split7:
+            if st["root"] not in singles:
+                singles.append(st["root"])
+        for why in st.get("because") or ():
+            if why in singles:
+                reused.add(why)
+    # The roots are read out of the prose, not hard-coded here: a copy in the
+    # checker would make the prose's list unguarded, which is the exact defect
+    # this file exists to catch elsewhere.
+    m = re.search(r"\(`([\d, ]+)`\), every one of which is later cited", prose)
+    if not m:
+        failures.append("§7.1's list of deduced pins could not be read out of the prose")
+        named = None
+    else:
+        named = [int(x) for x in m.group(1).split(",")]
+    if named is not None and singles != named:
+        failures.append(
+            f"§7.1 names {named} as the roots pinned by deduction; the payload "
+            f"gives {singles} in that order"
+        )
+    if set(singles) - reused:
+        failures.append(
+            f"§7.1 says every deduced pin is later cited as a reason; "
+            f"{sorted(set(singles) - reused)} never is"
+        )
 
     return failures, got
 
@@ -377,6 +499,21 @@ def main():
             ),
             "M9 corrupt section 6's marginal cost": lambda t: t.replace(
                 "adds **27** steps", "adds **12** steps"
+            ),
+            # M13-M16 land in section 7, for the same reason M5-M7 and M8-M9
+            # were added: a gate proven on the old sections says nothing about
+            # the new one.
+            "M13 corrupt a section-7 bullet domain": lambda t: t.replace(
+                "⟹ `33` loses 1, domain `{4}`", "⟹ `33` loses 1, domain `{1,4}`"
+            ),
+            "M14 corrupt section 7's marginal cost": lambda t: t.replace(
+                "of which **23** are new", "of which **12** are new"
+            ),
+            "M15 corrupt the tree-wide deduced-pin median": lambda t: t.replace(
+                "median of **8** such singletons", "median of **9** such singletons"
+            ),
+            "M16 misname a deduced pin in section 7.1": lambda t: t.replace(
+                "(`27, 49, 15, 63, 33`)", "(`27, 49, 15, 63, 35`)"
             ),
         }
         print("positive control (unmutated):", "PASS" if not failures else "FAIL")
@@ -418,15 +555,22 @@ def main():
                 ["exercised a block prune, but section 3 contains one",
                  "in the 50 that avoid their split roots, but section 3 does not"],
             ),
-            "M12 point the lottery at a chosen section": (
+            "M12 point section 6's lottery at a chosen section": (
                 "__lottery__", "5", ["the leaf was swapped after the draw"],
+            ),
+            # M17: section 7 has its own seed, so section 6's lottery gate says
+            # nothing about it. Its death must name section 7.
+            "M17 swap section 7 for a chosen leaf": (
+                "7", cheap, ["section 7 claims a leaf drawn by lot"],
             ),
         }
         saved = dict(WORKED)
-        saved_sec = LOTTERY_SECTION
+        saved_lot = dict(LOTTERIES)
         for name, (sec, val, expect) in struct.items():
-            globals()["LOTTERY_SECTION"] = val if sec == "__lottery__" else saved_sec
-            if sec != "__lottery__":
+            if sec == "__lottery__":
+                LOTTERIES.clear()
+                LOTTERIES[val] = saved_lot["6"]
+            else:
                 WORKED[sec] = val
             try:
                 f, _ = check()
@@ -441,7 +585,8 @@ def main():
                 print(f"  {name}: RED (good, by its own assertion)")
             WORKED.clear()
             WORKED.update(saved)
-            globals()["LOTTERY_SECTION"] = saved_sec
+            LOTTERIES.clear()
+            LOTTERIES.update(saved_lot)
 
         print("self-test:", "PASS" if ok else "FAIL")
         return 0 if ok else 1

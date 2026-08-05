@@ -439,9 +439,119 @@ I kept choosing leaves myself.
 
 ---
 
-## 7. What remains
+## 7. A second leaf drawn by lot — path `11↦3, 9↦4, 17↦2, 19↦2, 21↦3` (depth 5, 36 steps)
 
-72 leaves. No shortcut is claimed for them: they are ordinary, and after §5 they
+The draw in §6 corrected the cost curve, so it is repeated rather than retired:
+one draw is a sample of one, and the two facts §6.2 reported were reported off a
+single leaf. The index was fixed as `int("3c9b7d5c6a83", 16) mod 76`, where the
+hex string is the digest of an unrelated daily snapshot taken at 08:11 on
+2026-08-05, hours before this section was begun and outside this repository. The
+same tie-break as §6 (advance by one if the draw lands on an already-written
+leaf) was fixed before the draw; it was not needed. The draw gave index 35.
+
+**A weakening against §6, stated rather than glossed.** §6's seed was the head
+of a ledger published elsewhere, so a reader could in principle audit that it
+predates the section. This seed is from a private snapshot: what the checker
+verifies is only that the leaf matches the seed, not that the seed predates the
+leaf. Against a determined author that is no protection at all. It still binds
+me, because the seed was written into the checker before the draw was run, but
+the claim a reader can check is the weaker one and is labelled as such.
+
+It shares the **13-step prefix** of §6 — the eight rigid deductions of §1 and
+the pin `11 = 3` with its four prunes — and 8 steps with each of §3, §4, §5.
+From the second split it diverges from everything written: §6 pins `9 = 2`,
+this pins `9 = 4`.
+
+**Split 2 — pin `9 = 4`:**
+
+- `{9, 27}` ⟹ `27` loses 4, domain `{2,3}`
+- `{9, 63}` ⟹ `63` loses 4, domain `{1,3}`
+
+**Split 3 — pin `17 = 2`** (its domain is `{2,4}` after the block prune):
+
+- `{7, 17, 27}` with 7, 17 at colour 2 ⟹ `27` loses 2, domain `{3}`
+- `{7, 17, 75}` ⟹ `75` loses 2, domain `{3,4}`
+- `{11, 19, 27}` with 11, 27 at colour 3 ⟹ `19` loses 3, domain `{2,4}`
+- `{11, 27, 49}` ⟹ `49` loses 3, domain `{4}`
+- `{17, 51}` ⟹ `51` loses 2, domain `{3,4}`
+- `{9, 29, 49}` with 9, 49 at colour 4 ⟹ `29` loses 4, domain `{2,3}`
+
+**Split 4 — pin `19 = 2`:**
+
+- `{7, 19, 33}` ⟹ `33` loses 2, domain `{1,4}`
+- `{15, 17, 19}` with 17, 19 at colour 2 ⟹ `15` loses 2, domain `{3,4}`
+
+**Split 5 — pin `21 = 3`:**
+
+- `{11, 21, 53}` ⟹ `53` loses 3, domain `{2,4}`
+- `{11, 21, 65}` ⟹ `65` loses 3, domain `{2,4}`
+- `{11, 21, 73}` ⟹ `73` loses 3, domain `{1,2,4}`
+- `{15, 21, 27}` with 21, 27 at colour 3 ⟹ `15` loses 3, domain `{4}`
+- `{21, 63}` ⟹ `63` loses 3, domain `{1}`
+- `{3, 33, 63}` with 3, 63 at colour 1 ⟹ `33` loses 1, domain `{4}`
+- `{3, 39, 63}` ⟹ `39` loses 1, domain `{2,3,4}`
+- `{5, 63, 73}` with 5, 63 at colour 1 ⟹ `73` loses 1, domain `{2,4}`
+
+**Conflict.** `15` and `33` are squeezed to `{4}` by the cascade and `9` was
+split to 4. `{9, 15, 33}` is a clause, monochromatic at colour 4. The case is
+dead.
+
+### 7.1 Five decisions, thirteen pins
+
+The last four prunes above hang off root `63`, which is not in this case's
+label. Nobody split it: four prunes drive it to the singleton `{1}`, and from
+there it behaves exactly like a pin — it is what removes colour 1 from `33` and
+so produces one of the two singletons in the killing clause. The same happens
+earlier to `27`, pinned to `{3}` by propagation at step 18 and used as a reason
+three times after.
+
+So the honest reading of "depth 5" is: five roots were *decided*, and the
+derivation runs on those five plus **5 more roots pinned by deduction**
+(`27, 49, 15, 63, 33`), every one of which is later cited as a reason. §5.1 said
+depth counts decisions and steps count work; the mechanism is this — a deduced
+singleton is indistinguishable from a decision in everything except who wrote
+it down.
+
+**And it is not a property of this leaf.** Before writing that up as a feature
+of the drawn case I counted it across the tree: **all 76 leaves** reuse at least
+one deduced singleton as a reason, with a median of **8** such singletons per
+leaf and **6** of them load-bearing. It was invisible in §3-§6 only because
+those sections never named the phenomenon — the same way §2 tabulated
+`pair_prune` for three instalments without a worked example. Measuring first is
+what kept it from being written as this leaf's discovery.
+
+### 7.2 What the second draw did and did not confirm
+
+**Cost.** 36 steps, of which **23** are new to the prefix tree. Five worked
+leaves now cover **126 of the 1116 distinct steps**. §5's chosen leaf bought 12,
+§6's drawn leaf 27, this one 23 — the two draws agree with each other and
+disagree with the chosen leaf, which is the shape §6.1 predicted and the reason
+the falling curve was retracted. No estimate of the remaining 71 is offered.
+
+**Depth is not the cost either.** This leaf and §5's are both depth 5; §5's is
+31 steps and this is 36. The depth-5 band runs 30 to 44 with median 36, so the
+drawn leaf sits on its band's median and the chosen one sat below it. Two
+measurements of the same band, one per route.
+
+**The killing clause, again.** §6.2 noted that it died on a clause naming one
+of its own split roots — the minority of 26 — while all three chosen leaves were
+in the 50. This one is also in the 26: `{9, 15, 33}` names `9`. Both drawn
+leaves in the minority is 2 of 2 and proves nothing by itself, but it does mean
+the 50/26 split of §5.2 is still the only statement about shape that rests on
+the whole tree rather than on my route.
+
+**A coincidence that would have read as a mechanism.** Exactly **26** leaves
+pin `11 = 3`, and exactly **26** leaves die on a clause naming a split root.
+They are *different* sets of 26 — 18 leaves are in each without the other. Two
+equal counts in a tree this small are cheap, and the only reason this is written
+here rather than as "the block side is the side that dies on its own splits" is
+that I compared the sets before writing the sentence.
+
+---
+
+## 8. What remains
+
+71 leaves. No shortcut is claimed for them: they are ordinary, and after §5 they
 are also known to be no worse per leaf than the ones already written. §3 and §4
 share a 16-step prefix with each other; §5 shares nineteen steps with §3; §6
 shares eight with all three.
