@@ -549,9 +549,113 @@ that I compared the sets before writing the sentence.
 
 ---
 
-## 8. What remains
+## 8. A third leaf drawn by lot, from a public seed — path `11↦3, 9↦4, 17↦2, 19↦4, 21↦3, 25↦3` (depth 6, 42 steps)
 
-71 leaves. No shortcut is claimed for them: they are ordinary, and after §5 they
+§7 named its own weakness: its seed was a private digest, so the checker could
+confirm the leaf matched the seed but not that the seed predated the leaf. This
+draw uses a seed a stranger can date without trusting me — the hash of Bitcoin
+block **961256**,
+`00000000000000000002005110a64e347261eefa63b7810236bbcba8a63f3f79`,
+timestamped 2026-08-06 06:01:48 UTC in a public chain. The commit that carries
+this section is minutes later, and that gap is the actual protection: a further
+draw costs a further block, so **the block-to-commit interval bounds how many
+seeds I could have tried** — roughly one per ten minutes, visibly. It does not
+forbid retries; it prices them in a currency the reader can read off the clock.
+
+**The rule fixed before the draw was degenerate, and that is reported rather
+than hidden.** The rule was "first twelve hex digits of the tip hash, mod 76",
+with the same tie-break as §6 and §7. Every valid Bitcoin block hash begins with
+a long run of zeros, so those twelve digits are `000000000000` for this block and
+for every block that has ever been mined: the rule returns index **0**
+regardless of the seed. It is a constant function wearing a lottery's clothes,
+and a reader can verify that in one line without taking my word for anything.
+Index 0 is §5's leaf, so the tie-break would have fired and handed back leaf 1 —
+also a constant, forever. The rule was *executable*; it was rejected because it
+is not a draw, not because it failed.
+
+So the extraction was revised once, to the **last** twelve hex digits of the
+same already-published hash — `cba8a63f3f79`, giving index **37**. One revision,
+declared, on a seed that could not be re-rolled. The reason it needed declaring
+is the thing worth carrying out of this section: **unpredictability is a
+property of the extraction, not of the source.** The seed was public,
+timestamped, third-party, and unforgeable, and the index it produced was a
+constant. Every earlier draw in this file inherited its credibility from the
+seed's provenance; none of them checked that the digits actually used carried
+any of it.
+
+It shares the **23-step prefix** of §7 — through the pins `11 = 3`, `9 = 4`,
+`17 = 2` and their cascades — and 13 steps with §6, 8 with each of §3, §4, §5.
+From the fourth split it diverges from everything written: §7 pins `19 = 2`,
+this pins `19 = 4`, and it is the first leaf here from the **depth-6 band**.
+
+**Split 4 — pin `19 = 4`:**
+
+- `{9, 19, 53}` ⟹ `53` loses 4, domain `{2,3}`
+
+**Split 5 — pin `21 = 3`:**
+
+- `{11, 21, 53}` ⟹ `53` loses 3, domain `{2}`
+- `{11, 21, 65}` ⟹ `65` loses 3, domain `{2,4}`
+- `{11, 21, 73}` ⟹ `73` loses 3, domain `{1,2,4}`
+- `{15, 21, 27}` with 21, 27 at colour 3 ⟹ `15` loses 3, domain `{2,4}`
+- `{21, 63}` ⟹ `63` loses 3, domain `{1}`
+- `{3, 33, 63}` with 3, 63 at colour 1 ⟹ `33` loses 1, domain `{2,4}`
+- `{3, 39, 63}` ⟹ `39` loses 1, domain `{2,3,4}`
+- `{5, 63, 73}` ⟹ `73` loses 1, domain `{2,4}`
+- `{7, 25, 53}` with 7, 53 at colour 2 ⟹ `25` loses 2, domain `{3,4}`
+
+**Split 6 — pin `25 = 3`:**
+
+- `{21, 25, 29}` ⟹ `29` loses 3, domain `{2}`
+- `{25, 75}` ⟹ `75` loses 3, domain `{4}`
+- `{7, 15, 29}` with 7, 29 at colour 2 ⟹ `15` loses 2, domain `{4}`
+- `{9, 15, 33}` with 9, 15 at colour 4 ⟹ `33` loses 4, domain `{2}`
+- `{9, 39, 75}` ⟹ `39` loses 4, domain `{2,3}`
+
+**Conflict.** `15` and `75` are both squeezed to `{4}`. `{15, 75}` is a
+two-element clause of the instance, monochromatic at colour 4. The case is dead.
+
+### 8.1 The deepest band is not the dearest
+
+This is the first leaf written from depth 6, and it settles a question §5.1 left
+half-open. Depth-6 runs **37 to 48 steps with median 40**; this leaf is 42, just
+above its band's median. Depth 3 — the shallowest band, four leaves — runs 39 to
+41 with median 40. **The deepest and the shallowest bands have the same median
+cost**, and the cheapest band is depth 5 in the middle. Depth does not order
+work even weakly; §5.1 said depth counts decisions, and with all four bands now
+measured the statement has no residual trend hiding inside it.
+
+The same mechanism as §7.1 is why: six roots were decided here, and the
+derivation runs on those six plus **8 roots pinned by deduction** on this leaf
+(`27, 49, 53, 63, 29, 75, 15, 33`), seven of which are cited later as reasons.
+Two more decisions bought almost no extra work because the deductions were doing
+it either way.
+
+### 8.2 What the third draw did to the two earlier ones
+
+**Cost.** 42 steps, of which **19** are new to the prefix tree — the smallest
+marginal yield of the three draws (§6 bought 27, §7 bought 23), on the longest
+leaf of the three. Six worked leaves now cover **145 of the 1116 distinct
+steps**. The marginal figure falls as the tree fills, which is expected and is
+exactly why §6.1 retracted the earlier falling curve: a decline that is an
+artefact of overlap says nothing about the leaves.
+
+**The killing clause.** §7.2 recorded that both drawn leaves so far died on a
+clause naming one of their own split roots — the minority of 26 — and said 2 of
+2 proves nothing. This one dies on `{15, 75}`, which names none of its six split
+roots: it is in the majority of 50. The streak was two coin flips, and the third
+went the other way. The 50/26 statement stays where §5.2 put it, resting on the
+whole tree.
+
+**The block fires again.** Step 12 is `¬(11 = 3 ∧ 17 = 3)` pruning colour 3 from
+`17`, the same block step §6 first exhibited. It is on the 11↦3 side, as §2's
+table says all 49 of its firings are.
+
+---
+
+## 9. What remains
+
+70 leaves. No shortcut is claimed for them: they are ordinary, and after §5 they
 are also known to be no worse per leaf than the ones already written. §3 and §4
 share a 16-step prefix with each other; §5 shares nineteen steps with §3; §6
 shares eight with all three.

@@ -52,6 +52,7 @@ WORKED = {
     "5": [[11, 2], [9, 3], [17, 2], [19, 2], [21, 3]],
     "6": [[11, 3], [9, 2], [17, 2], [19, 3]],
     "7": [[11, 3], [9, 4], [17, 2], [19, 2], [21, 3]],
+    "8": [[11, 3], [9, 4], [17, 2], [19, 4], [21, 3], [25, 3]],
 }
 
 # Section 6 claims its leaf was drawn by lot rather than chosen. That claim is
@@ -64,7 +65,14 @@ WORKED = {
 # Section 7 repeats the draw with a second seed. Its provenance is weaker and
 # the prose says so: the seed is a private snapshot digest, so this gate proves
 # the leaf matches the seed, not that the seed predates the leaf.
-LOTTERIES = {"6": "a3cf376a4c14", "7": "3c9b7d5c6a83"}
+# Section 8 draws from a public, timestamped seed -- a Bitcoin block hash --
+# so the provenance §7 could not offer is available here. Its extraction is the
+# LAST twelve hex digits; the rule fixed before the draw took the FIRST twelve,
+# which are zeros in every block hash that has ever existed. §8 says so out
+# loud, so the degeneracy is checked too: a later me who quietly drops that
+# paragraph would be dropping a verifiable fact, not an apology.
+LOTTERIES = {"6": "a3cf376a4c14", "7": "3c9b7d5c6a83", "8": "cba8a63f3f79"}
+BLOCK_HASH = "00000000000000000002005110a64e347261eefa63b7810236bbcba8a63f3f79"
 
 
 def step_key(s):
@@ -103,7 +111,9 @@ def derive(payload):
 
     idx = {tuple(map(tuple, c["path"])): i for i, c in enumerate(cases)}
     worked = {k: idx[tuple(map(tuple, p))] for k, p in WORKED.items()}
-    a, b, e, f, g = (cases[worked[s]]["steps"] for s in ("3", "4", "5", "6", "7"))
+    a, b, e, f, g, h = (
+        cases[worked[s]]["steps"] for s in ("3", "4", "5", "6", "7", "8")
+    )
 
     # §7.1: roots driven to a singleton by propagation (never split on this
     # path) and then cited as the reason for a later step. Counted over the
@@ -186,19 +196,26 @@ def derive(payload):
         "worked3_distinct_covered": trie_size([a, b, e]),
         "worked_distinct_covered": trie_size([a, b, e, f]),
         "worked5_distinct_covered": trie_size([a, b, e, f, g]),
+        "worked6_distinct_covered": trie_size([a, b, e, f, g, h]),
         "steps_sec3": len(a),
         "steps_sec4": len(b),
         "steps_sec5": len(e),
         "steps_sec6": len(f),
         "steps_sec7": len(g),
+        "steps_sec8": len(h),
         "shared_prefix_3_5": shared_prefix(a, e),
         "shared_prefix_3_6": shared_prefix(a, f),
         "shared_prefix_6_7": shared_prefix(f, g),
+        "shared_prefix_7_8": shared_prefix(g, h),
         "shared_prefix_3_7": shared_prefix(a, g),
         "marginal_sec5": trie_size([a, b, e]) - trie_size([a, b]),
         "marginal_sec6": trie_size([a, b, e, f]) - trie_size([a, b, e]),
         "marginal_sec7": trie_size([a, b, e, f, g]) - trie_size([a, b, e, f]),
+        "marginal_sec8": trie_size([a, b, e, f, g, h]) - trie_size([a, b, e, f, g]),
+        "deduced_pins_sec8": deduced_pins(cases[worked["8"]])[0],
         "band5_median": median(band[5]),
+        "band6_median": median(band[6]),
+        "band3_median": median(band[3]),
         "deduced_pins_sec7": deduced_pins(cases[worked["7"]])[0],
         "deduced_median": median([x for x, _ in pins]),
         "deduced_reused_median": median([y for _, y in pins]),
@@ -257,6 +274,13 @@ ANCHORS = {
     "shared_prefix_3_7": r"and (\d+) steps with each of §3, §4, §5",
     "marginal_sec7": r"36 steps, of which \*\*(\d+)\*\* are new",
     "worked5_distinct_covered": r"Five worked\s+leaves now cover \*\*(\d+) of the 1116",
+    "worked6_distinct_covered": r"Six worked leaves now cover \*\*(\d+) of the 1116 distinct",
+    "steps_sec8": r"\n## 8\..*?\(depth \d+, (\d+) steps\)",
+    "shared_prefix_7_8": r"shares the \*\*(\d+)-step prefix\*\* of §7",
+    "marginal_sec8": r"42 steps, of which \*\*(\d+)\*\* are new",
+    "band6_median": r"37 to 48 steps with median (\d+)",
+    "band3_median": r"41 with median (\d+)\.",
+    "deduced_pins_sec8": r"\*\*(\d+) roots pinned by deduction\*\* on this leaf",
     "band5_median": r"30 to 44 with median (\d+)",
     "deduced_pins_sec7": r"\*\*(\d+) more roots pinned by deduction\*\*",
     "deduced_median": r"with a median of \*\*(\d+)\*\* such singletons",
@@ -264,7 +288,7 @@ ANCHORS = {
     "leaves_reusing_a_deduced_pin": r"\*\*all (\d+) leaves\*\* reuse at least",
     "block_side": r"Exactly \*\*(\d+)\*\* leaves\npin `11 = 3`",
     "block_side_only": r"(\d+) leaves are in each without the other",
-    "leaves_remaining": r"\n## 8\. What remains\n\n(\d+) leaves\.",
+    "leaves_remaining": r"\n## 9\. What remains\n\n(\d+) leaves\.",
     "kill_touches_split_root": r"\*\*(\d+) leaves have a split root in their killing",
     "kill_avoids_split_root": r"killing\nclause, and (\d+) do not\.\*\*",
     "band3_min": r"\| 3 \| 4 \| (\d+) \| \d+ \|",
@@ -404,6 +428,44 @@ def check(payload_text=None, prose_text=None):
                 f"§6.2 says the three chosen leaves were all in the 50 that avoid "
                 f"their split roots, but section {sec} does not"
             )
+
+    # --- §8's claims that are not numbers -------------------------------------
+    # (f) §8 says the rule it fixed BEFORE the draw was degenerate: the first
+    # twelve hex digits of the block hash are zeros, so the index is 0 whatever
+    # the seed, and index 0 is §5's leaf, so the tie-break hands back leaf 1.
+    # All three are facts about the payload and the published hash, so all
+    # three are checked. A later me who deletes the paragraph as embarrassing
+    # deletes a checkable claim, and this notices.
+    if int(BLOCK_HASH[:12], 16) % n != 0:
+        failures.append(
+            "§8 says the discarded rule returns index 0 for this block; "
+            f"it returns {int(BLOCK_HASH[:12], 16) % n}"
+        )
+    if [list(x) for x in cases[0]["path"]] != WORKED["5"]:
+        failures.append(
+            "§8 says index 0 is §5's leaf, so the tie-break would have fired; "
+            f"index 0 is {[list(x) for x in cases[0]['path']]}"
+        )
+    if BLOCK_HASH[-12:] != LOTTERIES["8"]:
+        failures.append(
+            "§8's seed must be the tail of the published block hash; "
+            f"{LOTTERIES['8']} is not the last twelve digits of {BLOCK_HASH}"
+        )
+    for claim, pat in (
+        ("the block hash it draws from", BLOCK_HASH),
+        ("the discarded first-digits rule", "000000000000"),
+    ):
+        if pat not in prose:
+            failures.append(f"§8 no longer states {claim} ({pat}) in the prose")
+
+    # (g) §8.2 says this leaf is in the 50 that avoid their own split roots --
+    # the claim that breaks §7.2's "2 of 2". Denied of §8 is asserted of the
+    # streak, so it is checked in the direction that can embarrass it.
+    if kill_touches("8"):
+        failures.append(
+            "§8.2 says the third draw broke the streak by dying on a clause "
+            "naming none of its split roots; it names one"
+        )
 
     # --- §7's claims that are not numbers -------------------------------------
     # (d) §7.2 says BOTH drawn leaves are in the 26; that is a claim about §7
