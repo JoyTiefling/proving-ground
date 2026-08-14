@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "N": 90,
+    "chains": 45,
+    "distinct_partner_pairs": 79,
+    "elapsed_s_total": 7.482,
+    "k": 5,
+    "max_per_order": 5,
+    "method": "pigeonhole explore over diverse T_44 colorings",
+    "n_orderings_tried": 4,
+    "seed": 42,
+    "sha16_added_retroactively": {
+      "reason": "debt from rule 18-07 (P-48) — receipt written 00:00 23-07 without sha16",
+      "when": "2026-07-23T02:00Z"
+    },
+    "target_root": 45,
+    "tool": "explore_pigeonhole_45.py",
+    "tool_version": "23-07-2026 wake 00:00",
+    "triples_containing_target": 79,
+    "triples_total": 1410,
+    "triples_without_target": 1331
+  },
+  "result": {
+    "distribution_per_color": {
+      "0": {
+        "avg": 5.0,
+        "max": 5,
+        "min": 5,
+        "zeros": 0
+      },
+      "1": {
+        "avg": 3.6,
+        "max": 4,
+        "min": 3,
+        "zeros": 0
+      },
+      "2": {
+        "avg": 2.25,
+        "max": 4,
+        "min": 1,
+        "zeros": 0
+      },
+      "3": {
+        "avg": 3.5,
+        "max": 4,
+        "min": 3,
+        "zeros": 0
+      },
+      "4": {
+        "avg": 2.25,
+        "max": 4,
+        "min": 1,
+        "zeros": 0
+      }
+    },
+    "escape_found": false,
+    "n_diverse_colorings": 20,
+    "sample_rows": [
+      [
+        "089344d49b5a0451",
+        {
+          "0": 5,
+          "1": 4,
+          "2": 3,
+          "3": 4,
+          "4": 1
+        }
+      ],
+      [
+        "16d3a8a24266a555",
+        {
+          "0": 5,
+          "1": 4,
+          "2": 3,
+          "3": 4,
+          "4": 1
+        }
+      ],
+      [
+        "6c6706624c58af5b",
+        {
+          "0": 5,
+          "1": 4,
+          "2": 3,
+          "3": 4,
+          "4": 1
+        }
+      ],
+      [
+        "d5487285888cc61a",
+        {
+          "0": 5,
+          "1": 3,
+          "2": 3,
+          "3": 4,
+          "4": 1
+        }
+      ],
+      [
+        "e42e1cf6c0f78467",
+        {
+          "0": 5,
+          "1": 3,
+          "2": 3,
+          "3": 4,
+          "4": 1
+        }
+      ],
+      [
+        "6756547ff635b0ba",
+        {
+          "0": 5,
+          "1": 4,
+          "2": 4,
+          "3": 3,
+          "4": 1
+        }
+      ],
+      [
+        "c3f1ef1ce06b7ddc",
+        {
+          "0": 5,
+          "1": 4,
+          "2": 4,
+          "3": 3,
+          "4": 1
+        }
+      ],
+      [
+        "2255fab4d831ca53",
+        {
+          "0": 5,
+          "1": 4,
+          "2": 4,
+          "3": 3,
+          "4": 1
+        }
+      ],
+      [
+        "905ca1d62c96ac75",
+        {
+          "0": 5,
+          "1": 3,
+          "2": 4,
+          "3": 3,
+          "4": 1
+        }
+      ],
+      [
+        "f0df83eda2be11c3",
+        {
+          "0": 5,
+          "1": 3,
+          "2": 4,
+          "3": 3,
+          "4": 1
+        }
+      ]
+    ],
+    "tight_color_counter": {
+      "2": 10,
+      "4": 10
+    }
+  },
+  "sha16": "801ccaf5c89519e2"
+}

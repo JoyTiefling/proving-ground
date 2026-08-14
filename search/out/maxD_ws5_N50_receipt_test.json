@@ -1,0 +1,200 @@
+{
+  "meta": {
+    "solver": "cadical195",
+    "encoding": "vid=(v-1)*k+c+1, symmetry break c<=v-1, Tseitin eq/iseq, seqcounter cardinality",
+    "N": 50,
+    "k": 5,
+    "D_min_requested": 1,
+    "elapsed_s_total": 0.113,
+    "wake": "2026-07-18T00:08:50Z",
+    "tool": "sat_maxD.py",
+    "tool_version": "18-07-10:00 (--out added)",
+    "bound_hypothesis_log2N_plus_k": 10
+  },
+  "result": {
+    "best_D": 25,
+    "gate": "PASS",
+    "gate_reason": null,
+    "D_set": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25
+    ],
+    "partition": [
+      [
+        1,
+        2,
+        4,
+        8,
+        11,
+        16,
+        22,
+        25,
+        32,
+        35,
+        44,
+        50
+      ],
+      [
+        3,
+        5,
+        6,
+        10,
+        12,
+        20,
+        24,
+        31,
+        33,
+        40,
+        47,
+        48,
+        49
+      ],
+      [
+        7,
+        9,
+        13,
+        14,
+        18,
+        26,
+        28,
+        36
+      ],
+      [
+        15,
+        17,
+        21,
+        23,
+        30,
+        34,
+        37,
+        39,
+        41,
+        42,
+        43,
+        46
+      ],
+      [
+        19,
+        27,
+        29,
+        38,
+        45
+      ]
+    ]
+  },
+  "log": [
+    {
+      "D_min": 1,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 7,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 8,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 9,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 10,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 11,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 12,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 13,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 14,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 15,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 16,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 17,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 18,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 19,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 20,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 21,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 24,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    },
+    {
+      "D_min": 25,
+      "status": "SAT",
+      "elapsed_s": 0.004
+    }
+  ]
+}

@@ -1,0 +1,1730 @@
+{
+  "M1_colour_dispensable_SAT": false,
+  "N": 90,
+  "arm": "T44_rigid_anchor_reverse",
+  "claim": "T_44 AND no pair takes colour c  is UNSAT (universal cover on the reduced pair set)",
+  "colour": 3,
+  "core_triples": [
+    {
+      "distinct_roots": [
+        1,
+        33
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        1,
+        1,
+        33
+      ],
+      "witness": [
+        1,
+        32,
+        33
+      ]
+    },
+    {
+      "distinct_roots": [
+        1,
+        63
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        1,
+        1,
+        63
+      ],
+      "witness": [
+        1,
+        63,
+        64
+      ]
+    },
+    {
+      "distinct_roots": [
+        1,
+        23,
+        39
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        1,
+        23,
+        39
+      ],
+      "witness": [
+        16,
+        23,
+        39
+      ]
+    },
+    {
+      "distinct_roots": [
+        3,
+        33,
+        63
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        3,
+        33,
+        63
+      ],
+      "witness": [
+        3,
+        63,
+        66
+      ]
+    },
+    {
+      "distinct_roots": [
+        3,
+        39,
+        63
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        3,
+        39,
+        63
+      ],
+      "witness": [
+        24,
+        39,
+        63
+      ]
+    },
+    {
+      "distinct_roots": [
+        5,
+        63,
+        73
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        5,
+        63,
+        73
+      ],
+      "witness": [
+        10,
+        63,
+        73
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        21
+      ],
+      "n_witnesses": 5,
+      "triple": [
+        7,
+        7,
+        21
+      ],
+      "witness": [
+        7,
+        14,
+        21
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        35
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        7,
+        35
+      ],
+      "witness": [
+        7,
+        28,
+        35
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        49
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        7,
+        49
+      ],
+      "witness": [
+        7,
+        49,
+        56
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        63
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        7,
+        63
+      ],
+      "witness": [
+        7,
+        56,
+        63
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        9,
+        11
+      ],
+      "n_witnesses": 3,
+      "triple": [
+        7,
+        9,
+        11
+      ],
+      "witness": [
+        7,
+        11,
+        18
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        9,
+        19
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        9,
+        19
+      ],
+      "witness": [
+        9,
+        19,
+        28
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        9,
+        25
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        9,
+        25
+      ],
+      "witness": [
+        7,
+        18,
+        25
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        9,
+        29
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        9,
+        29
+      ],
+      "witness": [
+        7,
+        29,
+        36
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        9,
+        65
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        9,
+        65
+      ],
+      "witness": [
+        7,
+        65,
+        72
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        11,
+        15
+      ],
+      "n_witnesses": 3,
+      "triple": [
+        7,
+        11,
+        15
+      ],
+      "witness": [
+        7,
+        15,
+        22
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        11,
+        25
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        11,
+        25
+      ],
+      "witness": [
+        11,
+        14,
+        25
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        11,
+        51
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        11,
+        51
+      ],
+      "witness": [
+        7,
+        44,
+        51
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        15,
+        29
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        15,
+        29
+      ],
+      "witness": [
+        14,
+        15,
+        29
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        15,
+        41
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        15,
+        41
+      ],
+      "witness": [
+        15,
+        41,
+        56
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        17,
+        27
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        17,
+        27
+      ],
+      "witness": [
+        7,
+        27,
+        34
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        17,
+        75
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        17,
+        75
+      ],
+      "witness": [
+        7,
+        68,
+        75
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        19,
+        33
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        19,
+        33
+      ],
+      "witness": [
+        14,
+        19,
+        33
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        19,
+        75
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        19,
+        75
+      ],
+      "witness": [
+        19,
+        56,
+        75
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        25,
+        39
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        7,
+        25,
+        39
+      ],
+      "witness": [
+        14,
+        25,
+        39
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        25,
+        53
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        25,
+        53
+      ],
+      "witness": [
+        25,
+        28,
+        53
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        27,
+        29
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        27,
+        29
+      ],
+      "witness": [
+        27,
+        29,
+        56
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        27,
+        55
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        27,
+        55
+      ],
+      "witness": [
+        27,
+        28,
+        55
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        33,
+        59
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        33,
+        59
+      ],
+      "witness": [
+        7,
+        59,
+        66
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        41,
+        55
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        41,
+        55
+      ],
+      "witness": [
+        14,
+        41,
+        55
+      ]
+    },
+    {
+      "distinct_roots": [
+        7,
+        59,
+        73
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        7,
+        59,
+        73
+      ],
+      "witness": [
+        14,
+        59,
+        73
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        27
+      ],
+      "n_witnesses": 4,
+      "triple": [
+        9,
+        9,
+        27
+      ],
+      "witness": [
+        9,
+        18,
+        27
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        63
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        9,
+        63
+      ],
+      "witness": [
+        9,
+        63,
+        72
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        11,
+        29
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        9,
+        11,
+        29
+      ],
+      "witness": [
+        11,
+        18,
+        29
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        11,
+        35
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        9,
+        11,
+        35
+      ],
+      "witness": [
+        9,
+        35,
+        44
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        15,
+        21
+      ],
+      "n_witnesses": 4,
+      "triple": [
+        9,
+        15,
+        21
+      ],
+      "witness": [
+        9,
+        21,
+        30
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        15,
+        33
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        9,
+        15,
+        33
+      ],
+      "witness": [
+        15,
+        18,
+        33
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        17,
+        25
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        9,
+        17,
+        25
+      ],
+      "witness": [
+        9,
+        25,
+        34
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        17,
+        55
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        17,
+        55
+      ],
+      "witness": [
+        17,
+        55,
+        72
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        17,
+        59
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        17,
+        59
+      ],
+      "witness": [
+        9,
+        59,
+        68
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        19,
+        53
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        19,
+        53
+      ],
+      "witness": [
+        19,
+        53,
+        72
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        21,
+        33
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        9,
+        21,
+        33
+      ],
+      "witness": [
+        9,
+        33,
+        42
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        21,
+        51
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        9,
+        21,
+        51
+      ],
+      "witness": [
+        9,
+        42,
+        51
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        21,
+        75
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        21,
+        75
+      ],
+      "witness": [
+        9,
+        75,
+        84
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        25,
+        59
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        25,
+        59
+      ],
+      "witness": [
+        9,
+        50,
+        59
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        29,
+        49
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        29,
+        49
+      ],
+      "witness": [
+        9,
+        49,
+        58
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        33,
+        39
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        33,
+        39
+      ],
+      "witness": [
+        33,
+        39,
+        72
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        39,
+        75
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        39,
+        75
+      ],
+      "witness": [
+        36,
+        39,
+        75
+      ]
+    },
+    {
+      "distinct_roots": [
+        9,
+        55,
+        73
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        9,
+        55,
+        73
+      ],
+      "witness": [
+        18,
+        55,
+        73
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        33
+      ],
+      "n_witnesses": 4,
+      "triple": [
+        11,
+        11,
+        33
+      ],
+      "witness": [
+        11,
+        22,
+        33
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        55
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        11,
+        55
+      ],
+      "witness": [
+        11,
+        44,
+        55
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        77
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        11,
+        77
+      ],
+      "witness": [
+        11,
+        77,
+        88
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        15,
+        19
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        11,
+        15,
+        19
+      ],
+      "witness": [
+        11,
+        19,
+        30
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        15,
+        59
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        15,
+        59
+      ],
+      "witness": [
+        15,
+        44,
+        59
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        17,
+        27
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        11,
+        17,
+        27
+      ],
+      "witness": [
+        17,
+        27,
+        44
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        17,
+        39
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        11,
+        17,
+        39
+      ],
+      "witness": [
+        17,
+        22,
+        39
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        19,
+        25
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        11,
+        19,
+        25
+      ],
+      "witness": [
+        19,
+        25,
+        44
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        19,
+        27
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        11,
+        19,
+        27
+      ],
+      "witness": [
+        11,
+        27,
+        38
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        19,
+        41
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        11,
+        19,
+        41
+      ],
+      "witness": [
+        19,
+        22,
+        41
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        21,
+        53
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        21,
+        53
+      ],
+      "witness": [
+        11,
+        42,
+        53
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        21,
+        65
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        21,
+        65
+      ],
+      "witness": [
+        21,
+        44,
+        65
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        21,
+        73
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        21,
+        73
+      ],
+      "witness": [
+        11,
+        73,
+        84
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        25,
+        63
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        25,
+        63
+      ],
+      "witness": [
+        25,
+        63,
+        88
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        27,
+        49
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        27,
+        49
+      ],
+      "witness": [
+        22,
+        27,
+        49
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        29,
+        51
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        29,
+        51
+      ],
+      "witness": [
+        22,
+        29,
+        51
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        29,
+        59
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        29,
+        59
+      ],
+      "witness": [
+        29,
+        59,
+        88
+      ]
+    },
+    {
+      "distinct_roots": [
+        11,
+        35,
+        59
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        11,
+        35,
+        59
+      ],
+      "witness": [
+        11,
+        59,
+        70
+      ]
+    },
+    {
+      "distinct_roots": [
+        13,
+        43,
+        73
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        13,
+        43,
+        73
+      ],
+      "witness": [
+        13,
+        73,
+        86
+      ]
+    },
+    {
+      "distinct_roots": [
+        15,
+        75
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        15,
+        15,
+        75
+      ],
+      "witness": [
+        15,
+        60,
+        75
+      ]
+    },
+    {
+      "distinct_roots": [
+        15,
+        17,
+        19
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        15,
+        17,
+        19
+      ],
+      "witness": [
+        15,
+        19,
+        34
+      ]
+    },
+    {
+      "distinct_roots": [
+        15,
+        17,
+        77
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        15,
+        17,
+        77
+      ],
+      "witness": [
+        17,
+        60,
+        77
+      ]
+    },
+    {
+      "distinct_roots": [
+        15,
+        21,
+        27
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        15,
+        21,
+        27
+      ],
+      "witness": [
+        15,
+        27,
+        42
+      ]
+    },
+    {
+      "distinct_roots": [
+        15,
+        25,
+        35
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        15,
+        25,
+        35
+      ],
+      "witness": [
+        15,
+        35,
+        50
+      ]
+    },
+    {
+      "distinct_roots": [
+        15,
+        25,
+        55
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        15,
+        25,
+        55
+      ],
+      "witness": [
+        25,
+        30,
+        55
+      ]
+    },
+    {
+      "distinct_roots": [
+        17,
+        51
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        17,
+        17,
+        51
+      ],
+      "witness": [
+        17,
+        34,
+        51
+      ]
+    },
+    {
+      "distinct_roots": [
+        17,
+        19,
+        21
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        17,
+        19,
+        21
+      ],
+      "witness": [
+        17,
+        21,
+        38
+      ]
+    },
+    {
+      "distinct_roots": [
+        17,
+        19,
+        49
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        17,
+        19,
+        49
+      ],
+      "witness": [
+        19,
+        49,
+        68
+      ]
+    },
+    {
+      "distinct_roots": [
+        17,
+        21,
+        25
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        17,
+        21,
+        25
+      ],
+      "witness": [
+        17,
+        25,
+        42
+      ]
+    },
+    {
+      "distinct_roots": [
+        17,
+        27,
+        41
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        17,
+        27,
+        41
+      ],
+      "witness": [
+        27,
+        41,
+        68
+      ]
+    },
+    {
+      "distinct_roots": [
+        17,
+        29,
+        39
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        17,
+        29,
+        39
+      ],
+      "witness": [
+        29,
+        39,
+        68
+      ]
+    },
+    {
+      "distinct_roots": [
+        17,
+        29,
+        63
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        17,
+        29,
+        63
+      ],
+      "witness": [
+        29,
+        34,
+        63
+      ]
+    },
+    {
+      "distinct_roots": [
+        17,
+        29,
+        75
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        17,
+        29,
+        75
+      ],
+      "witness": [
+        17,
+        58,
+        75
+      ]
+    },
+    {
+      "distinct_roots": [
+        19,
+        21,
+        59
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        19,
+        21,
+        59
+      ],
+      "witness": [
+        21,
+        38,
+        59
+      ]
+    },
+    {
+      "distinct_roots": [
+        19,
+        25,
+        51
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        19,
+        25,
+        51
+      ],
+      "witness": [
+        25,
+        51,
+        76
+      ]
+    },
+    {
+      "distinct_roots": [
+        19,
+        27,
+        65
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        19,
+        27,
+        65
+      ],
+      "witness": [
+        27,
+        38,
+        65
+      ]
+    },
+    {
+      "distinct_roots": [
+        19,
+        29,
+        77
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        19,
+        29,
+        77
+      ],
+      "witness": [
+        19,
+        58,
+        77
+      ]
+    },
+    {
+      "distinct_roots": [
+        21,
+        63
+      ],
+      "n_witnesses": 2,
+      "triple": [
+        21,
+        21,
+        63
+      ],
+      "witness": [
+        21,
+        42,
+        63
+      ]
+    },
+    {
+      "distinct_roots": [
+        21,
+        25,
+        29
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        21,
+        25,
+        29
+      ],
+      "witness": [
+        21,
+        29,
+        50
+      ]
+    },
+    {
+      "distinct_roots": [
+        21,
+        27,
+        33
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        21,
+        27,
+        33
+      ],
+      "witness": [
+        21,
+        33,
+        54
+      ]
+    },
+    {
+      "distinct_roots": [
+        25,
+        75
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        25,
+        25,
+        75
+      ],
+      "witness": [
+        25,
+        50,
+        75
+      ]
+    },
+    {
+      "distinct_roots": [
+        25,
+        27,
+        77
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        25,
+        27,
+        77
+      ],
+      "witness": [
+        27,
+        50,
+        77
+      ]
+    },
+    {
+      "distinct_roots": [
+        29,
+        35,
+        41
+      ],
+      "n_witnesses": 1,
+      "triple": [
+        29,
+        35,
+        41
+      ],
+      "witness": [
+        29,
+        41,
+        70
+      ]
+    }
+  ],
+  "counts": {
+    "T_other": 1331,
+    "T_target": 79,
+    "groups": 1331,
+    "roots": 45
+  },
+  "deletion_order": "reverse",
+  "elapsed_s": 1.234,
+  "k": 5,
+  "mus_size": 92,
+  "mus_size_rigid": 0,
+  "mus_size_triples": 92,
+  "mus_verified_minimal": true,
+  "mus_verified_unsat": true,
+  "pairs": [
+    [
+      11,
+      17
+    ],
+    [
+      35,
+      55
+    ]
+  ],
+  "prereg": {
+    "H_large>60": 0.8,
+    "H_medium_16_60": 0.15,
+    "H_small<=15": 0.05,
+    "secondary_mus_gt_699": 0.5
+  },
+  "rigid_kept": [],
+  "rigid_mode": "hard",
+  "rigid_offered": 0,
+  "roots_in_mus": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    11,
+    13,
+    15,
+    17,
+    19,
+    21,
+    23,
+    25,
+    27,
+    29,
+    33,
+    35,
+    39,
+    41,
+    43,
+    49,
+    51,
+    53,
+    55,
+    59,
+    63,
+    65,
+    73,
+    75,
+    77
+  ],
+  "sanity": {
+    "S1_baseline_SAT": true,
+    "S2_single_pair_SAT": {
+      "11,17": true,
+      "35,55": true
+    },
+    "S3_claim_SAT": false
+  },
+  "script": "mus_cover_claim.py",
+  "secondary_mus_gt_699": false,
+  "sha16": "ea42b98d6cfb60b0",
+  "solver_core_size": 164,
+  "target_root": 45,
+  "verdict": "H_large",
+  "wake": "2026-08-14T02:04:00Z"
+}

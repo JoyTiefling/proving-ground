@@ -5,8 +5,19 @@ __pycache__/
 .venv/
 venv/
 
-# Search outputs (large / regenerable result dumps)
-search/out/
+# Search outputs.
+# NOT "regenerable": that word sat here until 14-08 while a separate
+# measurement (05-08) put receipt reproducibility at 1/18 — elapsed_s and the
+# wake stamp live inside the hash, so a rerun cannot reproduce a published
+# sha16. The two facts lived in the same repository and never met.
+# Every claim in STATE.md and in covering/*.md is anchored to a sha16; if the
+# receipts are not here, a reader of this public repo can verify none of them.
+# So: .json receipts are TRACKED. Bulk logs and dumps stay ignored.
+search/out/*
+!search/out/*.json
+!search/out/superseded/
+search/out/superseded/*
+!search/out/superseded/*.json
 covering/out/
 covering/data/
 *.result.json

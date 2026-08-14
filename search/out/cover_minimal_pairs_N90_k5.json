@@ -1,0 +1,722 @@
+{
+  "meta": {
+    "N": 90,
+    "anchor": {
+      "1": 0,
+      "3": 1,
+      "7": 2
+    },
+    "full_pairs": [
+      [
+        1,
+        13
+      ],
+      [
+        1,
+        23
+      ],
+      [
+        1,
+        43
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        7,
+        19
+      ],
+      [
+        9,
+        9
+      ],
+      [
+        11,
+        17
+      ],
+      [
+        15,
+        15
+      ],
+      [
+        35,
+        55
+      ]
+    ],
+    "k": 5,
+    "method": "deletion-based irreducible subset of the 10 forced_same cover-pairs keeping color(45)=c unsatisfiable; two arms (T_44 alone vs T_44+anchor+rigid), two deletion orders",
+    "pre_registration": {
+      "does_rigid_shrink_cover": {
+        "H_rigid_helps": 0.45,
+        "H_rigid_inert": 0.55
+      },
+      "size_of_irreducible_cover_c34_treatment": {
+        "H_large_8_10": 0.5,
+        "H_medium_4_7": 0.3,
+        "H_small_le3": 0.2,
+        "note": "priors deliberately shifted to large: measured systematic 27-07 — I bet on locality where structure is global; weakest prior won 3x in a row"
+      }
+    },
+    "provenance": {
+      "cover": "universal_cover.py sha16=ac1d0b86255578c5",
+      "pairs": "cycle_forced_pairs_run1.json sha16=5fa65016a6417fb8",
+      "rigid": "sat_verify_partition_run1.json sha16=3669e88c7ec427c6"
+    },
+    "rigid": {
+      "A_color0": [
+        13,
+        23,
+        43
+      ],
+      "B_color1": [
+        5,
+        31
+      ],
+      "T_not01": [
+        9,
+        11,
+        15,
+        17,
+        19,
+        21,
+        25,
+        27,
+        29,
+        35,
+        41,
+        49,
+        51,
+        53,
+        55,
+        59,
+        65,
+        75,
+        77,
+        85
+      ],
+      "X_not1": [
+        79
+      ]
+    },
+    "target_root": 45,
+    "tool": "cover_minimal_pairs.py",
+    "wake": "2026-07-28T12:04:09Z"
+  },
+  "result": {
+    "arms": {
+      "T44_only": {
+        "baseline_sat": true,
+        "clauses": 7139,
+        "per_color": {
+          "0": {
+            "full10_sat": false,
+            "full10_time_s": 0.5713,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    43
+                  ],
+                  [
+                    5,
+                    5
+                  ],
+                  [
+                    11,
+                    17
+                  ],
+                  [
+                    15,
+                    15
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    13
+                  ],
+                  [
+                    3,
+                    3
+                  ],
+                  [
+                    7,
+                    19
+                  ],
+                  [
+                    9,
+                    9
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          },
+          "1": {
+            "full10_sat": false,
+            "full10_time_s": 0.5572,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    43
+                  ],
+                  [
+                    5,
+                    5
+                  ],
+                  [
+                    11,
+                    17
+                  ],
+                  [
+                    15,
+                    15
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    13
+                  ],
+                  [
+                    3,
+                    3
+                  ],
+                  [
+                    7,
+                    19
+                  ],
+                  [
+                    9,
+                    9
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          },
+          "2": {
+            "full10_sat": false,
+            "full10_time_s": 0.7175,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    43
+                  ],
+                  [
+                    5,
+                    5
+                  ],
+                  [
+                    11,
+                    17
+                  ],
+                  [
+                    15,
+                    15
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    13
+                  ],
+                  [
+                    3,
+                    3
+                  ],
+                  [
+                    7,
+                    19
+                  ],
+                  [
+                    9,
+                    9
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          },
+          "3": {
+            "full10_sat": false,
+            "full10_time_s": 0.5835,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    43
+                  ],
+                  [
+                    5,
+                    5
+                  ],
+                  [
+                    11,
+                    17
+                  ],
+                  [
+                    15,
+                    15
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    13
+                  ],
+                  [
+                    3,
+                    3
+                  ],
+                  [
+                    7,
+                    19
+                  ],
+                  [
+                    9,
+                    9
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          },
+          "4": {
+            "full10_sat": false,
+            "full10_time_s": 0.5262,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    43
+                  ],
+                  [
+                    5,
+                    5
+                  ],
+                  [
+                    11,
+                    17
+                  ],
+                  [
+                    15,
+                    15
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                "size": 5,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    13
+                  ],
+                  [
+                    3,
+                    3
+                  ],
+                  [
+                    7,
+                    19
+                  ],
+                  [
+                    9,
+                    9
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          }
+        }
+      },
+      "T44_rigid_anchor": {
+        "baseline_sat": true,
+        "clauses": 7188,
+        "per_color": {
+          "0": {
+            "full10_sat": false,
+            "full10_time_s": 0.0,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true
+                ],
+                "size": 1,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    43
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true
+                ],
+                "size": 1,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    1,
+                    13
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          },
+          "1": {
+            "full10_sat": false,
+            "full10_time_s": 0.0,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true
+                ],
+                "size": 1,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    5,
+                    5
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true
+                ],
+                "size": 1,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    3,
+                    3
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          },
+          "2": {
+            "full10_sat": false,
+            "full10_time_s": 0.0003,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true
+                ],
+                "size": 1,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    15,
+                    15
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true
+                ],
+                "size": 1,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    7,
+                    19
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          },
+          "3": {
+            "full10_sat": false,
+            "full10_time_s": 0.0004,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true,
+                  true
+                ],
+                "size": 2,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    11,
+                    17
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true,
+                  true
+                ],
+                "size": 2,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    9,
+                    9
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          },
+          "4": {
+            "full10_sat": false,
+            "full10_time_s": 0.0004,
+            "irreducible": {
+              "forward": {
+                "one_drop_sat": [
+                  true,
+                  true
+                ],
+                "size": 2,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    11,
+                    17
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              },
+              "reverse": {
+                "one_drop_sat": [
+                  true,
+                  true
+                ],
+                "size": 2,
+                "solver_calls": 10,
+                "subset": [
+                  [
+                    9,
+                    9
+                  ],
+                  [
+                    35,
+                    55
+                  ]
+                ],
+                "verified_irreducible": true,
+                "verified_unsat": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "elapsed_s": 72.322,
+    "rigid_verdict": "H_rigid_helps",
+    "size_verdict": "H_small",
+    "sizes_c34_control": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "sizes_c34_treatment": [
+      2,
+      2,
+      2,
+      2
+    ]
+  },
+  "sha16": "62bda6b81b534a22"
+}

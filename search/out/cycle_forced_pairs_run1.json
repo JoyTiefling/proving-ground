@@ -1,0 +1,1983 @@
+{
+  "meta": {
+    "N": 90,
+    "chains": 45,
+    "cnf": {
+      "n_clauses": 7139,
+      "n_vars": 220
+    },
+    "k": 5,
+    "method": "cycle SAT over all partner-pairs of chain 45 via Minisat22 CDCL (pysat)",
+    "n_partner_pairs": 79,
+    "n_self_pairs_skipped": 0,
+    "other_chains": 44,
+    "pre_registration": {
+      "H_35_55_special": 0.45,
+      "H_all_forced": 0.35,
+      "H_broad_not_universal": 0.2
+    },
+    "target_root": 45,
+    "tool": "cycle_forced_pairs.py",
+    "tool_version": "23-07-2026 wake 04:00",
+    "triples_T_44": 1331,
+    "triples_T_45": 79,
+    "triples_total": 1410,
+    "wake": "2026-07-22T18:03:46Z"
+  },
+  "result": {
+    "forced_same": [
+      [
+        1,
+        13
+      ],
+      [
+        1,
+        23
+      ],
+      [
+        1,
+        43
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        7,
+        19
+      ],
+      [
+        9,
+        9
+      ],
+      [
+        11,
+        17
+      ],
+      [
+        15,
+        15
+      ],
+      [
+        35,
+        55
+      ]
+    ],
+    "free": [
+      [
+        1,
+        37
+      ],
+      [
+        1,
+        61
+      ],
+      [
+        3,
+        33
+      ],
+      [
+        3,
+        39
+      ],
+      [
+        3,
+        69
+      ],
+      [
+        3,
+        87
+      ],
+      [
+        7,
+        59
+      ],
+      [
+        13,
+        71
+      ],
+      [
+        21,
+        69
+      ],
+      [
+        21,
+        87
+      ],
+      [
+        23,
+        67
+      ],
+      [
+        29,
+        61
+      ],
+      [
+        33,
+        39
+      ],
+      [
+        33,
+        57
+      ],
+      [
+        37,
+        41
+      ],
+      [
+        39,
+        51
+      ],
+      [
+        41,
+        49
+      ]
+    ],
+    "hypothesis_supported": "H_broad_not_universal",
+    "per_pair": {
+      "11_17": {
+        "A": {
+          "sat": false,
+          "time_s": 0.2964,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.001
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0065
+        },
+        "verdict": "forced_same"
+      },
+      "11_23": {
+        "A": {
+          "sat": true,
+          "time_s": 0.001,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.001
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0794
+        },
+        "verdict": "forced_different"
+      },
+      "11_43": {
+        "A": {
+          "sat": true,
+          "time_s": 0.001,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.001
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1082
+        },
+        "verdict": "forced_different"
+      },
+      "11_67": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0011,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.001
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1511
+        },
+        "verdict": "forced_different"
+      },
+      "11_79": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0281,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.001
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.2042
+        },
+        "verdict": "forced_different"
+      },
+      "11_89": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0149,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0011
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.2022
+        },
+        "verdict": "forced_different"
+      },
+      "13_19": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0069,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0066
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0733
+        },
+        "verdict": "forced_different"
+      },
+      "13_29": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0728,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0063
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0863
+        },
+        "verdict": "forced_different"
+      },
+      "13_71": {
+        "A": {
+          "sat": true,
+          "time_s": 0.1192,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0065
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0019
+        },
+        "verdict": "free"
+      },
+      "13_77": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0071,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0064
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1652
+        },
+        "verdict": "forced_different"
+      },
+      "15_15": {
+        "A": {
+          "sat": false,
+          "time_s": 0.0,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0148
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.015
+        },
+        "verdict": "forced_same"
+      },
+      "15_75": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0147,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0147
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "17_23": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0017,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0147
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.077
+        },
+        "verdict": "forced_different"
+      },
+      "17_31": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0066,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0149
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1042
+        },
+        "verdict": "forced_different"
+      },
+      "17_73": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0035,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0148
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1583
+        },
+        "verdict": "forced_different"
+      },
+      "17_79": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0488,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0148
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1966
+        },
+        "verdict": "forced_different"
+      },
+      "19_31": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0199,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0446
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0961
+        },
+        "verdict": "forced_different"
+      },
+      "19_71": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0296,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0451
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1507
+        },
+        "verdict": "forced_different"
+      },
+      "19_83": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0071,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0451
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.2143
+        },
+        "verdict": "forced_different"
+      },
+      "1_11": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0271,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0461
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0702
+        },
+        "verdict": "forced_different"
+      },
+      "1_13": {
+        "A": {
+          "sat": false,
+          "time_s": 0.3008,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0465
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0043
+        },
+        "verdict": "forced_same"
+      },
+      "1_19": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0058,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0473
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0236
+        },
+        "verdict": "forced_different"
+      },
+      "1_23": {
+        "A": {
+          "sat": false,
+          "time_s": 0.3233,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0472
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0019
+        },
+        "verdict": "forced_same"
+      },
+      "1_29": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0013,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0465
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0511
+        },
+        "verdict": "forced_different"
+      },
+      "1_37": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0087,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0466
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.003
+        },
+        "verdict": "free"
+      },
+      "1_41": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0091,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0474
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1068
+        },
+        "verdict": "forced_different"
+      },
+      "1_43": {
+        "A": {
+          "sat": false,
+          "time_s": 0.3442,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0466
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0012
+        },
+        "verdict": "forced_same"
+      },
+      "1_47": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0243,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0468
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1705
+        },
+        "verdict": "forced_different"
+      },
+      "1_49": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0186,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0463
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1483
+        },
+        "verdict": "forced_different"
+      },
+      "1_53": {
+        "A": {
+          "sat": true,
+          "time_s": 0.032,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0462
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0369
+        },
+        "verdict": "forced_different"
+      },
+      "1_61": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0035,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0461
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0084
+        },
+        "verdict": "free"
+      },
+      "1_77": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0076,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0464
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0842
+        },
+        "verdict": "forced_different"
+      },
+      "1_89": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0263,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0469
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1765
+        },
+        "verdict": "forced_different"
+      },
+      "21_33": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0009,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0009
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0454
+        },
+        "verdict": "forced_different"
+      },
+      "21_39": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0009,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0009
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1164
+        },
+        "verdict": "forced_different"
+      },
+      "21_69": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0152,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0009
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0009
+        },
+        "verdict": "free"
+      },
+      "21_87": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0326,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0009
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0011
+        },
+        "verdict": "free"
+      },
+      "23_67": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0707,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.006
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0075
+        },
+        "verdict": "free"
+      },
+      "25_35": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0031,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0024
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1408
+        },
+        "verdict": "forced_different"
+      },
+      "25_65": {
+        "A": {
+          "sat": true,
+          "time_s": 0.015,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0024
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.075
+        },
+        "verdict": "forced_different"
+      },
+      "27_63": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0035,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0115
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1082
+        },
+        "verdict": "forced_different"
+      },
+      "29_37": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0089,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0088
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1657
+        },
+        "verdict": "forced_different"
+      },
+      "29_61": {
+        "A": {
+          "sat": true,
+          "time_s": 0.003,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0086
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0007
+        },
+        "verdict": "free"
+      },
+      "31_59": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0896,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0186
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1551
+        },
+        "verdict": "forced_different"
+      },
+      "33_39": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0121,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0135
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.001
+        },
+        "verdict": "free"
+      },
+      "33_57": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0033,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0134
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0031
+        },
+        "verdict": "free"
+      },
+      "35_55": {
+        "A": {
+          "sat": false,
+          "time_s": 0.4556,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0114
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0067
+        },
+        "verdict": "forced_same"
+      },
+      "37_41": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0464,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.001
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0064
+        },
+        "verdict": "free"
+      },
+      "37_53": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0052,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.001
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1866
+        },
+        "verdict": "forced_different"
+      },
+      "39_51": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0174,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0136
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0306
+        },
+        "verdict": "free"
+      },
+      "3_21": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0122,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0123
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "3_3": {
+        "A": {
+          "sat": false,
+          "time_s": 0.0,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0125
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0125
+        },
+        "verdict": "forced_same"
+      },
+      "3_33": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0186,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0121
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0015
+        },
+        "verdict": "free"
+      },
+      "3_39": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0078,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0122
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0058
+        },
+        "verdict": "free"
+      },
+      "3_51": {
+        "A": {
+          "sat": true,
+          "time_s": 0.012,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0127
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "3_57": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0412,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0122
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1166
+        },
+        "verdict": "forced_different"
+      },
+      "3_69": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0078,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0127
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0201
+        },
+        "verdict": "free"
+      },
+      "3_87": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0067,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0125
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0071
+        },
+        "verdict": "free"
+      },
+      "41_43": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0629,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0273
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1699
+        },
+        "verdict": "forced_different"
+      },
+      "41_49": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0478,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0271
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0066
+        },
+        "verdict": "free"
+      },
+      "43_47": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0025,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0092
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.2366
+        },
+        "verdict": "forced_different"
+      },
+      "5_25": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0573,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0593
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "5_35": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0582,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0573
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "5_5": {
+        "A": {
+          "sat": false,
+          "time_s": 0.0,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0576
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0577
+        },
+        "verdict": "forced_same"
+      },
+      "5_55": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0603,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0588
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1957
+        },
+        "verdict": "forced_different"
+      },
+      "5_65": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0034,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0585
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.2247
+        },
+        "verdict": "forced_different"
+      },
+      "5_85": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0587,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0583
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "7_11": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0236,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.007
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0277
+        },
+        "verdict": "forced_different"
+      },
+      "7_13": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0092,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0071
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0285
+        },
+        "verdict": "forced_different"
+      },
+      "7_17": {
+        "A": {
+          "sat": true,
+          "time_s": 0.01,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.007
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0724
+        },
+        "verdict": "forced_different"
+      },
+      "7_19": {
+        "A": {
+          "sat": false,
+          "time_s": 0.303,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0071
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0067
+        },
+        "verdict": "forced_same"
+      },
+      "7_31": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0072,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.007
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1073
+        },
+        "verdict": "forced_different"
+      },
+      "7_59": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0118,
+          "witness_pair": [
+            0,
+            1
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0071
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0181
+        },
+        "verdict": "free"
+      },
+      "7_73": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0121,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.007
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.182
+        },
+        "verdict": "forced_different"
+      },
+      "7_83": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0182,
+          "witness_pair": [
+            0,
+            3
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0071
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.1973
+        },
+        "verdict": "forced_different"
+      },
+      "9_27": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0084,
+          "witness_pair": [
+            0,
+            2
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0084
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "9_63": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0087,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0084
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "9_81": {
+        "A": {
+          "sat": true,
+          "time_s": 0.0084,
+          "witness_pair": [
+            0,
+            4
+          ]
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0087
+        },
+        "C": {
+          "sat": false,
+          "time_s": 0.0
+        },
+        "verdict": "forced_different"
+      },
+      "9_9": {
+        "A": {
+          "sat": false,
+          "time_s": 0.0,
+          "witness_pair": null
+        },
+        "B": {
+          "sat": true,
+          "time_s": 0.0084
+        },
+        "C": {
+          "sat": true,
+          "time_s": 0.0084
+        },
+        "verdict": "forced_same"
+      }
+    },
+    "total_elapsed_s": 11.753,
+    "weird": [
+      {
+        "pair": [
+          1,
+          11
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          1,
+          19
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          1,
+          29
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          1,
+          41
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          1,
+          47
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          1,
+          49
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          1,
+          53
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          1,
+          77
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          1,
+          89
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          3,
+          21
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          3,
+          51
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          3,
+          57
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          5,
+          25
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          5,
+          35
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          5,
+          55
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          5,
+          65
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          5,
+          85
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          7,
+          11
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          7,
+          13
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          7,
+          17
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          7,
+          31
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          7,
+          73
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          7,
+          83
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          9,
+          27
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          9,
+          63
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          9,
+          81
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          11,
+          23
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          11,
+          43
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          11,
+          67
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          11,
+          79
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          11,
+          89
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          13,
+          19
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          13,
+          29
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          13,
+          77
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          15,
+          75
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          17,
+          23
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          17,
+          31
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          17,
+          73
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          17,
+          79
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          19,
+          31
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          19,
+          71
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          19,
+          83
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          21,
+          33
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          21,
+          39
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          25,
+          35
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          25,
+          65
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          27,
+          63
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          29,
+          37
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          31,
+          59
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          37,
+          53
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          41,
+          43
+        ],
+        "verdict": "forced_different"
+      },
+      {
+        "pair": [
+          43,
+          47
+        ],
+        "verdict": "forced_different"
+      }
+    ]
+  },
+  "sha16": "5fa65016a6417fb8"
+}

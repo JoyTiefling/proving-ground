@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "N": 90,
+    "full_pairs": [
+      [
+        1,
+        13
+      ],
+      [
+        1,
+        23
+      ],
+      [
+        1,
+        43
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        7,
+        19
+      ],
+      [
+        9,
+        9
+      ],
+      [
+        11,
+        17
+      ],
+      [
+        15,
+        15
+      ],
+      [
+        35,
+        55
+      ]
+    ],
+    "k": 5,
+    "method": "test whether 4-pair reduced cover holds for c∈{3,4} while c∈{0,1,2} are handled by rigid direct triples",
+    "pre_registration": {
+      "H_reduced_holds": 0.7,
+      "H_reduced_leaks": 0.3
+    },
+    "reduced_pairs": [
+      [
+        9,
+        9
+      ],
+      [
+        15,
+        15
+      ],
+      [
+        11,
+        17
+      ],
+      [
+        35,
+        55
+      ]
+    ],
+    "rigid_direct_triples": {
+      "c=0": [
+        1,
+        45,
+        46
+      ],
+      "c=1_via_3": [
+        3,
+        45,
+        48
+      ],
+      "c=1_via_5": [
+        5,
+        40,
+        45
+      ],
+      "c=2": [
+        7,
+        38,
+        45
+      ]
+    },
+    "target_root": 45,
+    "tool": "reduced_cover_rigid.py",
+    "wake": "2026-07-24T12:07:45Z"
+  },
+  "result": {
+    "elapsed_s": 2.973,
+    "full_cover": {
+      "0": {
+        "sat": false,
+        "time_s": 0.594
+      },
+      "1": {
+        "sat": false,
+        "time_s": 0.5693
+      },
+      "2": {
+        "sat": false,
+        "time_s": 0.6046
+      },
+      "3": {
+        "sat": false,
+        "time_s": 0.5835
+      },
+      "4": {
+        "sat": false,
+        "time_s": 0.5036
+      }
+    },
+    "reduced_cover": {
+      "0": {
+        "sat": true,
+        "time_s": 0.0471
+      },
+      "1": {
+        "sat": true,
+        "time_s": 0.0118
+      },
+      "2": {
+        "sat": true,
+        "time_s": 0.002
+      },
+      "3": {
+        "sat": true,
+        "time_s": 0.0061
+      },
+      "4": {
+        "sat": true,
+        "time_s": 0.0012
+      }
+    },
+    "reduced_leaks": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "sanity_rigid_triples_present": {
+      "c=0: (1,45,46)": false,
+      "c=1: (3,45,48)": false,
+      "c=1: (5,40,45)": false,
+      "c=2: (7,38,45)": false
+    },
+    "verdict": "H_reduced_leaks"
+  },
+  "sha16": "c673b906394ee839"
+}

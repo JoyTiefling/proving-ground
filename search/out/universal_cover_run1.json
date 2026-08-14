@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "N": 90,
+    "cnf_T_44": {
+      "n_clauses": 7139,
+      "n_vars": 220
+    },
+    "forced_same_pairs": [
+      [
+        1,
+        13
+      ],
+      [
+        1,
+        23
+      ],
+      [
+        1,
+        43
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        7,
+        19
+      ],
+      [
+        9,
+        9
+      ],
+      [
+        11,
+        17
+      ],
+      [
+        15,
+        15
+      ],
+      [
+        35,
+        55
+      ]
+    ],
+    "k": 5,
+    "method": "universal-cover test: for each color c, is there a T_44 coloring where no forced-same pair takes c?",
+    "n_forced_same_pairs": 10,
+    "pre_registration": {
+      "H_multi_gap": 0.15,
+      "H_one_gap": 0.25,
+      "H_universal": 0.6
+    },
+    "predecessor": "forced_same_color_coverage.py wake 04:00 (existential coverage was 5/5 but that was existential, not universal — this fixes it)",
+    "target_root": 45,
+    "tool": "universal_cover.py",
+    "tool_version": "23-07-2026 wake 04:00 (level 3)",
+    "wake": "2026-07-22T18:07:05Z"
+  },
+  "result": {
+    "escapable_colors": [],
+    "hypothesis_supported": "H_universal",
+    "n_escapable": 0,
+    "per_color": {
+      "0": {
+        "sat": false,
+        "time_s": 0.5867
+      },
+      "1": {
+        "sat": false,
+        "time_s": 0.6097
+      },
+      "2": {
+        "sat": false,
+        "time_s": 0.5965
+      },
+      "3": {
+        "sat": false,
+        "time_s": 0.558
+      },
+      "4": {
+        "sat": false,
+        "time_s": 0.5232
+      }
+    },
+    "total_elapsed_s": 2.903
+  },
+  "sha16": "ac1d0b86255578c5"
+}

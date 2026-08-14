@@ -1,0 +1,28 @@
+{
+  "M1_T44_4colourable": false,
+  "N": 90,
+  "aborted": "claim_SAT",
+  "colour": 0,
+  "k": 5,
+  "pairs": [
+    [
+      11,
+      17
+    ],
+    [
+      35,
+      55
+    ]
+  ],
+  "sanity": {
+    "S1_baseline_SAT": true,
+    "S2_single_pair_SAT": {
+      "11,17": true,
+      "35,55": true
+    },
+    "S3_claim_SAT": true
+  },
+  "script": "mus_cover_claim.py",
+  "sha16": "a77f82518da029ee",
+  "wake": "2026-08-01T18:03:31Z"
+}
