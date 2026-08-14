@@ -98,21 +98,37 @@ RIGID_T = [9, 11, 15, 17, 19, 21, 25, 27, 29, 35, 41,      # colour in {2,3,4}
 RIGID_X = [79]                                             # colour != 1
 
 
-def rigid_clauses(var):
-    """Anchor + rigid facts as hard unit clauses (NOT minimised away)."""
-    cl = []
-    for r, c in ANCHOR.items():
-        cl.append([var[(r, c)]])
+def anchor_clauses(var):
+    """WLOG symmetry-breaking labels. FREE — not a derived fact, so these
+    stay hard in every arm that keeps them (colours are interchangeable
+    until three of them are named)."""
+    return [[var[(r, c)]] for r, c in ANCHOR.items()]
+
+
+def rigid_units(var):
+    """The 26 rigid facts as (label, unit-clause) pairs.
+
+    These are NOT free: they were themselves established by SAT under
+    T_44 + anchor (sat_verify_partition, 24-07). Every MUS measured with
+    them HARD is therefore conditional — it prices the cover claim at a
+    premise front that already contains paid-for work. See --rigid-mode."""
+    out = []
     for r in RIGID_A:
-        cl.append([var[(r, 0)]])
+        out.append((f"rigid_A:{r}=0", [var[(r, 0)]]))
     for r in RIGID_B:
-        cl.append([var[(r, 1)]])
+        out.append((f"rigid_B:{r}=1", [var[(r, 1)]]))
     for r in RIGID_T:
-        cl.append([-var[(r, 0)]])
-        cl.append([-var[(r, 1)]])
+        out.append((f"rigid_T:{r}!=0", [-var[(r, 0)]]))
+        out.append((f"rigid_T:{r}!=1", [-var[(r, 1)]]))
     for r in RIGID_X:
-        cl.append([-var[(r, 1)]])
-    return cl
+        out.append((f"rigid_X:{r}!=1", [-var[(r, 1)]]))
+    return out
+
+
+def rigid_clauses(var):
+    """Anchor + rigid facts as hard unit clauses (legacy shape, kept so the
+    default arm encodes byte-for-byte the same instance as on 02-08)."""
+    return anchor_clauses(var) + [cl for _, cl in rigid_units(var)]
 
 
 def witnesses_for_triple(tri, N):
@@ -195,6 +211,20 @@ def main():
                          "measured for c in {3,4} under anchor+rigid")
     ap.add_argument("--no-rigid", action="store_true",
                     help="control arm: T_44 alone, no anchor/rigid facts")
+    ap.add_argument("--rigid-mode", choices=["hard", "off", "soft"],
+                    default="hard",
+                    help="hard (default, 02-08 arm: rigid unminimisable) | "
+                         "off (anchor kept, rigid REMOVED — unconditional "
+                         "price of the cover claim) | soft (rigid facts "
+                         "become minimisable premises alongside triples, so "
+                         "the core reports how many of them it actually "
+                         "needs). Ignored when --no-rigid.")
+    ap.add_argument("--order",
+                    choices=["core", "sorted", "reverse", "rigid-first"],
+                    default="core",
+                    help="deletion order — an MUS is irreducible, not "
+                         "minimum, so it is order-dependent; run two hands "
+                         "before believing a size")
     ap.add_argument("--out", type=str, default="")
     ap.add_argument("--no-out", action="store_true")
     args = ap.parse_args()
@@ -203,7 +233,14 @@ def main():
     N, k, c = args.N, args.k, args.colour
 
     tag = "-".join(f"{a}_{b}" for a, b in pairs)
-    arm = "T44_only" if args.no_rigid else "T44_rigid_anchor"
+    if args.no_rigid:
+        arm = "T44_only"
+    else:
+        arm = {"hard": "T44_rigid_anchor",
+               "off": "T44_anchor_norigid",
+               "soft": "T44_rigid_soft"}[args.rigid_mode]
+    if args.order != "core":
+        arm = f"{arm}_{args.order}"
     out_path = receipts.resolve_out(args, __file__, arm=arm,
                                     pairs=tag, N=N, k=k, t=args.target, c=c)
     receipts.probe_writable(out_path)
@@ -222,12 +259,39 @@ def main():
           f"T_other={len(T_other)}")
 
     var, hard, soft, groups, nvars = build(other_roots, T_other, k)
-    sels = sorted(groups)
-    if not args.no_rigid:
+    kind = {s: "triple" for s in groups}
+    rigid_label = {}
+
+    if args.no_rigid:
+        pass
+    elif args.rigid_mode == "hard":
         rc = rigid_clauses(var)
         hard = hard + rc
         print(f"  + anchor/rigid hard clauses: {len(rc)}")
-    print(f"  vars={nvars} hard={len(hard)} soft={len(soft)} groups={len(sels)}")
+    elif args.rigid_mode == "off":
+        ac = anchor_clauses(var)
+        hard = hard + ac
+        print(f"  + anchor hard clauses: {len(ac)}  (rigid REMOVED — "
+              f"unconditional front)")
+    elif args.rigid_mode == "soft":
+        ac = anchor_clauses(var)
+        hard = hard + ac
+        ru = rigid_units(var)
+        for label, cl in ru:
+            nvars += 1
+            sel = nvars
+            groups[sel] = tuple(cl)
+            kind[sel] = "rigid"
+            rigid_label[sel] = label
+            soft.append([-sel] + cl)
+        print(f"  + anchor hard clauses: {len(ac)}  + rigid as SOFT groups: "
+              f"{len(ru)}  (minimisable alongside triples)")
+
+    sels = sorted(groups)
+    print(f"  vars={nvars} hard={len(hard)} soft={len(soft)} groups={len(sels)}"
+          f"  (triples={sum(1 for s in sels if kind[s] == 'triple')}, "
+          f"rigid={sum(1 for s in sels if kind[s] == 'rigid')})"
+          f"  deletion order={args.order}")
 
     blocks = [block_pair(var, p, c) for p in pairs]
 
@@ -278,10 +342,24 @@ def main():
     core_sels = [s for s in core0 if s in groups]
     print(f"\n  solver core (over-approx): {len(core_sels)} of {len(sels)}")
 
+    # An MUS is IRREDUCIBLE, not minimum — the subset you land on depends on
+    # the order you try deletions in. "core" is the legacy order (whatever
+    # order the solver handed the core back in) and reproduces the published
+    # 02-08 numbers; the others are second hands on the same instance.
+    if args.order == "reverse":
+        del_order = sorted(core_sels, reverse=True)
+    elif args.order == "rigid-first":
+        del_order = ([s for s in core_sels if kind[s] == "rigid"]
+                     + [s for s in core_sels if kind[s] != "rigid"])
+    elif args.order == "sorted":
+        del_order = sorted(core_sels)
+    else:
+        del_order = list(core_sels)
+
     cand = list(core_sels)
     removed = 0
     t_del = time.time()
-    for s in list(cand):
+    for s in del_order:
         trial = [x for x in cand if x != s]
         sat, _ = solve(hard, soft, blocks, trial)
         if not sat:
@@ -300,11 +378,19 @@ def main():
             break
     print(f"  verify: MUS UNSAT = {not sat_mus}; every 1-drop SAT = {each_drop_sat}")
 
-    roots_in_mus = sorted({r for s in mus for r in set(groups[s])})
-    print(f"  roots touched: {len(roots_in_mus)} of {len(other_roots)}")
+    mus_triples = [s for s in mus if kind[s] == "triple"]
+    mus_rigid = [s for s in mus if kind[s] == "rigid"]
+    roots_in_mus = sorted({r for s in mus_triples for r in set(groups[s])})
+    print(f"  roots touched (by triples): {len(roots_in_mus)} of "
+          f"{len(other_roots)}")
+    if args.rigid_mode == "soft" and not args.no_rigid:
+        print(f"  MUS composition: {len(mus_triples)} triples + "
+              f"{len(mus_rigid)} rigid facts of {len(rigid_label)} offered")
+        for s in mus_rigid:
+            print(f"      kept: {rigid_label[s]}")
 
     core_detail = []
-    for s in mus:
+    for s in mus_triples:
         tri = groups[s]
         w = witnesses_for_triple(tri, N)
         core_detail.append({"triple": list(tri),
@@ -337,8 +423,14 @@ def main():
         "sanity": {"S1_baseline_SAT": bool(s1_sat),
                    "S2_single_pair_SAT": s2,
                    "S3_claim_SAT": bool(s3_sat)},
+        "rigid_mode": "absent" if args.no_rigid else args.rigid_mode,
+        "deletion_order": args.order,
         "solver_core_size": len(core_sels),
         "mus_size": len(mus),
+        "mus_size_triples": len(mus_triples),
+        "mus_size_rigid": len(mus_rigid),
+        "rigid_offered": len(rigid_label),
+        "rigid_kept": [rigid_label[s] for s in mus_rigid],
         "mus_verified_unsat": bool(not sat_mus),
         "mus_verified_minimal": bool(each_drop_sat),
         "verdict": verdict,

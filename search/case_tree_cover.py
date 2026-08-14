@@ -256,7 +256,10 @@ def main():
 
     result = {
         "script": "case_tree_cover.py",
-        "wake": "2026-08-02T18:00Z",
+        # was hardcoded "2026-08-02T18:00Z" until 14-08: every later rerun
+        # stamped itself with the date of the first run. A field that cannot
+        # disagree with reality is not a record (#3706).
+        "wake": receipts.wake_iso(),
         "source_receipt_sha16": src.get("sha16"),
         "source_mus_size": src.get("mus_size"),
         "N": 90, "k": K, "colour": COLOUR, "pairs": [list(p) for p in PAIRS],
