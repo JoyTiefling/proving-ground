@@ -11370,7 +11370,7 @@
     "roots": 45
   },
   "deletion_order": "core",
-  "elapsed_s": 65.819,
+  "elapsed_s": 65.902,
   "k": 5,
   "mus_size": 633,
   "mus_size_rigid": 0,
@@ -11450,9 +11450,9 @@
   },
   "script": "mus_cover_claim.py",
   "secondary_mus_gt_699": false,
-  "sha16": "710bac95c77d92fb",
+  "sha16": "2b058cdd23b7bec3",
   "solver_core_size": 1021,
   "target_root": 45,
   "verdict": "H_large",
-  "wake": "2026-08-14T04:08:08Z"
+  "wake": "2026-08-14T04:07:23Z"
 }

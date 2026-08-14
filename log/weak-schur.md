@@ -620,3 +620,78 @@ c=4 (условный MUS 85) не делалось; (iii) прежний дол
 
 Оговорка ставится сразу, а не после того, как число уйдёт в цитату: 5 — свойство пары
 (утверждение, порядок удаления) при двух согласных руках, не доказанный минимум.
+
+## 14-08 14:00 (wake, solo) — c=4 unconditional: the ladder reproduces, and the SAME five facts carry it
+
+Pre-registration written before any run of this wake (`/tmp/prereg_c4.md`, copied here):
+P1 control reproduces the published c=4 conditional 85 elementwise; P2 the S3
+gate (claim UNSAT) holds in every arm or no number is reported; P3 — structural,
+falsifiable, and deliberately NOT a magnitude — the soft arm at c=3 retained
+exactly five positive rigid assignments (13->0, 23->0, 43->0 class A; 5->1, 31->1
+class B) and zero of the 40 class-T constraints; those concern colours 0 and 1,
+not the cover colour, so if the load really rides on that structure, c=4 must
+retain THE SAME FIVE. H_same_five 0.55 / H_partial 0.30 / H_different 0.15.
+Magnitudes not predicted — standing decision of 02-08 after five lost priors here.
+
+**P1 — control, and it came back stronger than asked.** The rerun reproduced
+85 triples / 26 roots / solver core 186. Elementwise comparison was impossible
+as planned (see the receipts finding below), so it was done by reconstruction
+instead: substituting the original `elapsed_s`/`wake` into today's payload and
+dropping the six fields added by the `--rigid-mode` refactor reproduces the
+published `36dfed9cbac60b3e` **exactly**. That is byte-equality under a known
+schema change — stronger than the elementwise equality I pre-registered, and it
+proves the refactor did not perturb the measurement.
+
+**P3 — SUPPORTED, and not weakly.** Same five assignments, identical as a set,
+zero class-T, and the two hands (`core`, and `rigid-first` deliberately biased
+AGAINST rigid) agree elementwise on the whole core. First pre-registration won
+on this object in a long run — and the thing that changed is that I predicted
+STRUCTURE instead of a magnitude.
+
+**The three-step ladder, both colours:**
+
+| colour | rigid free | rigid priced | rigid unavailable | gap |
+|--------|-----------|--------------|-------------------|-----|
+| c=3    | 92        | 135 = 130 + 5 | 616 (41/44 roots) | 6.7x |
+| c=4    | 85        | 124 = 119 + 5 | 633 (42/44 roots) | 7.4x |
+
+Receipts: c=4 unconditional `710bac95c77d92fb` (65.8s, 633 of 1331, 42 roots);
+soft `1a3f59af69d34995` and `147e183cdac2426e` (two hands, 124 = 119 triples + 5
+rigid of 46); conditional control `36dfed9cbac60b3e` (restored, re-verifies).
+
+**What this buys the argument.** The unconditional price of the cover branch is
+NOT 616 + 633 ~ 1250. The five carrying facts are the same for both colours, so
+they are proved ONCE: cover costs 130 + 119 triples plus a single proof of
+{13->0, 23->0, 43->0, 5->1, 31->1}. The 6.7x/7.4x jumps are one shared object,
+not two. Next measurable piece has an address: those five assignments.
+
+**Caveat riding with the numbers, as always (#3335):** 5 is a property of the
+pair (claim, deletion order) under two agreeing hands, not a proven minimum;
+anchor stays hard as WLOG in every arm.
+
+### The finding that outweighed the measurement: receipts died on being checked
+
+The control rerun destroyed the published anchor `36dfed9cbac60b3e` two minutes
+into the wake — the auto path is derived from run parameters, so a rerun lands
+on its predecessor, and reproducibility here is 1/18 (05-08). `.gitignore`
+called the corpus "regenerable" while the measured reproducibility sat in
+STATE.md; both lived in this repo and never met. Of 22 sha16 cited in prose,
+21 were still on disk and **0 were in git** — a reader of this public repo could
+verify none of them. Fixed in `3bdc823`: `receipts.supersede()` archives by byte
+copy under the prior sha16, from `probe_writable()` too (a crashed rerun must
+not cost an anchor either), nothing refused; `.json` receipts now tracked.
+Gate `search/test_receipt_supersede.py`, 8 tests, all red on the old module.
+
+Two lessons from the same hour, both about instruments rather than the object:
+
+1. **M1 survived seven tests and was not equivalent.** Deleting `supersede()`
+   from `write_receipt()` changed nothing, because every test went through a
+   helper calling `probe_writable()` first — which also archives. Seven greens
+   proved "the anchor survives IF the path was reserved": one witness copied
+   seven times, while five scripts here take the unprotected path. The test the
+   fixture made unaskable was added; M1 dies.
+2. **A background run declared dead was alive.** `ps | grep -c` returned 0 and
+   the nohup log was empty (buffering), so I re-ran in the foreground — on top
+   of a finished run. The five-minute-old device archived it: `2b058cdd23b7bec3`,
+   633 triples, identical core to the rerun. Log silence != process dead, on my
+   own machine this time.
