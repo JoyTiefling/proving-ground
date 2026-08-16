@@ -695,3 +695,61 @@ Two lessons from the same hour, both about instruments rather than the object:
    of a finished run. The five-minute-old device archived it: `2b058cdd23b7bec3`,
    633 triples, identical core to the rerun. Log silence != process dead, on my
    own machine this time.
+
+---
+
+## Wake 16-08 12:00 solo — the price of the five rigid facts
+
+`search/mus_rigid_five.py`, receipt `01b9c00621e97385` (80s, fact 13 -> 0 only).
+
+The 14-08 ladder ended with an address: the 6.7x/7.4x jump is carried by five
+positive assignments `{13->0, 23->0, 43->0, 5->1, 31->1}`, shared by both
+colours, so "prove them once and the cover branch costs 130 + 119 triples plus
+that single proof." Their status was a SAT verdict — UNSAT for every wrong
+colour under T_44 + anchor. A verdict is a proof only if you trust the solver;
+nobody reading this repo can audit it. So: extract irreducible triple-sets and
+see whether each fact becomes a finite combinatorial argument.
+
+**P1 (locality) REFUTED, and that is the result.** For `13 -> 0` the MUS runs
+319..584 triples of 1331, per wrong colour:
+
+| wrong colour | solver core | MUS forward | MUS reverse |
+|---|---|---|---|
+| 1 | 552 | 319 | 323 |
+| 2 | 584 | 372 | 332 |
+| 3 | 869 | 579 | 487 |
+| 4 | 832 | 584 | 493 |
+
+Proving ONE of the five costs the same order of magnitude as the 616/633-triple
+unconditional cover it was supposed to make cheap. "Prove the five once and
+share them across both colours" does not rescue the cover branch unless the five
+MUS overlap heavily with EACH OTHER — not measured here, and now the first thing
+worth measuring. The optimistic reading of the ladder ("cover = 130 + 119 + a
+small shared lemma") is dead as stated.
+
+**P2 was not testable by the procedure I used, and I only saw it after the
+numbers came back.** I predicted the MUS for wrong colour 3 and wrong colour 4
+would be equal as sets, because the anchor pins 0,1,2 and leaves 3,4
+interchangeable. They came back unequal, and my check printed REFUTED. But the
+deletion minimiser disagrees with *itself* by 40–92 triples across two orders on
+the *same* instance. A set difference between two colours cannot separate "the
+symmetry is broken" from "the deletion order wandered". The comparable numbers
+say the opposite of the printed verdict: sizes 579/487 vs 584/493 — a
+cross-colour gap of 5 and 6 against self-noise of 92 and 91. Fully consistent
+with the symmetry.
+
+So the prediction was about the object and the test could only see my procedure
+— #3468 at the moment of *designing a check*, not of reading an old note. The
+check now reports NOT TESTABLE BY THIS PROCEDURE with both spreads printed, so
+the number can't be read as a fact about weak Schur. Note the receipt on disk
+still carries the old `REFUTED` string: it is a faithful record of what the code
+said at run time, superseded in prose here rather than rewritten.
+
+**P3 SUPPORTED:** every class-A MUS contains a triple meeting root 1 — the
+partner-pair spine `(1,13)` shows up in the certificate, as it should.
+
+**Next step.** Run the remaining four facts (~80s each) and measure pairwise MUS
+overlap. The whole ladder argument now hinges on one number nobody has: how much
+of the ~500-triple proof of `13->0` is reused by `23->0`, `43->0`, `5->1`,
+`31->1`. Large overlap keeps the shared-lemma story alive at a higher price;
+small overlap kills it.
