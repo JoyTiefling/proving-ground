@@ -1,0 +1,147 @@
+{
+  "cert_sizes": {
+    "13->0": {
+      "fwd": 820,
+      "rev": 704
+    },
+    "23->0": {
+      "fwd": 868,
+      "rev": 721
+    },
+    "31->1": {
+      "fwd": 842,
+      "rev": 697
+    },
+    "43->0": {
+      "fwd": 919,
+      "rev": 790
+    },
+    "5->1": {
+      "fwd": 842,
+      "rev": 693
+    }
+  },
+  "checks": {
+    "Q1_class_structure": {
+      "median_across_classes": 0.7448979591836735,
+      "median_within_A": 0.7477386934673367,
+      "verdict": "SUPPORTED"
+    },
+    "Q2_economy": {
+      "reading": "WEAK: this procedure did not show the five are cheap. CERT is a union of four separately minimised MUS, i.e. an upper bound; next move is one minimisation against the conjunction of all wrong colours, not a death notice.",
+      "sharing_factor": 3.97,
+      "sum_of_five": 4291,
+      "unconditional_cover": 616,
+      "union_forward": 1082,
+      "union_reverse": 951,
+      "verdict": "REFUTED"
+    },
+    "Q3_instrument_sanity": {
+      "max_cross": 0.768,
+      "min_self": 0.685,
+      "note": "if REFUTED, Q1 and Q2 are not readable -- the overlap number carries more procedure-noise than object-signal",
+      "self_jaccard": {
+        "13->0": 0.726,
+        "23->0": 0.731,
+        "31->1": 0.704,
+        "43->0": 0.735,
+        "5->1": 0.685
+      },
+      "verdict": "REFUTED",
+      "violations": {
+        "13->0 | 23->0": 0.747,
+        "13->0 | 31->1": 0.753,
+        "13->0 | 43->0": 0.748,
+        "13->0 | 5->1": 0.744,
+        "23->0 | 31->1": 0.745,
+        "23->0 | 43->0": 0.768,
+        "23->0 | 5->1": 0.74,
+        "31->1 | 43->0": 0.763,
+        "31->1 | 5->1": 0.749,
+        "43->0 | 5->1": 0.744
+      }
+    }
+  },
+  "cross": {
+    "13->0 | 23->0": {
+      "a_size": 820,
+      "b_size": 868,
+      "jaccard": 0.7474120082815735,
+      "shared": 722
+    },
+    "13->0 | 31->1": {
+      "a_size": 820,
+      "b_size": 842,
+      "jaccard": 0.7531645569620253,
+      "shared": 714
+    },
+    "13->0 | 43->0": {
+      "a_size": 820,
+      "b_size": 919,
+      "jaccard": 0.7477386934673367,
+      "shared": 744
+    },
+    "13->0 | 5->1": {
+      "a_size": 820,
+      "b_size": 842,
+      "jaccard": 0.7439664218258132,
+      "shared": 709
+    },
+    "23->0 | 31->1": {
+      "a_size": 868,
+      "b_size": 842,
+      "jaccard": 0.7448979591836735,
+      "shared": 730
+    },
+    "23->0 | 43->0": {
+      "a_size": 868,
+      "b_size": 919,
+      "jaccard": 0.7675568743818002,
+      "shared": 776
+    },
+    "23->0 | 5->1": {
+      "a_size": 868,
+      "b_size": 842,
+      "jaccard": 0.7395727365208545,
+      "shared": 727
+    },
+    "31->1 | 43->0": {
+      "a_size": 842,
+      "b_size": 919,
+      "jaccard": 0.7627627627627628,
+      "shared": 762
+    },
+    "31->1 | 5->1": {
+      "a_size": 842,
+      "b_size": 842,
+      "jaccard": 0.7487019730010385,
+      "shared": 721
+    },
+    "43->0 | 5->1": {
+      "a_size": 919,
+      "b_size": 842,
+      "jaccard": 0.7435643564356436,
+      "shared": 751
+    }
+  },
+  "preregistered": {
+    "Q1": "median within-class-A cross-Jaccard > median A-vs-B",
+    "Q2": "union of all five CERT < 616 (unconditional c=3 cover)",
+    "Q3": "every cross-fact Jaccard strictly below both facts' J_self"
+  },
+  "reads": [
+    "mus_rigid_five_facts13.json",
+    "mus_rigid_five_facts23-43-5-31.json"
+  ],
+  "script": "mus_overlap.py",
+  "self_jaccard": {
+    "13->0": 0.7259343148357871,
+    "23->0": 0.7309368191721133,
+    "31->1": 0.7043189368770764,
+    "43->0": 0.7350253807106599,
+    "5->1": 0.6849615806805708
+  },
+  "sha16": "9bc58e76ab491d89",
+  "unit": "CERT(fact) = union over wrong colours of that fact's MUS",
+  "wake": "2026-08-16T04:11:28Z"
+}
