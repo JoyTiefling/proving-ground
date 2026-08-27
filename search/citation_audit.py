@@ -14,8 +14,17 @@ the defect (L3 #3936) — so this walks the WHOLE list instead:
 
 Four verdicts per citation:
   LIVE       — the cited sha is the sha of a current receipt. Fine.
-  SUPERSEDED — the cited sha only exists under out/superseded/. ROTTED:
-               the object was re-run, the pointer was not repointed.
+  SUPERSEDED — the cited sha only exists under out/superseded/.
+
+               NOTE THE LIMIT, it is the same defect one level up: this
+               verdict cannot tell "the pointer rotted" from "the prose is
+               deliberately narrating the archived run" — frontier/STATE.md
+               says outright that 36dfed… *names the predecessor*, and that
+               sentence is correct. Two states, one screen. So the prose gets
+               a way to say which it is: a line carrying the marker below is
+               a deliberate historical reference and is counted apart. A
+               citation with no marker is presumed rotted, because that is
+               the direction in which the error stays quiet.
   UNKNOWN    — no receipt on disk carries that sha at all. Either the file
                was deleted, or the sha was never a receipt sha.
   (tokens that are plainly not receipt shas are reported separately, not
@@ -41,6 +50,8 @@ HEX16 = re.compile(r"\b(?=[0-9a-f]{16}\b)[0-9a-f]*[a-f][0-9a-f]*\b")
 # Receipts are DATA, not prose: a sha inside a receipt is provenance, not a
 # citation. Scan the things a reader reads.
 PROSE_EXT = {".md", ".txt", ".py"}
+# Written on the citing LINE when the archived run is the intended referent.
+HISTORICAL = "[archived-on-purpose]"
 
 
 def core_shas(repo):
@@ -109,9 +120,12 @@ def prose_citations(roots):
                 except Exception:
                     continue
                 for i, line in enumerate(lines, 1):
+                    # Test the marker on the FULL line — the snippet is
+                    # truncated for display and would drop a late marker.
+                    hist = HISTORICAL in line
                     for m in HEX16.findall(line):
                         cites.setdefault(m, []).append(
-                            (p.replace("\\", "/"), i, line.strip()[:140]))
+                            (p.replace("\\", "/"), i, line.strip()[:140], hist))
     return cites
 
 
@@ -133,7 +147,7 @@ def main():
     def self_cite(sha, path):
         return live.get(sha) == path or sup.get(sha) == path
 
-    rotted, ok, core_ok, unknown = [], [], [], []
+    rotted, ok, core_ok, unknown, historical = [], [], [], [], []
     for sha, where in sorted(cites.items()):
         where = [w for w in where if not self_cite(sha, w[0])]
         if not where:
@@ -143,7 +157,17 @@ def main():
         elif sha in cores:
             core_ok.append((sha, where))
         elif sha in sup:
-            rotted.append((sha, where))
+            # A dated journal entry is a record of what was true on its date;
+            # repointing it would be falsifying the record, not fixing a
+            # pointer. Still printed — just not what the gate is about.
+            def dated(w):
+                return "/journal/" in w[0]
+            bad = [w for w in where if not w[3] and not dated(w)]
+            marked = [w for w in where if w[3] or dated(w)]
+            if bad:
+                rotted.append((sha, bad))
+            if marked:
+                historical.append((sha, marked))
         else:
             unknown.append((sha, where))
 
@@ -154,10 +178,14 @@ def main():
     print("  CORE       %d   (recomputed from receipt CONTENT — confirmed)"
           % len(core_ok))
     print("  SUPERSEDED %d   <-- rotted pointers" % len(rotted))
+    print("  HISTORICAL %d   (marked %s — archived run is the referent)"
+          % (len(historical), HISTORICAL))
     print("  UNKNOWN    %d   (nothing on disk carries or yields this sha)"
           % len(unknown))
 
     for title, group in (("ROTTED (cited sha exists only in superseded/)", rotted),
+                         ("HISTORICAL (deliberate reference to an archived run)",
+                          historical),
                          ("UNKNOWN (nothing on disk carries or yields this sha)", unknown),
                          ("CORE (cited sha == recomputed content digest)", core_ok),
                          ("LIVE (cited sha == a current receipt)", ok)):
@@ -168,7 +196,7 @@ def main():
             tgt = (sup.get(sha) or live.get(sha)
                    or (" + ".join(cores[sha]) if sha in cores else "-"))
             print("  %s  -> %s" % (sha, tgt))
-            for p, i, line in where:
+            for p, i, line, _hist in where:
                 print("       %s:%d  %s" % (p, i, line))
 
     return 1 if rotted else 0

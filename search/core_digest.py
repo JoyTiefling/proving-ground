@@ -10,7 +10,7 @@ a CORE**: re-run the same minimisation and the sha moves even though not one
 triple changed.
 
 Concretely, what made me write this: the c=4 cover-claim core was measured
-02-08 (sha `36dfed9cbac60b3e`) and re-run 14-08 (sha `24c378c7df3e11a8`).
+02-08 (sha `36dfed9cbac60b3e`) and re-run 14-08 (sha `24c378c7df3e11a8`).  # [archived-on-purpose]
 Core triples: **identical, symmetric difference 0.** But log/weak-schur.md and
 projects/frontier/STATE.md both went on citing the 02-08 sha, and on 27-08 I
 copied that stale sha into a fresh entry — describing a measurement whose real

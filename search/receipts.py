@@ -60,7 +60,7 @@ def supersede(out_path):
 
     That is exactly what happened at 14:00 on 14-08: a *control* rerun —
     the live-hand-first discipline that is supposed to protect me —
-    destroyed the published anchor 36dfed9cbac60b3e within two minutes.
+    destroyed the published anchor 36dfed9cbac60b3e within two minutes.  # [archived-on-purpose]
     It was recoverable only because I had happened to print the original
     scalars just before. An accident, not a device.
 

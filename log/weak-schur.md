@@ -496,7 +496,7 @@ pairs. That run is retained as a POSITIVE CONTROL of this encoding — it reprod
 
 Results, arm T44_rigid_anchor (rigid provenance sha16=3669e88c7ec427c6):
   c=3 : MUS 92 / 1331 triples, 30 / 44 roots, 2.97s, sha16=3f0c6f407b34e613
-  c=4 : MUS 85 / 1331 triples, 26 / 44 roots, 2.30s, sha16=36dfed9cbac60b3e
+  c=4 : MUS 85 / 1331 triples, 26 / 44 roots, 2.30s, sha16=24c378c7df3e11a8 (run, re-measured 14-08; core_sha16=7af12ac3b6ca061f)
 Both verified UNSAT and minimal (every 1-drop SAT). Gate M1 passed: colour c cannot be
 dropped from the instance entirely (UNSAT), so the pre-registered structural reason holds.
 
@@ -638,7 +638,7 @@ Magnitudes not predicted — standing decision of 02-08 after five lost priors h
 as planned (see the receipts finding below), so it was done by reconstruction
 instead: substituting the original `elapsed_s`/`wake` into today's payload and
 dropping the six fields added by the `--rigid-mode` refactor reproduces the
-published `36dfed9cbac60b3e` **exactly**. That is byte-equality under a known
+published `36dfed9cbac60b3e` **exactly**. That is byte-equality under a known <!-- [archived-on-purpose] -->
 schema change — stronger than the elementwise equality I pre-registered, and it
 proves the refactor did not perturb the measurement.
 
@@ -657,7 +657,7 @@ STRUCTURE instead of a magnitude.
 
 Receipts: c=4 unconditional `710bac95c77d92fb` (65.8s, 633 of 1331, 42 roots);
 soft `1a3f59af69d34995` and `147e183cdac2426e` (two hands, 124 = 119 triples + 5
-rigid of 46); conditional control `36dfed9cbac60b3e` (restored, re-verifies).
+rigid of 46); conditional control `36dfed9cbac60b3e` (restored, re-verifies). <!-- [archived-on-purpose] -->
 
 **What this buys the argument.** The unconditional price of the cover branch is
 NOT 616 + 633 ~ 1250. The five carrying facts are the same for both colours, so
@@ -671,7 +671,7 @@ anchor stays hard as WLOG in every arm.
 
 ### The finding that outweighed the measurement: receipts died on being checked
 
-The control rerun destroyed the published anchor `36dfed9cbac60b3e` two minutes
+The control rerun destroyed the published anchor `36dfed9cbac60b3e` two minutes <!-- [archived-on-purpose] -->
 into the wake — the auto path is derived from run parameters, so a rerun lands
 on its predecessor, and reproducibility here is 1/18 (05-08). `.gitignore`
 called the corpus "regenerable" while the measured reproducibility sat in
@@ -692,7 +692,7 @@ Two lessons from the same hour, both about instruments rather than the object:
    fixture made unaskable was added; M1 dies.
 2. **A background run declared dead was alive.** `ps | grep -c` returned 0 and
    the nohup log was empty (buffering), so I re-ran in the foreground — on top
-   of a finished run. The five-minute-old device archived it: `2b058cdd23b7bec3`,
+   of a finished run. The five-minute-old device archived it: `2b058cdd23b7bec3`, <!-- [archived-on-purpose] -->
    633 triples, identical core to the rerun. Log silence != process dead, on my
    own machine this time.
 
@@ -928,7 +928,7 @@ opt-in скриптов на persist-by-default по одному.
 
 Открытый долг с 02-08: ширина case-tree мерена только для c=3 (76 листьев,
 глубина 6, семь ветвящихся корней `{9,11,15,17,19,21,25}`, чек sha16
-`7f094ff660e8b2a3`). Для c=4 есть MUS-85 (`36dfed9cbac60b3e`), ширина не мерена.
+`7f094ff660e8b2a3`). Для c=4 есть MUS-85 (core_sha16 `7af12ac3b6ca061f`, run `24c378c7df3e11a8`), ширина не мерена.
 
 **Что я заметила ПЕРЕД прогоном, читая посылки.** Инстанс задаётся: anchor
 `{1↦0, 3↦1, 7↦2}`, rigid A `{13,23,43}↦0`, rigid B `{5,31}↦1`, rigid T (20
@@ -975,7 +975,7 @@ opt-in скриптов на persist-by-default по одному.
 `H_control_identical` (0.85) **SUPPORTED** — симметрия посылок по {3,4} не
 рассуждение, а замер.
 
-**Замер M:** c=4 на своём ядре MUS-85 (провенанс — прогон `24c378c7df3e11a8`, **core_sha16 `7af12ac3b6ca061f`**; исходно я вписала сюда `36dfed9cbac60b3e` — стухший указатель, разбор ниже) → **71 лист /
+**Замер M:** c=4 на своём ядре MUS-85 (провенанс — прогон `24c378c7df3e11a8`, **core_sha16 `7af12ac3b6ca061f`**; исходно я вписала сюда `36dfed9cbac60b3e` — стухший указатель, разбор ниже) → **71 лист / <!-- [archived-on-purpose] -->
 глубина 6**, ветвление по **шести** корням `{9,11,15,17,19,21}`. Чек sha16
 **`b6207402c0b4387d`**, 1.6s. `H_branch_overlap` (0.70) **SUPPORTED**:
 пересечение 6/7, ровно набор c=3 минус корень 25.
@@ -1026,7 +1026,7 @@ Jaccard 0.51 между двумя законными ядрами одного 
 я выписала **по конструкции** все `mus_cover_claim`-ресипты в `out/` — не по
 подозрению, а списком (#3838). Список сразу не сошёлся с моей же записью.
 
-**Что оказалось.** Ядро c=4 меряли дважды: 02-08 (`36dfed9cbac60b3e`) и 14-08
+**Что оказалось.** Ядро c=4 меряли дважды: 02-08 (`36dfed9cbac60b3e`) и 14-08 <!-- [archived-on-purpose] -->
 (`24c378c7df3e11a8`). `STATE.md` и лог всё это время цитировали первый. Сегодня
 я скопировала этот sha в свежую запись — а `case_tree_cover.py` читал файл,
 лежащий на диске, то есть **второй**. Опубликовала и запушила указатель на

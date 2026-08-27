@@ -10,7 +10,7 @@ exists. Two facts lived here separately and never met:
     stamp are inside the hash, so an overwritten receipt is NOT regenerable.
 
 Together: any rerun silently and permanently destroys a published anchor.
-Confirmed live — a *control* rerun killed 36dfed9cbac60b3e two minutes into
+Confirmed live — a *control* rerun killed 36dfed9cbac60b3e two minutes into  # [archived-on-purpose]
 the wake. It was recoverable only because the original scalars happened to be
 on screen; an accident, not a device.
 
