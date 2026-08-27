@@ -1,0 +1,119 @@
+{
+  "G1_unsat": true,
+  "G2_drops_checked": 92,
+  "G2_drops_still_unsat": [],
+  "G2_pass": true,
+  "N": 90,
+  "backdoor_candidates_scanned": [
+    7,
+    11,
+    9,
+    17,
+    19,
+    21,
+    25,
+    15,
+    29,
+    27,
+    33,
+    63,
+    59,
+    39
+  ],
+  "best_depth": 6,
+  "best_leaves": 76,
+  "colour": 4,
+  "core_size": 92,
+  "elapsed_s": 3.837,
+  "k": 5,
+  "pairs": [
+    [
+      11,
+      17
+    ],
+    [
+      35,
+      55
+    ]
+  ],
+  "prereg": null,
+  "prereg_note": "registered in log/weak-schur.md under the wake stamp above; magnitude deliberately NOT predicted for this object since 02-08",
+  "script": "case_tree_cover.py",
+  "secondary_backdoor_le2": false,
+  "sha16": "586819dcbe95925d",
+  "source_mus_size": 92,
+  "source_receipt_sha16": "3f0c6f407b34e613",
+  "trees": {
+    "dynamic": {
+      "branch_node_counts": {
+        "11": 10,
+        "15": 2,
+        "17": 20,
+        "19": 18,
+        "21": 14,
+        "25": 14,
+        "29": 1,
+        "33": 3,
+        "9": 1
+      },
+      "branch_root_count": 9,
+      "branch_roots": [
+        9,
+        11,
+        15,
+        17,
+        19,
+        21,
+        25,
+        29,
+        33
+      ],
+      "capped": false,
+      "depth": 8,
+      "leaves": 103,
+      "leaves_by_depth": {
+        "3": 4,
+        "4": 21,
+        "5": 47,
+        "6": 24,
+        "7": 5,
+        "8": 2
+      },
+      "nodes": 186
+    },
+    "static": {
+      "branch_node_counts": {
+        "11": 1,
+        "15": 1,
+        "17": 8,
+        "19": 15,
+        "21": 25,
+        "25": 7,
+        "9": 3
+      },
+      "branch_root_count": 7,
+      "branch_roots": [
+        9,
+        11,
+        15,
+        17,
+        19,
+        21,
+        25
+      ],
+      "capped": false,
+      "depth": 6,
+      "leaves": 76,
+      "leaves_by_depth": {
+        "3": 4,
+        "4": 16,
+        "5": 44,
+        "6": 12
+      },
+      "nodes": 136
+    }
+  },
+  "uniform_backdoor": null,
+  "verdict": "H_medium",
+  "wake": "2026-08-27T00:02:40Z"
+}

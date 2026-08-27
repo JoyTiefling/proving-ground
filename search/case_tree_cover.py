@@ -235,13 +235,22 @@ def case_tree(dom, groups, pair_clauses, order, mode, node_cap):
 
 
 def main():
+    global COLOUR
     ap = argparse.ArgumentParser()
     ap.add_argument("--receipt", default=RECEIPT)
+    ap.add_argument("--colour", type=int, default=COLOUR,
+                    help="colour whose cover-claim is being refuted. The "
+                         "premises (anchor 7=2, rigid A->0, B->1, T->{2,3,4}, "
+                         "X->not 1) do not distinguish 3 from 4, so running "
+                         "the SAME core at --colour 4 is a positive control "
+                         "of that symmetry, not a new measurement.")
     ap.add_argument("--node-cap", type=int, default=400000)
     ap.add_argument("--backdoor-max", type=int, default=2)
     ap.add_argument("--out", type=str, default="")
     ap.add_argument("--no-out", action="store_true")
     args = ap.parse_args()
+
+    COLOUR = args.colour
 
     t0 = time.time()
     src, core = load_core(args.receipt)
@@ -264,9 +273,21 @@ def main():
         "source_mus_size": src.get("mus_size"),
         "N": 90, "k": K, "colour": COLOUR, "pairs": [list(p) for p in PAIRS],
         "core_size": len(core),
-        "prereg": {"H_tiny<=10": 0.15, "H_small_11_60": 0.40,
-                   "H_medium_61_500": 0.30, "H_large>500": 0.15,
-                   "secondary_backdoor<=2": 0.25},
+        # This block belonged to the 02-08 c=3 run and to nothing else. It
+        # stayed hardcoded, so any later run stamped its own result with a
+        # prediction made about a different instance — the same defect class
+        # as the frozen "wake" field above (#3706), one field over. A
+        # pre-registration that cannot disagree with the run it labels is
+        # not a pre-registration. Carried only when the run it describes is
+        # actually reproduced (c=3 on the 92-triple core).
+        "prereg": ({"H_tiny<=10": 0.15, "H_small_11_60": 0.40,
+                    "H_medium_61_500": 0.30, "H_large>500": 0.15,
+                    "secondary_backdoor<=2": 0.25}
+                   if (COLOUR == 3 and len(core) == 92) else None),
+        "prereg_note": ("registered in log/weak-schur.md under the wake stamp "
+                        "above; magnitude deliberately NOT predicted for this "
+                        "object since 02-08" if not (COLOUR == 3 and len(core) == 92)
+                        else "2026-08-02 18:00, c=3 / MUS-92"),
     }
 
     # ---- G1: the re-encoded instance must be UNSAT -------------------
