@@ -1,0 +1,148 @@
+{
+  "source": "Bouzy, 'An Abstract Procedure to Compute Weak Schur Number Lower Bounds', LIPADE-TR-2, Sept 2015",
+  "published_k": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "measured_k": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "excluded": {
+    "6": "Table 17 (582 элемента, перенос по строкам) — транскрипция не делалась: риск моей опечатки выше пользы замера"
+  },
+  "rows": [
+    {
+      "name": "K=2 optimal (WS(2)=8)",
+      "k": 2,
+      "n": 8,
+      "table": "Table 3",
+      "gate": "PASS",
+      "chain_hits": 4,
+      "chain_total": 4,
+      "chain_rate": 1.0,
+      "first_violations": [],
+      "chain_mono": true
+    },
+    {
+      "name": "K=3 optimal A (WS(3)=23)",
+      "k": 3,
+      "n": 23,
+      "table": "Table 4",
+      "gate": "PASS",
+      "chain_hits": 7,
+      "chain_total": 11,
+      "chain_rate": 0.6364,
+      "first_violations": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "chain_mono": false
+    },
+    {
+      "name": "K=3 optimal B (WS(3)=23)",
+      "k": 3,
+      "n": 23,
+      "table": "Table 4",
+      "gate": "PASS",
+      "chain_hits": 7,
+      "chain_total": 11,
+      "chain_rate": 0.6364,
+      "first_violations": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "chain_mono": false
+    },
+    {
+      "name": "K=3 optimal C (WS(3)=23)",
+      "k": 3,
+      "n": 23,
+      "table": "Table 4",
+      "gate": "PASS",
+      "chain_hits": 8,
+      "chain_total": 11,
+      "chain_rate": 0.7273,
+      "first_violations": [
+        5,
+        6,
+        7
+      ],
+      "chain_mono": false
+    },
+    {
+      "name": "K=4 optimal (WS(4)=66)",
+      "k": 4,
+      "n": 66,
+      "table": "Table 14",
+      "gate": "PASS",
+      "chain_hits": 12,
+      "chain_total": 33,
+      "chain_rate": 0.3636,
+      "first_violations": [
+        5,
+        6,
+        7,
+        12,
+        13,
+        14,
+        15,
+        17
+      ],
+      "chain_mono": false
+    },
+    {
+      "name": "K=4 optimal, compact form",
+      "k": 4,
+      "n": 66,
+      "table": "Table 15",
+      "gate": "PASS",
+      "chain_hits": 8,
+      "chain_total": 33,
+      "chain_rate": 0.2424,
+      "first_violations": [
+        5,
+        6,
+        7,
+        8,
+        12,
+        13,
+        14,
+        15
+      ],
+      "chain_mono": false
+    },
+    {
+      "name": "K=5 best known (WS(5)>=196)",
+      "k": 5,
+      "n": 196,
+      "table": "Table 16",
+      "gate": "PASS",
+      "chain_hits": 13,
+      "chain_total": 98,
+      "chain_rate": 0.1327,
+      "first_violations": [
+        5,
+        6,
+        7,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "chain_mono": false
+    }
+  ],
+  "rejected": [],
+  "verdict_A_refuted": true
+}
