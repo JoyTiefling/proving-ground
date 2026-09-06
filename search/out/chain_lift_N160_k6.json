@@ -1,0 +1,65 @@
+{
+  "controls": [],
+  "controls_pass": true,
+  "first_unsat": null,
+  "hi": 160,
+  "instrument": "chain_lift.py (incremental climb)",
+  "k": 6,
+  "ladder": [
+    {
+      "N": 140,
+      "chain_mono": true,
+      "gate": true,
+      "s": 25.441,
+      "verdict": "SAT"
+    },
+    {
+      "N": 141,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.013,
+      "verdict": "SAT"
+    },
+    {
+      "N": 142,
+      "chain_mono": true,
+      "gate": true,
+      "s": 21.757,
+      "verdict": "SAT"
+    },
+    {
+      "N": 143,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.001,
+      "verdict": "SAT"
+    },
+    {
+      "N": 144,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.001,
+      "verdict": "SAT"
+    },
+    {
+      "N": 145,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 146,
+      "s": 110.013,
+      "verdict": "UNKNOWN",
+      "why": "step budget"
+    }
+  ],
+  "last_sat": 145,
+  "lo": 140,
+  "sha16": "b341cc5c41375c3b",
+  "stalled_at": 146,
+  "step_budget_s": 110.0,
+  "total_budget_s": 320.0,
+  "verdict": "M >= 145 — ВИЛКА: у N=146 нет вердикта, есть истёкшее время"
+}

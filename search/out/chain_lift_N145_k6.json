@@ -1,0 +1,171 @@
+{
+  "controls": [
+    {
+      "N": 24,
+      "control": "C0",
+      "k": 3,
+      "n_clauses": 565,
+      "pass": true
+    },
+    {
+      "N": 40,
+      "control": "C0",
+      "k": 5,
+      "n_clauses": 2541,
+      "pass": true
+    },
+    {
+      "N": 30,
+      "control": "C0",
+      "k": 6,
+      "n_clauses": 1921,
+      "pass": true
+    },
+    {
+      "control": "C1",
+      "normal_budget": "SAT",
+      "pass": true,
+      "zero_budget": "UNKNOWN"
+    },
+    {
+      "control": "C2",
+      "first_unsat": 23,
+      "k": 3,
+      "last_sat": 22,
+      "pass": true
+    },
+    {
+      "control": "C5",
+      "first_unsat": 24,
+      "last_sat": 23,
+      "mutant": "chain off",
+      "pass": true
+    },
+    {
+      "control": "C3",
+      "elapsed_s": 0.52,
+      "first_unsat": 90,
+      "k": 5,
+      "last_sat": 89,
+      "pass": true
+    }
+  ],
+  "controls_pass": true,
+  "first_unsat": null,
+  "hi": 145,
+  "instrument": "chain_lift.py (incremental climb)",
+  "k": 6,
+  "ladder": [
+    {
+      "N": 130,
+      "chain_mono": true,
+      "gate": true,
+      "s": 3.023,
+      "verdict": "SAT"
+    },
+    {
+      "N": 131,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.006,
+      "verdict": "SAT"
+    },
+    {
+      "N": 132,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.757,
+      "verdict": "SAT"
+    },
+    {
+      "N": 133,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.001,
+      "verdict": "SAT"
+    },
+    {
+      "N": 134,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 135,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 136,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.001,
+      "verdict": "SAT"
+    },
+    {
+      "N": 137,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 138,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 139,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 140,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 141,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 142,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.543,
+      "verdict": "SAT"
+    },
+    {
+      "N": 143,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.004,
+      "verdict": "SAT"
+    },
+    {
+      "N": 144,
+      "s": 25.001,
+      "verdict": "UNKNOWN",
+      "why": "step budget"
+    }
+  ],
+  "last_sat": 143,
+  "lo": 130,
+  "sha16": "20b178cde1162fdb",
+  "stalled_at": 144,
+  "step_budget_s": 25.0,
+  "total_budget_s": 200.0,
+  "verdict": "M >= 143 — ВИЛКА: у N=144 нет вердикта, есть истёкшее время"
+}
