@@ -1,0 +1,129 @@
+{
+ "driver_sees_death": true,
+ "k": 6,
+ "hi": 160,
+ "budget": 200000,
+ "cells": [
+  {
+   "label": "poscontrol",
+   "rc": 1,
+   "s": 0.2,
+   "reached_N": 50,
+   "last_sat": 49,
+   "why": "crash-now armed",
+   "child_done": false,
+   "stderr_tail": "OSError: exception: access violation reading 0x0000000000000000",
+   "hi": 160
+  },
+  {
+   "label": "solver_Minisat22",
+   "rc": 0,
+   "s": 7.9,
+   "reached_N": 138,
+   "last_sat": 137,
+   "why": "UNKNOWN at 138 (бюджет 200000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 160
+  },
+  {
+   "label": "solver_MinisatGH",
+   "rc": 1,
+   "s": 0.2,
+   "reached_N": null,
+   "last_sat": null,
+   "why": null,
+   "child_done": false,
+   "stderr_tail": "pysat.solvers.NoSuchSolverError: minisatgh",
+   "hi": 160
+  },
+  {
+   "label": "solver_Glucose3",
+   "rc": 0,
+   "s": 9.0,
+   "reached_N": 135,
+   "last_sat": 134,
+   "why": "UNKNOWN at 135 (бюджет 200000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 160
+  },
+  {
+   "label": "solver_Glucose42",
+   "rc": 0,
+   "s": 22.0,
+   "reached_N": 138,
+   "last_sat": 137,
+   "why": "UNKNOWN at 138 (бюджет 200000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 160
+  },
+  {
+   "label": "solver_Cadical153",
+   "rc": 0,
+   "s": 18.2,
+   "reached_N": 138,
+   "last_sat": 137,
+   "why": "UNKNOWN at 138 (бюджет 200000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 160
+  },
+  {
+   "label": "solver_Mergesat3",
+   "rc": 0,
+   "s": 28.1,
+   "reached_N": 144,
+   "last_sat": 143,
+   "why": "UNKNOWN at 144 (бюджет 200000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 160
+  },
+  {
+   "label": "solver_Maplesat",
+   "rc": 0,
+   "s": 7.1,
+   "reached_N": 142,
+   "last_sat": 141,
+   "why": "UNKNOWN at 142 (бюджет 200000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 160
+  },
+  {
+   "label": "m22_limited_modelevery",
+   "rc": 0,
+   "s": 7.8,
+   "reached_N": 138,
+   "last_sat": 137,
+   "why": "UNKNOWN at 138 (бюджет 200000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 160
+  },
+  {
+   "label": "m22_limited_nomodel",
+   "rc": 0,
+   "s": 7.9,
+   "reached_N": 138,
+   "last_sat": 137,
+   "why": "UNKNOWN at 138 (бюджет 200000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 160
+  },
+  {
+   "label": "m22_plain_modelevery",
+   "rc": 3221225477,
+   "s": 44.6,
+   "reached_N": 143,
+   "last_sat": 143,
+   "why": "running",
+   "child_done": false,
+   "stderr_tail": "",
+   "hi": 160
+  }
+ ]
+}

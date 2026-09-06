@@ -1,0 +1,53 @@
+{
+ "driver_sees_death": true,
+ "k": 6,
+ "hi": 150,
+ "axis_method": "plain",
+ "budget": 200000,
+ "cells": [
+  {
+   "label": "poscontrol",
+   "rc": 1,
+   "s": 0.2,
+   "reached_N": 50,
+   "last_sat": 49,
+   "why": "crash-now armed",
+   "child_done": false,
+   "stderr_tail": "OSError: exception: access violation reading 0x0000000000000000",
+   "hi": 150
+  },
+  {
+   "label": "solver_Glucose3",
+   "rc": 0,
+   "s": 94.0,
+   "reached_N": 139,
+   "last_sat": 139,
+   "why": "wall guard (НЕ вердикт: до участка падения не дошли)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 150
+  },
+  {
+   "label": "solver_Cadical153",
+   "rc": 0,
+   "s": 74.7,
+   "reached_N": 142,
+   "last_sat": 142,
+   "why": "wall guard (НЕ вердикт: до участка падения не дошли)",
+   "child_done": true,
+   "stderr_tail": "",
+   "hi": 150
+  },
+  {
+   "label": "solver_Mergesat3",
+   "rc": 143,
+   "s": 251.0,
+   "reached_N": 145,
+   "last_sat": 145,
+   "why": "running",
+   "child_done": false,
+   "stderr_tail": "",
+   "hi": 150
+  }
+ ]
+}
