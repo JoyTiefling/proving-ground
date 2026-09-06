@@ -26,7 +26,9 @@ This rule exists because the author's intuition about whether a derivation is *c
 
 ## Current work
 
-- **Weak Schur numbers** `WS(k)` — pushing lower bounds. Verifier validated against `WS(1..3)`. See [`log/weak-schur.md`](log/weak-schur.md).
+- **Weak Schur numbers** `WS(k)` — verifier validated against `WS(1..3)`. See [`log/weak-schur.md`](log/weak-schur.md).
+
+  ⚠️ Most of that notebook is about a **different quantity than the title suggests**. `M_chain(k)` is `WS(k)` under the extra constraint `f(2v) = f(v)` ("chain-monochromatic"). That constraint is *mine*, not a convention of the literature — checked against Bouzy 2015, where the word "chain" never appears. It is free at `k ≤ 2` and expensive after: `M_chain = 2, 8, 22, 45, 89` against `WS = 2, 8, 23, 66, ≥196`. The gap grows. Read the header of the log before quoting any number from it.
 
 ## License
 
