@@ -76,7 +76,30 @@ sys.path.insert(0, str(_HERE.parent))
 sys.path.insert(0, str(_HERE))
 
 from verifiers.weak_schur import verify_weak_schur  # noqa: E402  ГЕЙТ, не тронут
-from pysat.solvers import Minisat22  # noqa: E402
+from pysat.solvers import Minisat22, Mergesat3, Cadical153, Glucose42  # noqa: E402
+
+# ДВИЖОК — ПАРАМЕТР, А НЕ КОНСТАНТА ФАЙЛА (12-09 00:00).
+# Повод: подъём k=6 умирает сегфолтом на N~143-145, причина НЕ установлена, и
+# probe_segfault показал, что падает и второй солвер (Mergesat3). Но Mergesat3
+# и Minisat22 — ОДНА РОДОСЛОВНАЯ (оба потомки MiniSat): «второй носитель» из
+# той же семьи наследует и дефект семьи, если он там. Это #4238 в чистом виде —
+# я взяла второй экземпляр, а не вторую ПОЗИЦИЮ (#3812/#4052: новый класс даёт
+# только смена позиции наблюдателя, а не ещё одна проверка с той же).
+# Поэтому реестр разделён по РОДОСЛОВНОЙ, а не по именам: minisat-семья против
+# cadical (собственная кодовая база) и glucose42 (форк minisat, но своя
+# рестарт-политика). Регистр, не enum — новый движок добавляется строкой.
+SOLVERS = {
+    "minisat22": (Minisat22, "minisat"),
+    "mergesat3": (Mergesat3, "minisat"),
+    "glucose42": (Glucose42, "minisat-fork"),
+    "cadical153": (Cadical153, "cadical"),
+}
+
+
+def make_solver(name: str):
+    if name not in SOLVERS:
+        raise SystemExit(f"неизвестный движок {name!r}; есть: {', '.join(SOLVERS)}")
+    return SOLVERS[name][0]()
 
 import receipts  # noqa: E402
 from sat_chain_mono import build_cnf  # noqa: E402  сравнение с лобовой сборкой
@@ -188,7 +211,8 @@ def is_chain_mono(col: List[int], N: int) -> bool:
 def climb(k: int, hi: int, lo: int = 1, chain: bool = True, conflicts: bool = True,
           symmetry: bool = True, step_budget: int = 200000,
           total_budget: float = 600.0, gate_every: bool = True,
-          verbose: bool = False, live_path: str = "") -> Dict:
+          verbose: bool = False, live_path: str = "",
+          solver_name: str = "minisat22") -> Dict:
     """Инкрементальный подъём по N. Один солвер, клаузы дописываются.
 
     Возвращает лестницу поимённо: для каждого N вердикт и время.
@@ -203,7 +227,7 @@ def climb(k: int, hi: int, lo: int = 1, chain: bool = True, conflicts: bool = Tr
     stalled_at = None
     t_start = time.time()
 
-    s = Minisat22()
+    s = make_solver(solver_name)
     added: List[List[int]] = []
     if symmetry:
         cl = [var(1, 0, k)]
@@ -264,7 +288,8 @@ def climb(k: int, hi: int, lo: int = 1, chain: bool = True, conflicts: bool = Tr
             if live_path:
                 try:
                     with open(live_path, "w", encoding="utf-8") as fh:
-                        json.dump({"live": True, "k": k, "reached_N": n,
+                        json.dump({"live": True, "k": k, "solver": solver_name,
+                                   "reached_N": n,
                                    "last_sat": n, "witness": best_witness[1:],
                                    "ladder": ladder + [row]}, fh, ensure_ascii=False)
                 except OSError:
@@ -286,6 +311,7 @@ def climb(k: int, hi: int, lo: int = 1, chain: bool = True, conflicts: bool = Tr
     s.delete()
     return {"ladder": ladder, "last_sat": last_sat, "first_unsat": first_unsat,
             "stalled_at": stalled_at, "witness": best_witness,
+            "solver": solver_name, "lineage": SOLVERS[solver_name][1],
             "elapsed_s": round(time.time() - t_start, 2)}
 
 
@@ -301,7 +327,7 @@ def verdict_line(res: Dict) -> str:
 
 # ----------------------------------------------------------------- контроли
 
-def controls(step_budget: int) -> Tuple[bool, List[Dict]]:
+def controls(step_budget: int, solver_name: str = "minisat22") -> Tuple[bool, List[Dict]]:
     log: List[Dict] = []
     ok_all = True
 
@@ -322,7 +348,7 @@ def controls(step_budget: int) -> Tuple[bool, List[Dict]]:
     # быть UNKNOWN, при большом -- UNSAT. Тривиальный экземпляр тут не годится:
     # он решается за 0 конфликтов и вернул бы вердикт при любом бюджете, т.е.
     # контроль был бы зелёным даже у прибора, где бюджет ни на что не влияет.
-    s = Minisat22()
+    s = make_solver(solver_name)
     s.add_clause([var(1, 0, 5)])
     for v in range(1, 91):
         for cl in clauses_for_element(v, 5):
@@ -337,7 +363,7 @@ def controls(step_budget: int) -> Tuple[bool, List[Dict]]:
           f"{'OK' if c1 else 'ПРИБОР: UNKNOWN недостижим, вывод двузначный'}")
 
     # C2 -- k=3 обязан встать на 22.
-    r3 = climb(3, hi=26, lo=18, step_budget=step_budget, total_budget=120)
+    r3 = climb(3, hi=26, lo=18, step_budget=step_budget, total_budget=120, solver_name=solver_name)
     c2 = (r3["last_sat"] == 22 and r3["first_unsat"] == 23)
     ok_all &= c2
     log.append({"control": "C2", "k": 3, **{x: r3[x] for x in ("last_sat", "first_unsat")},
@@ -346,7 +372,7 @@ def controls(step_budget: int) -> Tuple[bool, List[Dict]]:
           f"{'OK (сошлось с тремя носителями)' if c2 else 'РАЗОШЛОСЬ с прежними носителями'}")
 
     # C5 -- мутант: сорвать chain-клаузу, граница обязана сдвинуться вверх.
-    r3m = climb(3, hi=24, lo=18, chain=False, step_budget=step_budget, total_budget=120)
+    r3m = climb(3, hi=24, lo=18, chain=False, step_budget=step_budget, total_budget=120, solver_name=solver_name)
     c5 = (r3m["last_sat"] == 23)
     ok_all &= c5
     log.append({"control": "C5", "mutant": "chain off", "last_sat": r3m["last_sat"],
@@ -359,8 +385,8 @@ def controls(step_budget: int) -> Tuple[bool, List[Dict]]:
     # потому что `lo` резал не печать, а вызовы solve. У такого дефекта не было
     # красного состояния — он выглядел как настройка вывода. Теперь есть: две
     # величины lo обязаны дать ПОСИМВОЛЬНО одинаковую лестницу вердиктов.
-    la = climb(4, hi=48, lo=1, step_budget=step_budget, total_budget=120)
-    lb = climb(4, hi=48, lo=40, step_budget=step_budget, total_budget=120)
+    la = climb(4, hi=48, lo=1, step_budget=step_budget, total_budget=120, solver_name=solver_name)
+    lb = climb(4, hi=48, lo=40, step_budget=step_budget, total_budget=120, solver_name=solver_name)
     seq_a = [(r["N"], r["verdict"]) for r in la["ladder"]]
     seq_b = [(r["N"], r["verdict"]) for r in lb["ladder"]]
     c6 = (seq_a == seq_b) and la["last_sat"] == lb["last_sat"] == 45
@@ -375,8 +401,8 @@ def controls(step_budget: int) -> Tuple[bool, List[Dict]]:
     # C7 -- ЛЕСТНИЦА ВОСПРОИЗВОДИМА. Родился из дефекта: секундный бюджет делал
     # вердикт функцией загрузки машины, и перепрогнать замер было нельзя. Два
     # прогона на тесном бюджете (много UNKNOWN) обязаны совпасть посимвольно.
-    da = climb(6, hi=150, lo=1, step_budget=3000, total_budget=120)
-    db = climb(6, hi=150, lo=1, step_budget=3000, total_budget=120)
+    da = climb(6, hi=150, lo=1, step_budget=3000, total_budget=120, solver_name=solver_name)
+    db = climb(6, hi=150, lo=1, step_budget=3000, total_budget=120, solver_name=solver_name)
     sa = [(r["N"], r["verdict"]) for r in da["ladder"]]
     sb = [(r["N"], r["verdict"]) for r in db["ladder"]]
     c7 = (sa == sb)
@@ -390,7 +416,7 @@ def controls(step_budget: int) -> Tuple[bool, List[Dict]]:
 
     # C3 -- k=5 обязан встать на 89.
     t0 = time.time()
-    r5 = climb(5, hi=92, lo=85, step_budget=step_budget, total_budget=240)
+    r5 = climb(5, hi=92, lo=85, step_budget=step_budget, total_budget=240, solver_name=solver_name)
     c3 = (r5["last_sat"] == 89 and r5["first_unsat"] == 90)
     ok_all &= c3
     log.append({"control": "C3", "k": 5, **{x: r5[x] for x in ("last_sat", "first_unsat")},
@@ -413,13 +439,15 @@ if __name__ == "__main__":
     ap.add_argument("--skip-controls", action="store_true")
     ap.add_argument("--out", type=str, default="")
     ap.add_argument("--no-out", action="store_true")
+    ap.add_argument("--solver", type=str, default="minisat22",
+                    help="движок: " + ", ".join(f"{n} ({SOLVERS[n][1]})" for n in SOLVERS))
     args = ap.parse_args()
 
     out_path = receipts.resolve_out(args, __file__, N=args.hi, k=args.k)
     receipts.probe_writable(out_path)
 
     print("=== M_chain(k) подъёмом: инкрементальный SAT ===\n")
-    ctl_ok, ctl_log = (True, []) if args.skip_controls else controls(step_budget=200000)
+    ctl_ok, ctl_log = (True, []) if args.skip_controls else controls(step_budget=200000, solver_name=args.solver)
     if not args.skip_controls:
         print()
     if not ctl_ok:
@@ -428,12 +456,13 @@ if __name__ == "__main__":
                                           "measurement": None})
         sys.exit(1)
 
-    print(f"ЗАМЕР: подъём k={args.k} до N={args.hi} "
+    print(f"ЗАМЕР: движок {args.solver} ({SOLVERS[args.solver][1]}), подъём k={args.k} до N={args.hi} "
           f"(шаг <= {args.step_budget} конфл., предохранитель {args.total_budget}s)")
     t0 = time.time()
     live_path = (os.path.splitext(out_path)[0] + ".live.json") if out_path else ""
     res = climb(args.k, hi=args.hi, lo=args.lo, step_budget=args.step_budget,
-                total_budget=args.total_budget, verbose=True, live_path=live_path)
+                total_budget=args.total_budget, verbose=True, live_path=live_path,
+                solver_name=args.solver)
     print(f"\nЛестница (от N={args.lo}):")
     for row in res["ladder"]:
         if row["N"] < args.lo:
@@ -445,6 +474,7 @@ if __name__ == "__main__":
 
     receipts.write_receipt(out_path, {
         "instrument": "chain_lift.py (incremental climb)",
+        "solver": args.solver, "solver_lineage": SOLVERS[args.solver][1],
         "controls": ctl_log,
         "controls_pass": ctl_ok,
         "k": args.k, "hi": args.hi, "lo": args.lo,

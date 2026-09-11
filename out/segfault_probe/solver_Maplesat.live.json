@@ -1,0 +1,1 @@
+{"solver": "Maplesat", "method": "plain", "reached_N": 142, "last_sat": 142, "why": "wall guard (НЕ вердикт: до участка падения не дошли)", "done": true, "elapsed_s": 2825.88}

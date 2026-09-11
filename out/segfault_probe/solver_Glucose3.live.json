@@ -1,0 +1,1 @@
+{"solver": "Glucose3", "method": "plain", "reached_N": 139, "last_sat": 139, "why": "wall guard (НЕ вердикт: до участка падения не дошли)", "done": true, "elapsed_s": 93.86}
