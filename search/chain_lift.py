@@ -291,6 +291,14 @@ def climb(k: int, hi: int, lo: int = 1, chain: bool = True, conflicts: bool = Tr
                         json.dump({"live": True, "k": k, "solver": solver_name,
                                    "reached_N": n,
                                    "last_sat": n, "witness": best_witness[1:],
+                                   # КТО это пишет. Без pid «файл не растёт»
+                                   # значит одновременно «ещё считает тяжёлую
+                                   # ступень» и «процесс мёртв», и оба дают
+                                   # один экран (#3961). pid переводит разницу
+                                   # в наблюдаемое: жив ли ЭТОТ процесс.
+                                   "pid": os.getpid(),
+                                   "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ",
+                                                       time.gmtime()),
                                    "ladder": ladder + [row]}, fh, ensure_ascii=False)
                 except OSError:
                     pass
