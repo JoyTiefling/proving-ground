@@ -1,0 +1,1172 @@
+{
+  "controls": [],
+  "controls_pass": true,
+  "first_unsat": null,
+  "hi": 200,
+  "instrument": "chain_lift.py (incremental climb)",
+  "k": 6,
+  "ladder": [
+    {
+      "N": 1,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 2,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 3,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 4,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 5,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 6,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 7,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 8,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 9,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 10,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 11,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 12,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 13,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 14,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 15,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 16,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 17,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 18,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 19,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 20,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 21,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 22,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 23,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 24,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 25,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 26,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 27,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 28,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 29,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 30,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 31,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 32,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 33,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 34,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 35,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 36,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 37,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 38,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 39,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 40,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 41,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 42,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 43,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 44,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 45,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 46,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 47,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 48,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 49,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 50,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 51,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 52,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 53,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 54,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 55,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 56,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 57,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 58,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 59,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 60,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 61,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 62,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 63,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 64,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 65,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 66,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 67,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 68,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 69,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 70,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 71,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 72,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 73,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 74,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 75,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 76,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 77,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 78,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 79,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 80,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 81,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 82,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 83,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 84,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 85,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 86,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 87,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 88,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 89,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 90,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 91,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 92,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 93,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 94,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 95,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 96,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 97,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 98,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 99,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 100,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 101,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 102,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 103,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 104,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 105,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 106,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 107,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 108,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 109,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 110,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.003,
+      "verdict": "SAT"
+    },
+    {
+      "N": 111,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 112,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 113,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 114,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.008,
+      "verdict": "SAT"
+    },
+    {
+      "N": 115,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 116,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 117,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 118,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 119,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 120,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.02,
+      "verdict": "SAT"
+    },
+    {
+      "N": 121,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 122,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 123,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 124,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 125,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 126,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.477,
+      "verdict": "SAT"
+    },
+    {
+      "N": 127,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.004,
+      "verdict": "SAT"
+    },
+    {
+      "N": 128,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.001,
+      "verdict": "SAT"
+    },
+    {
+      "N": 129,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 130,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.176,
+      "verdict": "SAT"
+    },
+    {
+      "N": 131,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.004,
+      "verdict": "SAT"
+    },
+    {
+      "N": 132,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.016,
+      "verdict": "SAT"
+    },
+    {
+      "N": 133,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 134,
+      "chain_mono": true,
+      "gate": true,
+      "s": 1.676,
+      "verdict": "SAT"
+    },
+    {
+      "N": 135,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.006,
+      "verdict": "SAT"
+    },
+    {
+      "N": 136,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.001,
+      "verdict": "SAT"
+    },
+    {
+      "N": 137,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 138,
+      "chain_mono": true,
+      "gate": true,
+      "s": 11.609,
+      "verdict": "SAT"
+    },
+    {
+      "N": 139,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.011,
+      "verdict": "SAT"
+    },
+    {
+      "N": 140,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 141,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.0,
+      "verdict": "SAT"
+    },
+    {
+      "N": 142,
+      "chain_mono": true,
+      "gate": true,
+      "s": 11.837,
+      "verdict": "SAT"
+    },
+    {
+      "N": 143,
+      "chain_mono": true,
+      "gate": true,
+      "s": 0.006,
+      "verdict": "SAT"
+    },
+    {
+      "N": 144,
+      "s": 17.191,
+      "verdict": "UNKNOWN",
+      "why": "conflict budget 500000"
+    }
+  ],
+  "last_sat": 143,
+  "lo": 130,
+  "sha16": "376edbba466301a6",
+  "solver": "minisat22",
+  "solver_lineage": "minisat",
+  "stalled_at": 144,
+  "step_budget_conflicts": 500000,
+  "total_budget_s": 900.0,
+  "verdict": "M >= 143 — ВИЛКА: у N=144 нет вердикта, есть истёкшее время",
+  "witness": [
+    0,
+    0,
+    2,
+    0,
+    4,
+    2,
+    4,
+    0,
+    3,
+    4,
+    3,
+    2,
+    5,
+    4,
+    5,
+    0,
+    3,
+    3,
+    0,
+    4,
+    3,
+    3,
+    5,
+    2,
+    0,
+    5,
+    5,
+    4,
+    2,
+    5,
+    4,
+    0,
+    2,
+    3,
+    5,
+    3,
+    3,
+    0,
+    4,
+    4,
+    3,
+    3,
+    4,
+    3,
+    1,
+    5,
+    1,
+    2,
+    2,
+    0,
+    5,
+    5,
+    0,
+    5,
+    1,
+    4,
+    1,
+    2,
+    2,
+    5,
+    1,
+    4,
+    5,
+    0,
+    4,
+    2,
+    0,
+    3,
+    3,
+    5,
+    5,
+    3,
+    0,
+    3,
+    2,
+    0,
+    4,
+    4,
+    1,
+    4,
+    1,
+    3,
+    1,
+    3,
+    1,
+    4,
+    1,
+    3,
+    1,
+    1,
+    1,
+    5,
+    1,
+    1,
+    1,
+    2,
+    0,
+    2,
+    1,
+    0,
+    1,
+    5,
+    1,
+    5,
+    1,
+    0,
+    1,
+    5,
+    1,
+    1,
+    1,
+    4,
+    1,
+    1,
+    4,
+    2,
+    1,
+    2,
+    1,
+    5,
+    1,
+    1,
+    1,
+    4,
+    1,
+    5,
+    1,
+    0,
+    1,
+    4,
+    3,
+    2,
+    3,
+    0,
+    3,
+    3,
+    2,
+    3,
+    0,
+    5,
+    4,
+    5,
+    1
+  ],
+  "witness_N": 143
+}
