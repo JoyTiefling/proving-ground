@@ -92,6 +92,8 @@ def main():
     ap.add_argument("--k", type=int, default=6)
     ap.add_argument("--budget", type=int, default=5_000_000)
     ap.add_argument("--cell-timeout", type=float, default=600.0)
+    # Отдельное имя на прогон: C-009 на 100M затёр бы отчёт C-008 (так и было 13-09 04:00).
+    ap.add_argument("--report", default="report.json")
     args = ap.parse_args()
     base = ["--n", str(args.n), "--k", str(args.k), "--budget", str(args.budget)]
 
@@ -106,7 +108,12 @@ def main():
     c = run_cell("fresh", base, args.cell_timeout)
     print(f"1. свежий:   rc={c['rc']} phase={c.get('phase')} res={c.get('res')} "
           f"clauses={c.get('clauses')} [{c['s']}s]")
-    if c["rc"] != 0:
+    if c["rc"] == "timeout":
+        # Третья графа. Раньше "timeout" != 0 читался как смерть => фантомное (N):
+        # показано живьём 13-09 04:00 на --cell-timeout 5 (тот же дефект, что
+        # probe_segfault чинил в 5975fa0 и который сам сюда не доехал, #4238).
+        print("   ЧТЕНИЕ: БЕЗ ВЕРДИКТА — ячейку убил предохранитель драйвера; ни (N), ни (A).")
+    elif c["rc"] != 0:
         print("   ЧТЕНИЕ: (N) умирает и свежий — дело в ЭКЗЕМПЛЯРЕ набора, не в накоплении.")
     elif str(c.get("res")) == "None":
         print("   ЧТЕНИЕ: свежий вернул UNKNOWN по бюджету — НЕ «прошёл», до места не досидел.")
@@ -115,7 +122,7 @@ def main():
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     json.dump({"args": vars(args), "poscontrol": c0, "fresh": c},
-              open(OUT_DIR / "report.json", "w", encoding="utf-8"),
+              open(OUT_DIR / args.report, "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     return 0
 
