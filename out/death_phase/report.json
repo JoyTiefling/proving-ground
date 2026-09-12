@@ -1,0 +1,18 @@
+{
+ "args": {
+  "k": 6,
+  "hi": 150,
+  "budget": 5000000,
+  "wall": 300.0,
+  "cell_timeout": 400.0
+ },
+ "subject": {
+  "label": "subject",
+  "rc": 3221225477,
+  "s": 44.0,
+  "n": 144,
+  "phase": "solve",
+  "last_sat": 143,
+  "extra": {}
+ }
+}

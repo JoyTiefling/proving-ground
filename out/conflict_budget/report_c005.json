@@ -1,0 +1,56 @@
+{
+ "driver_sees_death": true,
+ "args": {
+  "k": 6,
+  "hi": 150,
+  "budget": 5000000,
+  "low_budget": 2000000,
+  "splits": 10,
+  "wall": 1500.0,
+  "cell_timeout": 900.0,
+  "solver": "Minisat22",
+  "tag": "_c005"
+ },
+ "cells": [
+  {
+   "label": "poscontrol",
+   "rc": 3,
+   "s": 0.1,
+   "reached_N": 50,
+   "last_sat": 49,
+   "why": "crash-now armed",
+   "child_done": false,
+   "stderr_tail": ""
+  },
+  {
+   "label": "A_single_5M",
+   "rc": 3221225477,
+   "s": 46.5,
+   "reached_N": 143,
+   "last_sat": 143,
+   "why": "running",
+   "child_done": false,
+   "stderr_tail": ""
+  },
+  {
+   "label": "B_single_2M",
+   "rc": 3221225477,
+   "s": 46.7,
+   "reached_N": 143,
+   "last_sat": 143,
+   "why": "running",
+   "child_done": false,
+   "stderr_tail": ""
+  },
+  {
+   "label": "C_split_10x",
+   "rc": 3221225477,
+   "s": 46.6,
+   "reached_N": 143,
+   "last_sat": 143,
+   "why": "running",
+   "child_done": false,
+   "stderr_tail": ""
+  }
+ ]
+}
