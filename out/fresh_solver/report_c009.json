@@ -1,0 +1,28 @@
+{
+ "args": {
+  "n": 144,
+  "k": 6,
+  "budget": 100000000,
+  "cell_timeout": 1800.0,
+  "report": "report_c009.json"
+ },
+ "poscontrol": {
+  "label": "poscontrol",
+  "rc": 3,
+  "s": 0.2,
+  "n": 144,
+  "phase": "loaded",
+  "clauses": 33840,
+  "elapsed_s": 0.03
+ },
+ "fresh": {
+  "label": "fresh",
+  "rc": 0,
+  "s": 434.7,
+  "n": 144,
+  "phase": "solved",
+  "clauses": 33840,
+  "res": "True",
+  "elapsed_s": 434.51
+ }
+}
