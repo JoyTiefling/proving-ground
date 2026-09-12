@@ -1,0 +1,53 @@
+{
+ "driver_sees_death": true,
+ "k": 6,
+ "hi": 160,
+ "axis_method": "limited",
+ "budget": 5000000,
+ "wall_child_s": 1500.0,
+ "cell_timeout_driver_s": 1800.0,
+ "cells_planned": 3,
+ "cells_run": 3,
+ "complete": true,
+ "cells": [
+  {
+   "label": "poscontrol",
+   "rc": 3,
+   "s": 0.1,
+   "reached_N": 50,
+   "last_sat": 49,
+   "why": "crash-now armed",
+   "child_done": false,
+   "stderr_tail": "",
+   "killed_by_driver": false,
+   "driver_timeout_s": 1800.0,
+   "hi": 160
+  },
+  {
+   "label": "solver_Glucose42",
+   "rc": 0,
+   "s": 1180.0,
+   "reached_N": 146,
+   "last_sat": 145,
+   "why": "UNKNOWN at 146 (бюджет 5000000)",
+   "child_done": true,
+   "stderr_tail": "",
+   "killed_by_driver": false,
+   "driver_timeout_s": 1800.0,
+   "hi": 160
+  },
+  {
+   "label": "solver_Minisat22",
+   "rc": 3221225477,
+   "s": 46.4,
+   "reached_N": 143,
+   "last_sat": 143,
+   "why": "running",
+   "child_done": false,
+   "stderr_tail": "",
+   "killed_by_driver": false,
+   "driver_timeout_s": 1800.0,
+   "hi": 160
+  }
+ ]
+}

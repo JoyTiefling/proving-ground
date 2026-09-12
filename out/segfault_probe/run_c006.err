@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "F:\Claude\joy\repos\proving-ground\search\probe_segfault.py", line 239, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "F:\Claude\joy\repos\proving-ground\search\probe_segfault.py", line 184, in main
+    c = run_cell(f"solver_{name}", base + ["--solver", name, "--method", args.axis_method,
+                                           "--model-every"], args.hi)
+  File "F:\Claude\joy\repos\proving-ground\search\probe_segfault.py", line 128, in run_cell
+    p = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
+  File "C:\Users\dropr\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dropr\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dropr\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 1646, in _communicate
+    raise TimeoutExpired(self.args, orig_timeout)
+subprocess.TimeoutExpired: Command '['F:\\Claude\\joy\\repos\\proving-ground\\.venv\\Scripts\\python.exe', 'F:\\Claude\\joy\\repos\\proving-ground\\search\\probe_segfault.py', '--worker', '--live', 'F:\\Claude\\joy\\repos\\proving-ground\\out\\segfault_probe\\solver_Glucose42.live.json', '--k', '6', '--hi', '150', '--budget', '5000000', '--wall', '1500.0', '--solver', 'Glucose42', '--method', 'limited', '--model-every']' timed out after 900 seconds

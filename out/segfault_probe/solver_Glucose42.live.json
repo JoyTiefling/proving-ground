@@ -1,1 +1,1 @@
-{"solver": "Glucose42", "method": "plain", "reached_N": 142, "last_sat": 142, "why": "wall guard (НЕ вердикт: до участка падения не дошли)", "done": true, "elapsed_s": 270.47}
+{"solver": "Glucose42", "method": "limited", "reached_N": 146, "last_sat": 145, "why": "UNKNOWN at 146 (бюджет 5000000)", "done": true, "elapsed_s": 1179.83}
