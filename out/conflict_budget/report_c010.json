@@ -1,0 +1,72 @@
+{
+ "driver_sees_death": true,
+ "args": {
+  "k": 6,
+  "hi": 150,
+  "budget": 1000000,
+  "low_budget": 500000,
+  "splits": 2,
+  "wall": 600.0,
+  "cell_timeout": 900.0,
+  "solver": "Minisat22",
+  "tag": "_c010"
+ },
+ "cells": [
+  {
+   "label": "poscontrol",
+   "rc": 3221225477,
+   "verdict": "died",
+   "hard": true,
+   "killed_by_driver": false,
+   "s": 0.1,
+   "stderr_tail": "",
+   "driver_timeout_s": 300.0,
+   "reached_N": 50,
+   "last_sat": 49,
+   "why": "crash-now armed",
+   "child_done": false
+  },
+  {
+   "label": "A_single_5M",
+   "rc": 3221225477,
+   "verdict": "died",
+   "hard": true,
+   "killed_by_driver": false,
+   "s": 43.8,
+   "stderr_tail": "",
+   "driver_timeout_s": 900.0,
+   "reached_N": 143,
+   "last_sat": 143,
+   "why": "running",
+   "child_done": false
+  },
+  {
+   "label": "B_single_2M",
+   "rc": 0,
+   "verdict": "survived",
+   "hard": false,
+   "killed_by_driver": false,
+   "s": 40.2,
+   "stderr_tail": "",
+   "driver_timeout_s": 900.0,
+   "reached_N": 144,
+   "last_sat": 143,
+   "why": "UNKNOWN at 144 (суммарный бюджет 500000, вызовов 1)",
+   "child_done": true
+  },
+  {
+   "label": "C_split_10x",
+   "rc": 3221225477,
+   "verdict": "died",
+   "hard": true,
+   "killed_by_driver": false,
+   "s": 43.7,
+   "stderr_tail": "",
+   "driver_timeout_s": 900.0,
+   "reached_N": 143,
+   "last_sat": 143,
+   "why": "running",
+   "child_done": false
+  }
+ ]
+}

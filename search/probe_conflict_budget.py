@@ -110,6 +110,17 @@ def worker(solver_name: str, k: int, hi: int, budget: int, mode: str, splits: in
     return 0
 
 
+def _k(n: int) -> str:
+    return f"{n // 1_000_000}M" if n % 1_000_000 == 0 else f"{n // 1000}k"
+
+
+def cell_labels(args) -> tuple:
+    """Имена ячеек — ИЗ АРГУМЕНТОВ. Зашитые под C-005 «5M/2M/10x» подписали
+    прогон C-010 (1M/500k/2x) чужими числами прямо в отчёте (#3937)."""
+    return (f"A_single_{_k(args.budget)}", f"B_single_{_k(args.low_budget)}",
+            f"C_split_{args.splits}x{_k(max(1, args.budget // args.splits))}")
+
+
 def run_cell(label: str, argv: List[str], timeout: float) -> dict:
     c = common_run_cell(_HERE / "probe_conflict_budget.py", label, argv, timeout, OUT_DIR)
     st = c.pop("live")
@@ -134,7 +145,7 @@ def main():
             "--solver", args.solver, "--splits", str(args.splits)]
     cells = []
 
-    print("=== C-005: длина одного solve против трудности шага ===\n")
+    print(f"=== {args.tag or '(без тега)'}: длина одного solve против трудности шага ===\n")
     print("0. Положительный контроль (ребёнок обязан умереть на N=50):")
     c = run_cell("poscontrol", base + ["--mode", "single", "--budget", "200000",
                                        "--crash-now", "50"], 300.0)
@@ -150,9 +161,9 @@ def main():
         return 1
 
     plan = [
-        ("A_single_5M", ["--mode", "single", "--budget", str(args.budget)]),
-        ("B_single_2M", ["--mode", "single", "--budget", str(args.low_budget)]),
-        ("C_split_10x", ["--mode", "split", "--budget", str(args.budget)]),
+        (cell_labels(args)[0], ["--mode", "single", "--budget", str(args.budget)]),
+        (cell_labels(args)[1], ["--mode", "single", "--budget", str(args.low_budget)]),
+        (cell_labels(args)[2], ["--mode", "split", "--budget", str(args.budget)]),
     ]
     print("\n1. Один и тот же N, три способа потратить бюджет:")
     for label, extra in plan:
@@ -175,8 +186,8 @@ def main():
     print(f"   упало:              {[c['label'] for c in crashed] or '—'}")
     print(f"   БЕЗ ВЕРДИКТА (убиты драйвером): {[c['label'] for c in no_verdict] or '—'}")
     print(f"   НЕ доехало до участка (не «прошло»): {[(c['label'], c['why']) for c in not_reached] or '—'}")
-    a = next((c for c in body if c["label"] == "A_single_5M"), None)
-    cc = next((c for c in body if c["label"] == "C_split_10x"), None)
+    a = next((c for c in body if c["label"] == cell_labels(args)[0]), None)
+    cc = next((c for c in body if c["label"] == cell_labels(args)[2]), None)
     if a and cc:
         if NO_VERDICT in (a["verdict"], cc["verdict"]):
             print("   ЧТЕНИЕ: ключевая ячейка без вердикта — (V)/(T) этим прогоном не различены.")
