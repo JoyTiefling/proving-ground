@@ -33,7 +33,6 @@ Run:  python search/probe_conflict_budget.py
 
 import argparse
 import json
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -44,18 +43,11 @@ sys.path.insert(0, str(_HERE.parent))
 sys.path.insert(0, str(_HERE))
 
 from chain_lift import clauses_for_element, var  # noqa: E402  ТОТ ЖЕ энкодер
+# Смерть / таймаут / след — у предмета, не здесь (NEED-090 (б)).
+from probe_common import DIED, NO_VERDICT, SURVIVED, hard_crash  # noqa: E402
+from probe_common import run_cell as common_run_cell, write_live as _write_live  # noqa: E402
 
 OUT_DIR = _HERE.parent / "out" / "conflict_budget"
-
-
-def _write_live(path, payload):
-    if not path:
-        return
-    try:
-        with open(path, "w", encoding="utf-8") as fh:
-            json.dump(payload, fh, ensure_ascii=False)
-    except OSError:
-        pass
 
 
 def worker(solver_name: str, k: int, hi: int, budget: int, mode: str, splits: int,
@@ -78,14 +70,8 @@ def worker(solver_name: str, k: int, hi: int, budget: int, mode: str, splits: in
             _write_live(live_path, {"solver": solver_name, "mode": mode,
                                     "reached_N": n, "last_sat": last_sat,
                                     "why": "crash-now armed", "done": False})
-            # ЖЁСТКАЯ смерть, а не питоновское исключение: `ctypes.string_at(0)`
-            # на Windows перехватывается как OSError и даёт rc=1 — то есть
-            # контроль был бы зелёным и у драйвера, который видит только
-            # traceback, и ослеп бы ровно на предмете (реальный ACCESS_VIOLATION
-            # убивает процесс, rc=3221225477). Контроль обязан воспроизводить
-            # ТУ смерть, которую ловит (#3734).
-            import faulthandler
-            faulthandler._sigsegv()
+            # ЖЁСТКАЯ смерть, а не питоновское исключение (#3734) — через общий носитель.
+            hard_crash()
 
         if mode == "split":
             # ТОТ ЖЕ суммарный бюджет, но короткими вызовами: различаем длину
@@ -125,29 +111,10 @@ def worker(solver_name: str, k: int, hi: int, budget: int, mode: str, splits: in
 
 
 def run_cell(label: str, argv: List[str], timeout: float) -> dict:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    live = OUT_DIR / f"{label}.live.json"
-    if live.exists():
-        live.unlink()
-    cmd = [sys.executable, str(_HERE / "probe_conflict_budget.py"), "--worker",
-           "--live", str(live)] + argv
-    t0 = time.time()
-    try:
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-        rc, err = p.returncode, (p.stderr or "").strip().splitlines()
-    except subprocess.TimeoutExpired:
-        rc, err = "timeout", []
-    dt = round(time.time() - t0, 1)
-    state = {}
-    if live.exists():
-        try:
-            state = json.loads(live.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            state = {}
-    return {"label": label, "rc": rc, "s": dt,
-            "reached_N": state.get("reached_N"), "last_sat": state.get("last_sat"),
-            "why": state.get("why"), "child_done": bool(state.get("done")),
-            "stderr_tail": err[-1] if err else ""}
+    c = common_run_cell(_HERE / "probe_conflict_budget.py", label, argv, timeout, OUT_DIR)
+    st = c.pop("live")
+    return {**c, "reached_N": st.get("reached_N"), "last_sat": st.get("last_sat"),
+            "why": st.get("why"), "child_done": bool(st.get("done"))}
 
 
 def main():
@@ -172,7 +139,7 @@ def main():
     c = run_cell("poscontrol", base + ["--mode", "single", "--budget", "200000",
                                        "--crash-now", "50"], 300.0)
     cells.append(c)
-    sees_death = (c["rc"] not in (0, "timeout")) and (c["reached_N"] or 0) >= 40
+    sees_death = c["verdict"] == DIED and (c["reached_N"] or 0) >= 40
     print(f"   rc={c['rc']} reached={c['reached_N']}  -> "
           f"{'драйвер ВИДИТ смерть ребёнка' if sees_death else 'ПРИБОР СЛЕП: матрица ниже недействительна'}")
     if not sees_death:
@@ -191,24 +158,33 @@ def main():
     for label, extra in plan:
         c = run_cell(label, base + extra, args.cell_timeout)
         cells.append(c)
-        print(f"   {label:<13} rc={str(c['rc']):<12} reached={str(c['reached_N']):<5} "
+        rcs = "УБИТА ДРАЙВЕРОМ" if c["killed_by_driver"] else str(c["rc"])
+        print(f"   {label:<13} rc={rcs:<16} reached={str(c['reached_N']):<5} "
               f"last_sat={str(c['last_sat']):<5} [{c['s']}s] {c['why'] or c['stderr_tail'][:60]}")
 
     # ЗНАМЕНАТЕЛЬ: что НЕ доехало до предмета — поимённо, не «все зелёные».
+    # 13-09 10:00: до переезда на probe_common здесь было `rc not in (0,)`, и
+    # "timeout" попадал в УПАВШИЕ — тот же фантом, что починен в probe_segfault
+    # и probe_fresh_solver и сюда сам не доехал (#4297). Третья графа — отдельно.
     body = [c for c in cells if c["label"] != "poscontrol"]
-    crashed = [c for c in body if c["rc"] not in (0,)]
-    not_reached = [c for c in body if c["rc"] == 0 and (c["why"] or "").startswith(("UNKNOWN", "wall"))]
+    crashed = [c for c in body if c["verdict"] == DIED]
+    no_verdict = [c for c in body if c["verdict"] == NO_VERDICT]
+    not_reached = [c for c in body if c["verdict"] == SURVIVED
+                   and (c["why"] or "").startswith(("UNKNOWN", "wall"))]
     print("\n2. ИТОГ")
     print(f"   упало:              {[c['label'] for c in crashed] or '—'}")
+    print(f"   БЕЗ ВЕРДИКТА (убиты драйвером): {[c['label'] for c in no_verdict] or '—'}")
     print(f"   НЕ доехало до участка (не «прошло»): {[(c['label'], c['why']) for c in not_reached] or '—'}")
     a = next((c for c in body if c["label"] == "A_single_5M"), None)
     cc = next((c for c in body if c["label"] == "C_split_10x"), None)
     if a and cc:
-        if a["rc"] != 0 and cc["rc"] == 0 and (cc["reached_N"] or 0) > (a["reached_N"] or 0):
+        if NO_VERDICT in (a["verdict"], cc["verdict"]):
+            print("   ЧТЕНИЕ: ключевая ячейка без вердикта — (V)/(T) этим прогоном не различены.")
+        elif a["verdict"] == DIED and cc["verdict"] == SURVIVED and (cc["reached_N"] or 0) > (a["reached_N"] or 0):
             print("   ЧТЕНИЕ: (V) дефект ДЛИНЫ ОДНОГО ВЫЗОВА — нарезка проходит дальше.")
-        elif a["rc"] != 0 and cc["rc"] != 0:
+        elif a["verdict"] == DIED and cc["verdict"] == DIED:
             print("   ЧТЕНИЕ: (T) дефект ТРУДНОСТИ/накопления — нарезка не спасает.")
-        elif a["rc"] == 0:
+        elif a["verdict"] == SURVIVED:
             print("   ЧТЕНИЕ: падение НЕ воспроизведено этим прогоном — ничего не установлено.")
         else:
             print("   ЧТЕНИЕ: смешанный исход, читать ячейки руками.")

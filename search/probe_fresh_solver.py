@@ -19,7 +19,6 @@ Run:  python search/probe_fresh_solver.py --n 144
 
 import argparse
 import json
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -29,16 +28,11 @@ sys.path.insert(0, str(_HERE.parent))
 sys.path.insert(0, str(_HERE))
 
 from chain_lift import clauses_for_element, var  # noqa: E402  ТОТ ЖЕ энкодер
+# Смерть / таймаут / след — у предмета, не здесь (NEED-090 (б)).
+from probe_common import DIED, NO_VERDICT, hard_crash  # noqa: E402
+from probe_common import run_cell as common_run_cell, write_live as _mark  # noqa: E402
 
 OUT_DIR = _HERE.parent / "out" / "fresh_solver"
-
-
-def _mark(path, payload):
-    try:
-        with open(path, "w", encoding="utf-8") as fh:
-            json.dump(payload, fh, ensure_ascii=False)
-    except OSError:
-        pass
 
 
 def worker(n, k, budget, live, crash):
@@ -54,8 +48,7 @@ def worker(n, k, budget, live, crash):
     _mark(live, {"n": n, "phase": "loaded", "clauses": total,
                  "elapsed_s": round(time.time() - t0, 2)})
     if crash:
-        import faulthandler
-        faulthandler._sigsegv()
+        hard_crash()
     s.conf_budget(int(budget))
     res = s.solve_limited()
     _mark(live, {"n": n, "phase": "solved", "clauses": total, "res": str(res),
@@ -66,24 +59,8 @@ def worker(n, k, budget, live, crash):
 
 
 def run_cell(label, argv, timeout):
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    live = OUT_DIR / f"{label}.live.json"
-    if live.exists():
-        live.unlink()
-    cmd = [sys.executable, str(_HERE / "probe_fresh_solver.py"), "--worker",
-           "--live", str(live)] + argv
-    t0 = time.time()
-    try:
-        rc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout).returncode
-    except subprocess.TimeoutExpired:
-        rc = "timeout"
-    st = {}
-    if live.exists():
-        try:
-            st = json.loads(live.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            st = {}
-    return {"label": label, "rc": rc, "s": round(time.time() - t0, 1), **st}
+    c = common_run_cell(_HERE / "probe_fresh_solver.py", label, argv, timeout, OUT_DIR)
+    return {**c, **c.pop("live")}
 
 
 def main():
@@ -100,7 +77,7 @@ def main():
     # Номер кандидата сюда не зашивать: прогон C-009 печатал «C-008» (13-09 06:00).
     print(f"=== свежий солвер на том же наборе (отчёт {args.report}) ===\n")
     c0 = run_cell("poscontrol", base + ["--crash"], 300.0)
-    sees = c0["rc"] not in (0, "timeout") and c0.get("phase") == "loaded"
+    sees = c0["verdict"] == DIED and c0.get("phase") == "loaded"
     print(f"0. контроль: rc={c0['rc']} phase={c0.get('phase')} -> "
           f"{'драйвер ВИДИТ смерть на этом наборе' if sees else 'ПРИБОР СЛЕП'}")
     if not sees:
@@ -109,7 +86,7 @@ def main():
     c = run_cell("fresh", base, args.cell_timeout)
     print(f"1. свежий:   rc={c['rc']} phase={c.get('phase')} res={c.get('res')} "
           f"clauses={c.get('clauses')} [{c['s']}s]")
-    if c["rc"] == "timeout":
+    if c["verdict"] == NO_VERDICT:
         # Третья графа. Раньше "timeout" != 0 читался как смерть => фантомное (N):
         # показано живьём 13-09 04:00 на --cell-timeout 5 (тот же дефект, что
         # probe_segfault чинил в 5975fa0 и который сам сюда не доехал, #4238).

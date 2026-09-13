@@ -51,6 +51,9 @@ sys.path.insert(0, str(_HERE.parent))
 sys.path.insert(0, str(_HERE))
 
 from chain_lift import clauses_for_element, var  # noqa: E402  ТОТ ЖЕ энкодер
+# Смерть / таймаут / след — у предмета, не здесь (NEED-090 (б)).
+from probe_common import DIED, NO_VERDICT, SURVIVED, fuse_conflict, hard_crash  # noqa: E402
+from probe_common import run_cell as common_run_cell  # noqa: E402
 
 OUT_DIR = _HERE.parent / "out" / "segfault_probe"
 
@@ -85,9 +88,10 @@ def worker(solver_name: str, k: int, hi: int, budget: int, method: str,
             # процесс без исключения. Контроль обязан воспроизводить ТУ смерть,
             # которую ловит, а не похожую на неё. Урок прожит 13-09 00:00 в
             # соседнем probe_death_phase.py и НЕ доехал сюда сам (#4238).
+            # 13-09 10:00: и `_sigsegv` давал не ту смерть (rc=3, CRT abort) —
+            # теперь общий носитель probe_common.hard_crash, `--check` держит rc.
             _write_live(live_path, solver_name, method, n, last_sat, "crash-now armed")
-            import faulthandler
-            faulthandler._sigsegv()
+            hard_crash()
         if hang_now and n == hang_now:
             # ПОЛОЖИТЕЛЬНЫЙ КОНТРОЛЬ №2: ячейка, которая НЕ вернётся никогда.
             # Драйвер обязан её убить, назвать «не досмотрено», НЕ записать в
@@ -144,36 +148,10 @@ def run_cell(label: str, argv: List[str], hi: int, timeout: float) -> dict:
     запускалась вовсе. Прибор, у которого смерть ОДНОЙ ячейки стирает выдачу
     по ВСЕМ, отчитывается о нуле там, где у него есть данные.
     """
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    live = OUT_DIR / f"{label}.live.json"
-    if live.exists():
-        live.unlink()
-    cmd = [sys.executable, str(_HERE / "probe_segfault.py"), "--worker",
-           "--live", str(live)] + argv
-    t0 = time.time()
-    killed = False
-    try:
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-        rc, err = p.returncode, (p.stderr or "")
-    except subprocess.TimeoutExpired as e:
-        killed = True
-        rc = None
-        raw = e.stderr or ""
-        err = raw.decode("utf-8", "replace") if isinstance(raw, bytes) else raw
-    dt = round(time.time() - t0, 1)
-    state = {}
-    if live.exists():
-        try:
-            state = json.loads(live.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            state = {}
-    tail = err.strip().splitlines()
-    return {"label": label, "rc": rc, "s": dt,
-            "reached_N": state.get("reached_N"), "last_sat": state.get("last_sat"),
-            "why": state.get("why"), "child_done": bool(state.get("done")),
-            "stderr_tail": tail[-1] if tail else "",
-            "killed_by_driver": killed, "driver_timeout_s": timeout,
-            "hi": hi}
+    c = common_run_cell(_HERE / "probe_segfault.py", label, argv, timeout, OUT_DIR)
+    state = c.pop("live")
+    return {**c, "reached_N": state.get("reached_N"), "last_sat": state.get("last_sat"),
+            "why": state.get("why"), "child_done": bool(state.get("done")), "hi": hi}
 
 
 def main():
@@ -207,10 +185,9 @@ def main():
     # вердикт ребёнка не мог прозвучать в принципе. Теперь предохранитель
     # драйвера ВЫВОДИТСЯ из детского и обязан быть больше него.
     cell_timeout = args.cell_timeout or (args.wall + 300.0)
-    if cell_timeout <= args.wall:
-        print(f"ПРИБОР НЕСОГЛАСОВАН: предохранитель драйвера {cell_timeout}s <= "
-              f"детского --wall {args.wall}s. Ребёнок не успеет сказать свой вердикт "
-              f"НИКОГДА — матрица мерила бы терпение родителя, а не предмет.")
+    conflict = fuse_conflict(args.wall, cell_timeout)
+    if conflict:
+        print(conflict)
         return 2
 
     base = ["--k", str(args.k), "--hi", str(args.hi), "--budget", str(args.budget),
@@ -226,8 +203,7 @@ def main():
     cells.append(c)
     # rc=None означает «убит драйвером по времени» — это НЕ доказательство, что
     # драйвер видит смерть ребёнка; это доказательство, что он умеет ждать.
-    driver_sees_death = (not c["killed_by_driver"]) and (c["rc"] not in (0, None)) \
-        and (c["reached_N"] or 0) >= 40
+    driver_sees_death = c["verdict"] == DIED and (c["reached_N"] or 0) >= 40
     print(f"   rc={c['rc']} reached={c['reached_N']}  -> "
           f"{'драйвер ВИДИТ смерть ребёнка' if driver_sees_death else 'ПРИБОР СЛЕП: матрица ниже недействительна'}")
     if not driver_sees_death:
@@ -276,9 +252,9 @@ def main():
         write_report()
 
     graded = [c for c in cells if c["label"] != "poscontrol"]
-    killed = [c for c in graded if c["killed_by_driver"]]
-    crashed = [c for c in graded if not c["killed_by_driver"] and c["rc"] != 0]
-    survived = [c for c in graded if not c["killed_by_driver"] and c["rc"] == 0]
+    killed = [c for c in graded if c["verdict"] == NO_VERDICT]
+    crashed = [c for c in graded if c["verdict"] == DIED]
+    survived = [c for c in graded if c["verdict"] == SURVIVED]
     # ЗНАМЕНАТЕЛЬ, три графы вместо двух. «Убита драйвером» НЕ упала и НЕ
     # выжила: у неё вообще нет вердикта. Свалить её в «упавшие» значило бы
     # произвести фантомное падение из собственного нетерпения.

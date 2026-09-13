@@ -22,7 +22,6 @@ Run:  python search/probe_death_phase.py
 
 import argparse
 import json
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -32,6 +31,9 @@ sys.path.insert(0, str(_HERE.parent))
 sys.path.insert(0, str(_HERE))
 
 from chain_lift import clauses_for_element, var  # noqa: E402  ТОТ ЖЕ энкодер
+# Смерть / таймаут / след — у предмета, не здесь (NEED-090 (б)).
+from probe_common import DIED, NO_VERDICT, hard_crash, write_live  # noqa: E402
+from probe_common import run_cell as common_run_cell  # noqa: E402
 
 OUT_DIR = _HERE.parent / "out" / "death_phase"
 PHASES = ["enc", "add", "solve", "model"]
@@ -39,18 +41,11 @@ PHASES = ["enc", "add", "solve", "model"]
 
 def _mark(path, n, phase, last_sat, extra=None):
     """Фаза пишется НА ДИСК до входа в неё: у трупа stdout нет (#3961)."""
-    try:
-        with open(path, "w", encoding="utf-8") as fh:
-            json.dump({"n": n, "phase": phase, "last_sat": last_sat,
-                       "extra": extra or {}}, fh, ensure_ascii=False)
-            fh.flush()
-    except OSError:
-        pass
+    write_live(path, {"n": n, "phase": phase, "last_sat": last_sat, "extra": extra or {}})
 
 
 def _boom():
-    import faulthandler
-    faulthandler._sigsegv()
+    hard_crash()
 
 
 def worker(k, hi, budget, wall, live, crash_in, crash_n):
@@ -103,27 +98,10 @@ def worker(k, hi, budget, wall, live, crash_in, crash_n):
 
 
 def run_cell(label, argv, timeout):
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    live = OUT_DIR / f"{label}.live.json"
-    if live.exists():
-        live.unlink()
-    cmd = [sys.executable, str(_HERE / "probe_death_phase.py"), "--worker",
-           "--live", str(live)] + argv
-    t0 = time.time()
-    try:
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-        rc = p.returncode
-    except subprocess.TimeoutExpired:
-        rc = "timeout"
-    st = {}
-    if live.exists():
-        try:
-            st = json.loads(live.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            st = {}
-    return {"label": label, "rc": rc, "s": round(time.time() - t0, 1),
-            "n": st.get("n"), "phase": st.get("phase"), "last_sat": st.get("last_sat"),
-            "extra": st.get("extra")}
+    c = common_run_cell(_HERE / "probe_death_phase.py", label, argv, timeout, OUT_DIR)
+    st = c.pop("live")
+    return {**c, "n": st.get("n"), "phase": st.get("phase"),
+            "last_sat": st.get("last_sat"), "extra": st.get("extra")}
 
 
 def main():
@@ -142,9 +120,9 @@ def main():
     ok = True
     for ph in PHASES:
         c = run_cell(f"pos_{ph}", base + ["--crash-in", ph, "--crash-n", "50"], 300.0)
-        hit = (c["rc"] not in (0, "timeout")) and c["phase"] == ph and c["n"] == 50
+        hit = c["verdict"] == DIED and c["phase"] == ph and c["n"] == 50
         ok = ok and hit
-        print(f"   crash-in={ph:<6} rc={c['rc']:<12} увидел n={c['n']} phase={c['phase']}  "
+        print(f"   crash-in={ph:<6} rc={str(c['rc']):<12} увидел n={c['n']} phase={c['phase']}  "
               f"-> {'ОК' if hit else 'ПРОМАХ'}")
     if not ok:
         print("\n   ПРИБОР НЕ РАЗЛИЧАЕТ ФАЗЫ — замер ниже недействителен.")
@@ -154,7 +132,13 @@ def main():
     c = run_cell("subject", base, args.cell_timeout)
     print(f"   rc={c['rc']} n={c['n']} phase={c['phase']} last_sat={c['last_sat']} "
           f"extra={c['extra']} [{c['s']}s]")
-    if c["rc"] == 0:
+    if c["verdict"] == NO_VERDICT:
+        # 13-09 10:00: до переезда на probe_common "timeout" != 0 печатался как
+        # «умирает на N=… в фазе …» — фантомное место смерти (#4297, тот же дефект,
+        # что починен в двух соседях и сюда не доехал).
+        print(f"   ЧТЕНИЕ: БЕЗ ВЕРДИКТА — убит предохранителем драйвера на N={c['n']} "
+              f"(фаза '{c['phase']}' = где ЖДАЛ, не где умер).")
+    elif c["verdict"] != DIED:
         print("   ЧТЕНИЕ: смерть не воспроизведена — ничего не установлено (не «починено»).")
     else:
         print(f"   ЧТЕНИЕ: умирает на N={c['n']} в фазе '{c['phase']}'.")
