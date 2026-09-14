@@ -30,8 +30,29 @@ Schema (log/candidates.jsonl, one JSON object per line)
   cost_min     integer minutes to actually obtain that observation
   opened       YYYY-MM-DD
   status       "open" | "resolved"
+  if_true      what the observation shows IF THE CLAIM IS TRUE   (required when open)
+  if_false     what the observation shows IF THE CLAIM IS FALSE  (required when open)
   resolved     YYYY-MM-DD            (required when resolved)
   outcome      what the observation said (required when resolved)
+
+A price without POWER is the price of nothing (added 2026-09-14, L3 #4324)
+------------------------------------------------------------------------
+Measured failure (2026-09-13): C-003 sat in this queue with a 45-minute
+discriminator that could not turn red -- the ladder stops at the first UNKNOWN,
+so "never dies at ANY N" looks exactly the same whether it is true or false. It
+passed the schema because the schema only asked what the check COSTS. A
+discriminator that shows the same thing under both hypotheses is not cheap; it
+is infinitely expensive, and it sorts to the top precisely because nobody costed
+its power.
+
+So an open candidate must state both outcomes before it is queued. What this
+gate actually enforces, and no more (P-58 -- a declared boundary):
+  * both fields present and non-empty;
+  * the two are not the same text after case/whitespace/punctuation folding.
+It does NOT detect two differently-worded outcomes that mean the same thing.
+The working part is the forcing: C-003's powerlessness shows the moment you try
+to write its if_true. Resolved records written before this rule are exempt --
+back-filling predictions after the result would forge the pre-registration.
 
 Usage
 -----
@@ -54,6 +75,13 @@ DEFAULT_PATH = HERE.parent / "log" / "candidates.jsonl"
 REQUIRED = ("id", "claim", "discriminator", "cost_min", "opened", "status")
 REQUIRED_WHEN_RESOLVED = ("resolved", "outcome")
 STATUSES = ("open", "resolved")
+OUTCOME_FIELDS = ("if_true", "if_false")
+
+
+def _fold(text: object) -> str:
+    """Case, whitespace and punctuation must not make one outcome look like two."""
+    kept = "".join(ch if ch.isalnum() else " " for ch in str(text).casefold())
+    return " ".join(kept.split())
 
 # A discriminator has to be an observation, not an intention. These openings are
 # how the vague ones actually got written, so they are rejected by name.
@@ -126,6 +154,19 @@ def load(path: pathlib.Path) -> tuple[list[dict], list[str]]:
             if missing_r:
                 errors.append(f"{where}: resolved needs {', '.join(missing_r)}")
 
+        if rec["status"] == "open":
+            blank = [f for f in OUTCOME_FIELDS if not str(rec.get(f) or "").strip()]
+            if blank:
+                errors.append(
+                    f"{where}: open needs {', '.join(blank)} -- what does the "
+                    f"observation show if the claim is true, and if it is false?"
+                )
+            elif _fold(rec["if_true"]) == _fold(rec["if_false"]):
+                errors.append(
+                    f"{where}: if_true and if_false are the same outcome -- "
+                    f"this discriminator has no power, its price is infinite"
+                )
+
         records.append(rec)
 
     return records, errors
@@ -155,6 +196,8 @@ def report(path: pathlib.Path, show_all: bool) -> int:
               f"возраст {_age(nxt)} д){flag}")
         print(f"  проверяю: {nxt['claim']}")
         print(f"  чем:      {nxt['discriminator']}")
+        print(f"  если да:  {nxt.get('if_true', '—')}")
+        print(f"  если нет: {nxt.get('if_false', '—')}")
         print()
     else:
         print("Открытых кандидатов нет.\n")
