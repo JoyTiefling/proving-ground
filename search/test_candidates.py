@@ -21,6 +21,7 @@ BASE_OPEN = {
     "status": "open",
     "if_true": "exit 0, verdict SAT",
     "if_false": "exit 0, verdict UNKNOWN",
+    "produces": None,
 }
 
 
@@ -81,3 +82,69 @@ def test_real_queue_passes_gate():
     records, errors = C.load(C.DEFAULT_PATH)
     assert records, "real queue is empty -- gate would pass vacuously"
     assert errors == []
+
+
+# --- produces: the queue must not send me to redo what is already on disk -----
+# Rolled back, these break: the old code has no `produces` key check and always
+# prints "ДЕЛАЙ ЭТО" for the cheapest open record, even when its run is done.
+
+def test_open_without_produces_key_is_red(tmp_path):
+    rec = {k: v for k, v in BASE_OPEN.items() if k != "produces"}
+    assert any("produces" in e for e in _errors(tmp_path, rec))
+
+
+def test_open_with_produces_null_is_green(tmp_path):
+    assert _errors(tmp_path, dict(BASE_OPEN, produces=None)) == []
+
+
+def test_open_with_blank_produces_is_red(tmp_path):
+    assert any("produces" in e for e in _errors(tmp_path, dict(BASE_OPEN, produces="  ")))
+
+
+def _queue_c006_as_of_0225(tmp_path):
+    """Historical control: the 13-09 queue between 02:25 and 04:01, with the
+    report already on disk. C-006 (20 min) was NOT the cheapest line then if
+    another open record is cheaper -- so add a cheaper decoy to prove the
+    'already observed' record is lifted to the top, not merely left there."""
+    root = tmp_path / "repo"
+    (root / "out" / "segfault_probe").mkdir(parents=True)
+    (root / "out" / "segfault_probe" / "report_c006b.json").write_text("{}", encoding="utf-8")
+    (root / "log").mkdir()
+    c006 = dict(BASE_OPEN, id="C-006", cost_min=20,
+                claim="сегфолт в биндинге pysat",
+                produces="out/segfault_probe/report_c006b.json")
+    decoy = dict(BASE_OPEN, id="C-900", cost_min=1, produces="out/not_yet.json")
+    p = root / "log" / "candidates.jsonl"
+    p.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in (decoy, c006)) + "\n",
+                 encoding="utf-8")
+    return p, root
+
+
+def test_control_c006_existing_artifact_goes_first_as_read(tmp_path, capsys):
+    p, root = _queue_c006_as_of_0225(tmp_path)
+    C.report(p, show_all=False, root=root)
+    first = capsys.readouterr().out.splitlines()[0]
+    assert first.startswith("ЧИТАЙ, НЕ ЗАПУСКАЙ (C-006"), first
+
+
+def test_control_c003_observation_made_before_queueing(tmp_path, capsys):
+    # C-003's artifact predates the record itself; the default root (repo = log/..)
+    # must find it without an explicit root argument.
+    root = tmp_path / "repo"
+    (root / "search" / "out").mkdir(parents=True)
+    (root / "search" / "out" / "chain_lift_k6_minisat_500k_today.json").write_text("{}", encoding="utf-8")
+    (root / "log").mkdir()
+    rec = dict(BASE_OPEN, id="C-003", cost_min=45,
+               produces="search/out/chain_lift_k6_minisat_500k_today.json")
+    p = root / "log" / "candidates.jsonl"
+    p.write_text(json.dumps(rec, ensure_ascii=False) + "\n", encoding="utf-8")
+    C.report(p, show_all=False)
+    assert capsys.readouterr().out.startswith("ЧИТАЙ, НЕ ЗАПУСКАЙ (C-003")
+
+
+def test_empty_control_absent_artifact_keeps_do_this(tmp_path, capsys):
+    # The other side: nothing on disk -> the old instruction, cheapest first.
+    p, root = _queue_c006_as_of_0225(tmp_path)
+    (root / "out" / "segfault_probe" / "report_c006b.json").unlink()
+    C.report(p, show_all=False, root=root)
+    assert capsys.readouterr().out.startswith("ДЕЛАЙ ЭТО (C-900")

@@ -32,8 +32,27 @@ Schema (log/candidates.jsonl, one JSON object per line)
   status       "open" | "resolved"
   if_true      what the observation shows IF THE CLAIM IS TRUE   (required when open)
   if_false     what the observation shows IF THE CLAIM IS FALSE  (required when open)
+  produces     repo-relative path the discriminator WRITES, or null if it only
+               reads something that already exists      (key required when open)
   resolved     YYYY-MM-DD            (required when resolved)
   outcome      what the observation said (required when resolved)
+
+The queue must not send me to redo what is already on disk (added 2026-09-14)
+----------------------------------------------------------------------------
+Measured failure, twice, two different shapes (NEED-088):
+  * C-006, 2026-09-13: prose "C-006 закрыт" committed 02:07,
+    out/segfault_probe/report_c006b.json on disk by 02:25 (mtime), this file
+    said open until 04:01 -- the first line sent me to a 20-minute run.
+  * C-003, opened 2026-09-12 10:08: its observation had been MADE eight hours
+    BEFORE it was queued (search/out/chain_lift_k6_minisat_500k_today.json,
+    committed 02:08). No prose ever called it closed; it sat on top for a day.
+A prose watcher (regex for "закрыт" near an id) catches only the first. What
+both share is simpler: the artifact the discriminator would create already
+exists. So an open record names that artifact, and when it exists the report
+says READ, NOT RUN, and puts it first (reading costs minutes, not the price).
+Boundary (P-58): the check sees existence, not freshness or matching params --
+an older file from a different budget also flips the line. That error is loud
+(I read a wrong file and see the params), the opposite one was silent.
 
 A price without POWER is the price of nothing (added 2026-09-14, L3 #4324)
 ------------------------------------------------------------------------
@@ -155,7 +174,16 @@ def load(path: pathlib.Path) -> tuple[list[dict], list[str]]:
                 errors.append(f"{where}: resolved needs {', '.join(missing_r)}")
 
         if rec["status"] == "open":
-            blank = [f for f in OUTCOME_FIELDS if not str(rec.get(f) or "").strip()]
+            if "produces" not in rec:
+                errors.append(
+                    f"{where}: open needs produces -- the path the discriminator "
+                    f"writes (null if it only reads), so a done run is visible"
+                )
+            elif rec["produces"] is not None and not (
+                isinstance(rec["produces"], str) and rec["produces"].strip()
+            ):
+                errors.append(f"{where}: produces must be a non-empty path or null")
+            blank =[f for f in OUTCOME_FIELDS if not str(rec.get(f) or "").strip()]
             if blank:
                 errors.append(
                     f"{where}: open needs {', '.join(blank)} -- what does the "
@@ -176,7 +204,18 @@ def _age(rec: dict) -> int:
     return (_today() - rec["_opened"]).days
 
 
-def report(path: pathlib.Path, show_all: bool) -> int:
+def already_observed(rec: dict, root: pathlib.Path) -> pathlib.Path | None:
+    """The artifact this open record's discriminator writes, if it already exists."""
+    rel = rec.get("produces")
+    if not isinstance(rel, str) or not rel.strip():
+        return None
+    target = root / rel
+    return target if target.exists() else None
+
+
+def report(path: pathlib.Path, show_all: bool,
+           root: pathlib.Path | None = None) -> int:
+    root = root if root is not None else path.resolve().parent.parent
     records, errors = load(path)
     for err in errors:
         print(f"  !! {err}")
@@ -185,15 +224,22 @@ def report(path: pathlib.Path, show_all: bool) -> int:
 
     openq = sorted(
         (r for r in records if r.get("status") == "open"),
-        key=lambda r: (r["cost_min"], -_age(r)),
+        key=lambda r: (already_observed(r, root) is None, r["cost_min"], -_age(r)),
     )
     done = [r for r in records if r.get("status") == "resolved"]
 
     if openq:
         nxt = openq[0]
         flag = " 🔴 лежит давно" if _age(nxt) >= STALE_DAYS else ""
-        print(f"ДЕЛАЙ ЭТО ({nxt['id']}, {nxt['cost_min']} мин, "
-              f"возраст {_age(nxt)} д){flag}")
+        seen = already_observed(nxt, root)
+        if seen is not None:
+            print(f"ЧИТАЙ, НЕ ЗАПУСКАЙ ({nxt['id']}, возраст {_age(nxt)} д){flag}")
+            print(f"  наблюдение уже на диске: {nxt['produces']}")
+            print(f"  прочитать, сверить с исходами ниже, закрыть в jsonl ПЕРВЫМ, "
+                  f"прозу потом")
+        else:
+            print(f"ДЕЛАЙ ЭТО ({nxt['id']}, {nxt['cost_min']} мин, "
+                  f"возраст {_age(nxt)} д){flag}")
         print(f"  проверяю: {nxt['claim']}")
         print(f"  чем:      {nxt['discriminator']}")
         print(f"  если да:  {nxt.get('if_true', '—')}")
@@ -206,8 +252,9 @@ def report(path: pathlib.Path, show_all: bool) -> int:
           f"из {len(records)} записей ({len(done)} закрыто, "
           f"{len(errors)} строк с ошибкой схемы):")
     for rec in openq:
+        mark = "  [на диске]" if already_observed(rec, root) is not None else ""
         print(f"  {rec['cost_min']:>4} мин  {rec['id']}  "
-              f"(возраст {_age(rec)} д)  {rec['claim']}")
+              f"(возраст {_age(rec)} д)  {rec['claim']}{mark}")
 
     if show_all and done:
         print("\nЗАКРЫТЫЕ:")
