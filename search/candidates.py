@@ -204,13 +204,36 @@ def _age(rec: dict) -> int:
     return (_today() - rec["_opened"]).days
 
 
-def already_observed(rec: dict, root: pathlib.Path) -> pathlib.Path | None:
-    """The artifact this open record's discriminator writes, if it already exists."""
+def running_since(rec: dict, root: pathlib.Path) -> str | None:
+    """If the produces file is a start-of-run stub ({"status": "in_progress"}),
+    the run's start stamp. Instruments here write --out at START and overwrite it
+    at the end, so existence alone cannot tell a result from a run that is still
+    going -- or one that died mid-way (cadical_5M.json, frozen since 11-09)."""
     rel = rec.get("produces")
     if not isinstance(rel, str) or not rel.strip():
         return None
     target = root / rel
-    return target if target.exists() else None
+    if not target.is_file():
+        return None
+    try:
+        data = json.loads(target.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return None
+    if isinstance(data, dict) and data.get("status") == "in_progress":
+        return str(data.get("started", "?"))
+    return None
+
+
+def already_observed(rec: dict, root: pathlib.Path) -> pathlib.Path | None:
+    """The artifact this open record's discriminator writes, if it already exists
+    and is not a start-of-run stub (see running_since)."""
+    rel = rec.get("produces")
+    if not isinstance(rel, str) or not rel.strip():
+        return None
+    target = root / rel
+    if not target.exists() or running_since(rec, root) is not None:
+        return None
+    return target
 
 
 def report(path: pathlib.Path, show_all: bool,
@@ -224,7 +247,8 @@ def report(path: pathlib.Path, show_all: bool,
 
     openq = sorted(
         (r for r in records if r.get("status") == "open"),
-        key=lambda r: (already_observed(r, root) is None, r["cost_min"], -_age(r)),
+        key=lambda r: (already_observed(r, root) is None and running_since(r, root) is None,
+                       r["cost_min"], -_age(r)),
     )
     done = [r for r in records if r.get("status") == "resolved"]
 
@@ -232,7 +256,13 @@ def report(path: pathlib.Path, show_all: bool,
         nxt = openq[0]
         flag = " 🔴 лежит давно" if _age(nxt) >= STALE_DAYS else ""
         seen = already_observed(nxt, root)
-        if seen is not None:
+        since = running_since(nxt, root)
+        if since is not None:
+            print(f"В РАБОТЕ ({nxt['id']}, возраст {_age(nxt)} д){flag}")
+            print(f"  на диске заглушка старта {since}: прогон идёт ИЛИ оборвался — "
+                  f"не читать как результат и не перезапускать вслепую")
+            print(f"  сверить процесс и {nxt['produces'].rsplit('.', 1)[0]}.live.json")
+        elif seen is not None:
             print(f"ЧИТАЙ, НЕ ЗАПУСКАЙ ({nxt['id']}, возраст {_age(nxt)} д){flag}")
             print(f"  наблюдение уже на диске: {nxt['produces']}")
             print(f"  прочитать, сверить с исходами ниже, закрыть в jsonl ПЕРВЫМ, "
@@ -252,7 +282,9 @@ def report(path: pathlib.Path, show_all: bool,
           f"из {len(records)} записей ({len(done)} закрыто, "
           f"{len(errors)} строк с ошибкой схемы):")
     for rec in openq:
-        mark = "  [на диске]" if already_observed(rec, root) is not None else ""
+        since = running_since(rec, root)
+        mark = (f"  [в работе с {since}]" if since is not None
+                else "  [на диске]" if already_observed(rec, root) is not None else "")
         print(f"  {rec['cost_min']:>4} мин  {rec['id']}  "
               f"(возраст {_age(rec)} д)  {rec['claim']}{mark}")
 

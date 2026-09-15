@@ -148,3 +148,48 @@ def test_empty_control_absent_artifact_keeps_do_this(tmp_path, capsys):
     (root / "out" / "segfault_probe" / "report_c006b.json").unlink()
     C.report(p, show_all=False, root=root)
     assert capsys.readouterr().out.startswith("ДЕЛАЙ ЭТО (C-900")
+
+
+def _queue_c004_as_of_1804(tmp_path, placeholder: str):
+    """Historical control: 15-09 18:04. chain_lift.py writes its --out file at
+    START as {"status": "in_progress", ...} and overwrites it only at the end.
+    The queue took that placeholder for an observation and said READ about a run
+    that was 30 seconds old (the same stub froze in cadical_5M.json on 11-09)."""
+    root = tmp_path / "repo"
+    (root / "search" / "out").mkdir(parents=True)
+    rel = "search/out/chain_lift_k6_cadical_50M.json"
+    (root / rel).write_text(placeholder, encoding="utf-8")
+    (root / "log").mkdir()
+    rec = dict(BASE_OPEN, id="C-004", cost_min=180, produces=rel)
+    decoy = dict(BASE_OPEN, id="C-900", cost_min=1, produces="out/not_yet.json")
+    p = root / "log" / "candidates.jsonl"
+    p.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in (decoy, rec)) + "\n",
+                 encoding="utf-8")
+    return p, root
+
+
+STUB = '{"status": "in_progress", "started": "2026-09-15T08:04:06Z"}'
+
+
+def test_control_c004_in_progress_stub_is_not_an_observation(tmp_path, capsys):
+    p, root = _queue_c004_as_of_1804(tmp_path, STUB)
+    C.report(p, show_all=False, root=root)
+    out = capsys.readouterr().out
+    assert not out.startswith("ЧИТАЙ"), out.splitlines()[0]
+    assert out.startswith("В РАБОТЕ (C-004"), out.splitlines()[0]
+    assert "2026-09-15T08:04:06Z" in out.splitlines()[1]
+    assert "[на диске]" not in out and "[в работе с 2026-09-15T08:04:06Z]" in out
+
+
+def test_c004_finished_artifact_still_reads(tmp_path, capsys):
+    # The other side of the same file: once the run overwrites the stub, READ.
+    p, root = _queue_c004_as_of_1804(tmp_path, '{"verdict": "M >= 145", "last_sat": 145}')
+    C.report(p, show_all=False, root=root)
+    assert capsys.readouterr().out.startswith("ЧИТАЙ, НЕ ЗАПУСКАЙ (C-004")
+
+
+def test_unparseable_artifact_still_reads(tmp_path, capsys):
+    # A file I cannot parse is still something on disk to look at, not a run.
+    p, root = _queue_c004_as_of_1804(tmp_path, "SAT 146\n")
+    C.report(p, show_all=False, root=root)
+    assert capsys.readouterr().out.startswith("ЧИТАЙ, НЕ ЗАПУСКАЙ (C-004")
