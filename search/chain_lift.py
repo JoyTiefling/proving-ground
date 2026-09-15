@@ -328,8 +328,23 @@ def verdict_line(res: Dict) -> str:
     if res["first_unsat"] is not None:
         return f"M = {res['last_sat']} (SAT {res['last_sat']}, UNSAT {res['first_unsat']})"
     if res["last_sat"] is not None:
+        # Причина остановки берётся из последней ступени, а не пишется одной
+        # фразой. 15-09: C-004 встал на N=146, потому что исчерпал 50M конфликтов,
+        # а вердикт говорил «истёкшее время». Этот текст я сама прочла как
+        # «сработал предохранитель по часам». Это две разные вилки: бюджет шага
+        # означает «эта ступень тяжелее N конфликтов», стена по часам — «до
+        # ступени не дошли». Если их не различать, неверным выйдет следующий шаг
+        # (поднять бюджет или дать больше времени).
+        last = res["ladder"][-1] if res.get("ladder") else {}
+        why = str(last.get("why", ""))
+        if why.startswith("conflict budget"):
+            reason = f"исчерпан бюджет шага ({why})"
+        elif why.startswith("wall-clock"):
+            reason = "стена по часам: до ступени не дошли"
+        else:
+            reason = "причина остановки не записана"
         return (f"M >= {res['last_sat']} — ВИЛКА: у N={res['stalled_at']} нет вердикта, "
-                f"есть истёкшее время")
+                f"{reason}")
     return "нет ни одного SAT в окне"
 
 
