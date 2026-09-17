@@ -1,0 +1,178 @@
+{
+  "probe": "C-012 cost curve",
+  "started": "2026-09-17T12:10:56",
+  "cells": [
+    {
+      "label": "N141_seed1",
+      "k": 6,
+      "N": 141,
+      "seed": 1,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 32497,
+      "nvars": 846,
+      "stats": {
+        "restarts": 12900,
+        "conflicts": 1035296,
+        "decisions": 1114905,
+        "propagations": 53618189
+      },
+      "seconds": 47.5,
+      "verdict": "SAT",
+      "gate_reason": null
+    },
+    {
+      "label": "N141_seed2",
+      "k": 6,
+      "N": 141,
+      "seed": 2,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 32497,
+      "nvars": 846,
+      "stats": {
+        "restarts": 2392,
+        "conflicts": 83882,
+        "decisions": 95631,
+        "propagations": 4642004
+      },
+      "seconds": 2.5,
+      "verdict": "SAT",
+      "gate_reason": null
+    },
+    {
+      "label": "N141_seed3",
+      "k": 6,
+      "N": 141,
+      "seed": 3,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 32497,
+      "nvars": 846,
+      "stats": {
+        "restarts": 1859,
+        "conflicts": 79650,
+        "decisions": 90882,
+        "propagations": 4361331
+      },
+      "seconds": 2.3,
+      "verdict": "SAT",
+      "gate_reason": null
+    },
+    {
+      "label": "N143_seed1",
+      "k": 6,
+      "N": 143,
+      "seed": 1,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 33387,
+      "nvars": 858,
+      "stats": {
+        "restarts": 40865,
+        "conflicts": 2000000,
+        "decisions": 2196057,
+        "propagations": 104796037
+      },
+      "seconds": 99.3,
+      "verdict": "UNKNOWN",
+      "why": "conflict budget 2000000 exhausted"
+    },
+    {
+      "label": "N143_seed2",
+      "k": 6,
+      "N": 143,
+      "seed": 2,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 33387,
+      "nvars": 858,
+      "stats": {
+        "restarts": 12119,
+        "conflicts": 636209,
+        "decisions": 694167,
+        "propagations": 32912200
+      },
+      "seconds": 25.6,
+      "verdict": "SAT",
+      "gate_reason": null
+    },
+    {
+      "label": "N143_seed3",
+      "k": 6,
+      "N": 143,
+      "seed": 3,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 33387,
+      "nvars": 858,
+      "stats": {
+        "restarts": 50327,
+        "conflicts": 2000002,
+        "decisions": 2232401,
+        "propagations": 104573851
+      },
+      "seconds": 99.3,
+      "verdict": "UNKNOWN",
+      "why": "conflict budget 2000000 exhausted"
+    },
+    {
+      "label": "N145_seed1",
+      "k": 6,
+      "N": 145,
+      "seed": 1,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 34289,
+      "nvars": 870,
+      "stats": {
+        "restarts": 11254,
+        "conflicts": 494467,
+        "decisions": 550041,
+        "propagations": 25031627
+      },
+      "seconds": 17.9,
+      "verdict": "SAT",
+      "gate_reason": null
+    },
+    {
+      "label": "N145_seed2",
+      "k": 6,
+      "N": 145,
+      "seed": 2,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 34289,
+      "nvars": 870,
+      "stats": {
+        "restarts": 1497,
+        "conflicts": 194185,
+        "decisions": 206851,
+        "propagations": 10330385
+      },
+      "seconds": 6.5,
+      "verdict": "SAT",
+      "gate_reason": null
+    },
+    {
+      "label": "N145_seed3",
+      "k": 6,
+      "N": 145,
+      "seed": 3,
+      "conf_budget": 2000000,
+      "solver": "cadical153",
+      "clauses": 34289,
+      "nvars": 870,
+      "stats": {
+        "restarts": 4765,
+        "conflicts": 224304,
+        "decisions": 250265,
+        "propagations": 11867913
+      },
+      "seconds": 7.6,
+      "verdict": "SAT",
+      "gate_reason": null
+    }
+  ],
+  "finished": "2026-09-17T12:16:05"
+}

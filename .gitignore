@@ -15,6 +15,15 @@ venv/
 # So: .json receipts are TRACKED. Bulk logs and dumps stay ignored.
 search/out/*
 !search/out/*.json
+# Правило выше разигнорировало ТОЛЬКО корень search/out: git не заходит внутрь
+# исключённой директории, поэтому чеки пробников, пишущих в ПОДПАПКУ
+# (phase_portfolio/, hint_depth/, fresh_solver/...), молча не попадали в гит —
+# тот же дефект, про который написан комментарий выше, вернувшийся через соседа
+# (замер 17-09: 10 json, 264 K, ноль в индексе). Пускаем подпапки и json в них,
+# bulk (.log/.txt/дампы) остаётся за бортом.
+!search/out/*/
+search/out/*/*
+!search/out/*/*.json
 !search/out/superseded/
 search/out/superseded/*
 !search/out/superseded/*.json
