@@ -1,0 +1,18 @@
+{
+ "probe": "C-015 prefix cover",
+ "started": "2026-09-19T00:01:58",
+ "k": 6,
+ "P": 16,
+ "target": 146,
+ "budget": 2000000,
+ "enum": {
+  "raw": 1679616,
+  "weak_schur": 269640,
+  "carriers_disagree": 0,
+  "classes": 422,
+  "enum_seconds": 20.9,
+  "witness_class_present": true
+ },
+ "controls": [],
+ "cells": []
+}

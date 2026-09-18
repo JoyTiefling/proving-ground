@@ -97,15 +97,16 @@ def cube(prefix: tuple[int, ...], k: int) -> list[int]:
 
 
 def solve_cell(args):
-    label, k, N, prefix, budget = args
-    from pysat.solvers import Cadical153
+    label, k, N, prefix, budget, solver = args
+    from pysat.solvers import Cadical153, Glucose42, Minisat22
+    S = {"cadical153": Cadical153, "glucose42": Glucose42, "minisat22": Minisat22}[solver]
     cnf, _ = scm.build_cnf(k, N)
     t0 = time.time()
-    with Cadical153(bootstrap_with=cnf.clauses) as s:
+    with S(bootstrap_with=cnf.clauses) as s:
         s.conf_budget(budget)
         res = s.solve_limited(assumptions=cube(prefix, k))
         model = set(l for l in (s.get_model() or []) if l > 0) if res else None
-    cell = {"label": label, "N": N, "prefix": "".join(map(str, prefix)),
+    cell = {"label": label, "N": N, "solver": solver, "prefix": "".join(map(str, prefix)),
             "seconds": round(time.time() - t0, 2)}
     if res is None:
         cell["verdict"] = "UNKNOWN"
@@ -131,6 +132,7 @@ def main() -> int:
     ap.add_argument("--budget", type=int, default=2_000_000)
     ap.add_argument("--workers", type=int, default=5)
     ap.add_argument("--count-only", action="store_true")
+    ap.add_argument("--solver", default="cadical153")
     args = ap.parse_args()
     k, P = args.k, args.P
 
@@ -146,9 +148,9 @@ def main() -> int:
         print("!! ПЕРЕЧИСЛИТЕЛЬ НЕПОЛОН ИЛИ НОСИТЕЛИ РАСХОДЯТСЯ — стоп", flush=True)
         return 2
     OUT.mkdir(parents=True, exist_ok=True)
-    out = OUT / f"c015_k{k}_P{P}_N{args.target}.json"
+    out = OUT / f"c015_k{k}_P{P}_N{args.target}_{args.solver}.json"
     report = {"probe": "C-015 prefix cover", "started": time.strftime("%Y-%m-%dT%H:%M:%S"),
-              "k": k, "P": P, "target": args.target, "budget": args.budget,
+              "k": k, "P": P, "target": args.target, "budget": args.budget, "solver": args.solver,
               "enum": stats, "controls": [], "cells": []}
 
     def flush():
@@ -160,8 +162,8 @@ def main() -> int:
     # контроли на ТОЙ ЖЕ форме вопроса: куб класса + цель
     bad = list(wcanon)
     bad[0] = bad[1] = bad[2] = 0          # 1+2=3 одним цветом (и 2=2*1 цепочкой согласно)
-    ctrl = [("posctrl_witness_class_145", k, w["witness_N"], wcanon, args.budget),
-            ("negctrl_bad_cube_145", k, w["witness_N"], tuple(bad), args.budget)]
+    ctrl = [("posctrl_witness_class_145", k, w["witness_N"], wcanon, args.budget, args.solver),
+            ("negctrl_bad_cube_145", k, w["witness_N"], tuple(bad), args.budget, args.solver)]
     with Pool(2) as pool:
         for c in pool.imap(solve_cell, ctrl):
             report["controls"].append(c)
@@ -171,7 +173,7 @@ def main() -> int:
         print("!! POWERLESS — контроли не сошлись", flush=True)
         return 3
 
-    jobs = [(f"class{i}", k, args.target, c, args.budget) for i, c in enumerate(classes)]
+    jobs = [(f"class{i}", k, args.target, c, args.budget, args.solver) for i, c in enumerate(classes)]
     tally: dict[str, int] = {}
     with Pool(args.workers) as pool:
         for c in pool.imap_unordered(solve_cell, jobs):
