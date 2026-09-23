@@ -32,13 +32,22 @@ def job(i, prefix, N, q):
         rec["gate_own"] = valid(col, N); rec["witness"] = [col[v] for v in range(1, N+1)]
     q.put(rec)
 
+def emit(rec):
+    """Построчная запись СРАЗУ (19-09: прогон N=230 убит внешним timeout до записи итога —
+    41 класс отработал, в jsonl не осталось ни строки). Итог пусть будет побочным, а не носителем."""
+    with open(OUT, "a") as fh:
+        fh.write(json.dumps(rec) + "\n")
+        fh.flush()
+
 if __name__ == "__main__":
     idle()
     import probe_prefix_cover as ppc
     N, budget = int(sys.argv[1]), float(sys.argv[2])
     W = int(sys.argv[3]) if len(sys.argv) > 3 else 4
+    RUN = f"N{N}-b{int(budget)}-{time.strftime('%Y%m%dT%H%M%S')}"
     classes, _ = ppc.enumerate_classes(K, P)
-    print("classes", len(classes), "N", N, "budget", budget, flush=True)
+    print("classes", len(classes), "N", N, "budget", budget, "run", RUN, flush=True)
+    emit({"run": RUN, "kind": "start", "N": N, "budget": budget, "workers": W, "of": len(classes)})
     q = mp.Queue(); todo = list(enumerate(classes)); run = {}; done = []; t_all = time.time(); found = None
     while (todo or run) and not found:
         while todo and len(run) < W:
@@ -47,15 +56,17 @@ if __name__ == "__main__":
         while not q.empty():
             rec = q.get(); run.pop(rec["class"])[0].join(); done.append(rec)
             print({k: v for k, v in rec.items() if k != "witness"}, flush=True)
+            emit({"run": RUN, "kind": "class", **rec})
             if rec["sat"] and rec.get("gate_own"): found = rec
         for i, (p, t) in list(run.items()):
             if time.time() - t > budget:
                 p.terminate(); p.join(); run.pop(i); done.append({"class": i, "sat": None, "s": budget})
                 print({"class": i, "sat": "timeout"}, flush=True)
+                emit({"run": RUN, "kind": "class", "class": i, "sat": None, "s": budget})
     for p, _ in run.values(): p.terminate()
-    summ = {"N": N, "budget": budget, "tried": len(done), "of": len(classes),
+    summ = {"run": RUN, "kind": "summary", "N": N, "budget": budget, "tried": len(done), "of": len(classes),
             "unsat": sum(r["sat"] is False for r in done), "timeout": sum(r["sat"] is None for r in done),
             "wall_s": round(time.time() - t_all, 1), "found_class": found and found["class"],
             "witness": found and found["witness"]}
-    with open(OUT, "a") as fh: fh.write(json.dumps(summ) + "\n")
+    emit(summ)
     print({k: v for k, v in summ.items() if k != "witness"}, flush=True)
