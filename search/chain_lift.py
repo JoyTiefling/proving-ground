@@ -212,7 +212,8 @@ def climb(k: int, hi: int, lo: int = 1, chain: bool = True, conflicts: bool = Tr
           symmetry: bool = True, step_budget: int = 200000,
           total_budget: float = 600.0, gate_every: bool = True,
           verbose: bool = False, live_path: str = "",
-          solver_name: str = "minisat22") -> Dict:
+          solver_name: str = "minisat22",
+          cube: Optional[List[int]] = None) -> Dict:
     """Инкрементальный подъём по N. Один солвер, клаузы дописываются.
 
     Возвращает лестницу поимённо: для каждого N вердикт и время.
@@ -233,6 +234,20 @@ def climb(k: int, hi: int, lo: int = 1, chain: bool = True, conflicts: bool = Tr
         cl = [var(1, 0, k)]
         s.add_clause(cl)
         added.append(cl)
+
+    # ГИБРИД (02-10): куб префикса — те же юнит-клаузы, которыми scout_k7_classes.py
+    # резал пространство на 41 класс, но здесь они стоят ОДИН раз, и дальше идёт
+    # подъём внутри класса вместо холодного solve на целевом N. Замер, из которого
+    # это выросло: класс 14 отдал витнесс на N=230 за 592 s, а на N=240 холодным
+    # solve не уложился в 1200 s; лобовой подъём при этом проходит 212 ступеней
+    # за 2513 s. Утверждение о предмете куб НЕ меняет (SAT внутри класса ⇒ SAT),
+    # но UNSAT внутри класса НЕ значит UNSAT вообще — вердикт асимметричен,
+    # и это записано в verdict_line через поле cube.
+    if cube:
+        for v, c in enumerate(cube, 1):
+            cl = [var(v, c, k)]
+            s.add_clause(cl)
+            added.append(cl)
 
     for n in range(1, hi + 1):
         for cl in clauses_for_element(n, k, chain=chain, conflicts=conflicts):
@@ -464,9 +479,23 @@ if __name__ == "__main__":
     ap.add_argument("--no-out", action="store_true")
     ap.add_argument("--solver", type=str, default="minisat22",
                     help="движок: " + ", ".join(f"{n} ({SOLVERS[n][1]})" for n in SOLVERS))
+    ap.add_argument("--cube-class", type=int, default=-1,
+                    help="индекс класса префикса из probe_prefix_cover.enumerate_classes(k, P): "
+                         "подъём идёт ВНУТРИ класса. UNSAT тогда относится к классу, не к предмету")
+    ap.add_argument("--cube-P", type=int, default=12, help="длина префикса для нарезки на классы")
     args = ap.parse_args()
 
-    out_path = receipts.resolve_out(args, __file__, N=args.hi, k=args.k)
+    cube = None
+    if args.cube_class >= 0:
+        import probe_prefix_cover as ppc
+        classes, _ = ppc.enumerate_classes(args.k, args.cube_P)
+        if not (0 <= args.cube_class < len(classes)):
+            sys.exit(f"класс {args.cube_class} вне диапазона 0..{len(classes)-1}")
+        cube = list(classes[args.cube_class])
+        print(f"КУБ: класс {args.cube_class} из {len(classes)} (P={args.cube_P}) -> {cube}")
+
+    out_path = receipts.resolve_out(args, __file__, N=args.hi, k=args.k,
+                                    **({"cube": args.cube_class} if cube else {}))
     receipts.probe_writable(out_path)
 
     print("=== M_chain(k) подъёмом: инкрементальный SAT ===\n")
@@ -485,7 +514,24 @@ if __name__ == "__main__":
     live_path = (os.path.splitext(out_path)[0] + ".live.json") if out_path else ""
     res = climb(args.k, hi=args.hi, lo=args.lo, step_budget=args.step_budget,
                 total_budget=args.total_budget, verbose=True, live_path=live_path,
-                solver_name=args.solver)
+                solver_name=args.solver, cube=cube)
+
+    # C-CUBE — куб обязан быть ВИДЕН в витнессе. Без этого контроля опечатка в
+    # кодировке юнитов (здесь переменные по ВСЕМ v, у скаута — по нечётным
+    # представителям) даёт прогон, который выглядит как подъём внутри класса,
+    # а на деле просто лобовой подъём: зелёный по построению (#4490 — источник
+    # ожидаемого должен быть не тем же кодом).
+    cube_ctl = None
+    if cube:
+        # res["witness"] — 1-индексный (нулевой элемент фиктивный, расписка берёт [1:])
+        w = list((res.get("witness") or [])[1:])
+        ok_cube = len(w) >= len(cube) and w[:len(cube)] == list(cube)
+        cube_ctl = {"control": "C-CUBE", "cube_class": args.cube_class,
+                    "prefix": cube, "witness_prefix": w[:len(cube)], "pass": bool(ok_cube)}
+        print(f"C-CUBE: витнесс начинается кубом — {'OK' if ok_cube else 'РАЗОШЛОСЬ'}")
+        if not ok_cube and w:
+            print(f"   куб {cube}\n   витнесс {w[:len(cube)]}")
+        ctl_log = list(ctl_log) + [cube_ctl]
     print(f"\nЛестница (от N={args.lo}):")
     for row in res["ladder"]:
         if row["N"] < args.lo:
@@ -506,6 +552,15 @@ if __name__ == "__main__":
         "last_sat": res["last_sat"], "first_unsat": res["first_unsat"],
         "stalled_at": res["stalled_at"],
         "verdict": verdict_line(res),
+        # Куб делает вердикт АСИММЕТРИЧНЫМ: SAT внутри класса — показание о предмете
+        # (витнесс настоящий), UNSAT внутри класса — показание о КЛАССЕ. Поля ниже
+        # существуют, чтобы читающая расписку не могла об этом не узнать.
+        "cube_class": args.cube_class if cube else None,
+        "cube_prefix": cube,
+        "cube_P": args.cube_P if cube else None,
+        "cube_caveat": (None if not cube else
+                        "UNSAT/UNKNOWN относится к классу префикса, НЕ к M_chain(k); "
+                        "SAT и витнесс относятся к предмету"),
         # Витнесс наибольшего замеренного SAT: список цветов [1..last_sat].
         # Перепроверяется независимо: verifiers/weak_schur.verify_weak_schur
         # на разбиении + f(2v)==f(v) по самой раскраске.
