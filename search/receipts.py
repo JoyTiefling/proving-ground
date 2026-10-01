@@ -115,12 +115,65 @@ def resolve_out(args, script_file, **params):
     return getattr(args, "out", "") or default_out(script_file, **params)
 
 
+def warn_twin_verdict(out_path):
+    """Loud warning if a same-named receipt ELSEWHERE already carries a verdict.
+
+    Measured 02-10-2026: `M_chain(7) >= 212` finished on 24-09 into the auto
+    path `search/out/chain_lift_N245_k7_b10M.json`; on 28-09 the same climb was
+    launched from the repo root with an explicit `--out out/...`, so the two
+    trees held one basename — a verdict and an in_progress stub — and a whole
+    wake was spent re-computing an answer that was already on disk.
+
+    The question "has this already been computed?" must be answered by a
+    CARRIER, not by my memory of what I launched, and it must be answered
+    BEFORE the expensive part. That is exactly this function's position in
+    time. Warning only, never a refusal: a deliberate re-run is legitimate
+    (new solver, new budget, regression check) — what is not legitimate is
+    doing it without knowing the twin exists.
+
+    `search/run_census.py` is the repo-wide form of the same check.
+    """
+    if not out_path:
+        return
+    base = os.path.basename(out_path)
+    mine = os.path.abspath(out_path)
+    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    twins = []
+    for dirpath, dirnames, filenames in os.walk(repo):
+        dirnames[:] = [x for x in dirnames if x not in (".git", "__pycache__")]
+        if base not in filenames:
+            continue
+        full = os.path.join(dirpath, base)
+        if os.path.abspath(full) == mine:
+            continue
+        try:
+            with open(full, "r", encoding="utf-8") as fh:
+                d = json.load(fh)
+        except Exception:
+            continue
+        if not isinstance(d, dict) or d.get("status") == "in_progress":
+            continue
+        claim = d.get("verdict")
+        if claim is None and "last_sat" in d:
+            claim = "last_sat=%s stalled_at=%s" % (d.get("last_sat"), d.get("stalled_at"))
+        if claim is not None:
+            twins.append((os.path.relpath(full, repo).replace("\\", "/"), claim))
+    for path, claim in twins:
+        sys.stderr.write(
+            "  [TWIN RECEIPT] a receipt of the same name already carries a verdict:\n"
+            "                 %s\n                 -> %s\n"
+            "                 If that is this run's question, it is ALREADY ANSWERED.\n"
+            % (path, claim))
+    return twins
+
+
 def probe_writable(out_path):
     """Reserve the path NOW so a bad one fails in seconds, not after an hour."""
     if not out_path:
         sys.stderr.write(
             "  [warn] --no-out given; this run's result will NOT be persisted.\n")
         return
+    warn_twin_verdict(out_path)
     d = os.path.dirname(out_path) or "."
     os.makedirs(d, exist_ok=True)
     # BEFORE the stub clobbers anything: a crashed rerun must not cost an
